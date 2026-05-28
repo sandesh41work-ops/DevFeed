@@ -5,20 +5,34 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native'
-import { useState } from 'react'
-
+import { use, useEffect, useState } from 'react'
+import Button from '../../shared/components/Button';
 
 function checkLoginCreds(email: string, password: string) {
   if (email.trim() === "" || password.trim() === "") {
     alert("Please enter both email and password.");
+
     return false;
   }
   return true;
 }
 
+
+
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false);
+
+  function addDelay() {
+    // function for test the loading indicator 
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+    }, 10000);
+  }
+
+
 
   return (
     <View style={styles.container}>
@@ -47,23 +61,30 @@ const LoginScreen = () => {
           secureTextEntry
         />
 
-        <TouchableOpacity
-          style={styles.button}
+        <Button
+          title='Login'
+          disabled={false}
+          loading={loading}
           onPress={() => {
-            checkLoginCreds(email, password);
-            console.log('Email:', email)
-            console.log('Password:', password)
-          }}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
 
+            addDelay();
+
+            checkLoginCreds(email, password);
+
+
+            console.log("Email: ", email)
+            console.log("Password :", password)
+
+          }}
+
+        />
 
         <TouchableOpacity
           style={styles.signupLink}
           onPress={() => {
             console.log('Navigate to Register Screen')
           }
+
           }>
           <Text style={styles.signupLinkText}>
             Don't have an account? Register
@@ -73,6 +94,8 @@ const LoginScreen = () => {
 
     </View>
   )
+
+
 }
 
 export default LoginScreen
@@ -83,7 +106,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f4f7',
     justifyContent: 'center',
     paddingHorizontal: 20,
-
   },
 
   card: {
@@ -97,7 +119,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-
     elevation: 5,
   },
 
@@ -125,21 +146,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fafafa',
   },
 
-  button: {
-    height: 52,
-    backgroundColor: '#2563eb',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-
   signupLink: {
     marginTop: 15,
   },
@@ -149,3 +155,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   }
 })
+
