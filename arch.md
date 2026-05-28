@@ -1,0 +1,10 @@
+src/
+  features/
+    auth/
+    feed/
+  shared/
+    components/
+    hooks/
+    services/
+    types/
+  navigation/
