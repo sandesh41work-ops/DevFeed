@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 import { use, useEffect, useState } from 'react'
 import Button from '../../shared/components/Button';
+import Input from '../../shared/components/Input';
 
 function checkLoginCreds(email: string, password: string) {
   if (email.trim() === "" || password.trim() === "") {
@@ -32,8 +33,6 @@ const LoginScreen = () => {
     }, 10000);
   }
 
-
-
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -42,23 +41,21 @@ const LoginScreen = () => {
           Login to continue
         </Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your email"
-          placeholderTextColor="#999"
+        
+
+        <Input
           value={email}
+          placeholder='Enter your email'
           onChangeText={setEmail}
           keyboardType="email-address"
-          autoCapitalize="none"
         />
 
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="Enter your password"
-          placeholderTextColor="#999"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
+          secureTextEntry={true}
+          // keyboardType="visible-password"
         />
 
         <Button
@@ -66,12 +63,8 @@ const LoginScreen = () => {
           disabled={false}
           loading={loading}
           onPress={() => {
-
             addDelay();
-
             checkLoginCreds(email, password);
-
-
             console.log("Email: ", email)
             console.log("Password :", password)
 
@@ -144,6 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
     backgroundColor: '#fafafa',
+
   },
 
   signupLink: {
