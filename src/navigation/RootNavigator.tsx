@@ -3,10 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../features/auth/LoginScreen';
 import HomeScreen from '../features/feed/HomeScreen';
 
-export type RootStackParamList = {
-    Login: undefined;
-    Home: undefined;
-};
+import { RootStackParamList } from '../shared/types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootNavigator() {
