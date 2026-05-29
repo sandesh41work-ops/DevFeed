@@ -1,29 +1,19 @@
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
 } from 'react-native'
-import { use, useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from '../../shared/components/Button';
 import Input from '../../shared/components/Input';
 
-function checkLoginCreds(email: string, password: string) {
-  if (email.trim() === "" || password.trim() === "") {
-    alert("Please enter both email and password.");
-
-    return false;
-  }
-  return true;
-}
-
-
-
 const LoginScreen = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
 
   function addDelay() {
     // function for test the loading indicator 
@@ -31,6 +21,33 @@ const LoginScreen = () => {
     setTimeout(() => {
       setLoading(false)
     }, 10000);
+  }
+
+
+
+  function handleLogin(email: string, password: string) {
+    let userEmail = email.trim();
+    let userPassword = password.trim();
+
+    if (!userEmail) {
+      setError("Please enter your email.");
+      return false;
+    }
+    if (!userEmail.includes("@")) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+    if (!userPassword) {
+      setError("Please enter your password.");
+      return false;
+    }
+
+    if (userPassword.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+    setError("");
+    return true;
   }
 
   return (
@@ -41,35 +58,32 @@ const LoginScreen = () => {
           Login to continue
         </Text>
 
-        
-
         <Input
           value={email}
           placeholder='Enter your email'
           onChangeText={setEmail}
           keyboardType="email-address"
-        />
 
+        />
         <Input
           placeholder="Enter your password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry={true}
-          // keyboardType="visible-password"
         />
+
+        {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
 
         <Button
           title='Login'
-          disabled={false}
+          disabled={!email || !password}
           loading={loading}
           onPress={() => {
-            addDelay();
-            checkLoginCreds(email, password);
+            // addDelay(); // for test the loading indicator
+            handleLogin(email, password);
             console.log("Email: ", email)
             console.log("Password :", password)
-
           }}
-
         />
 
         <TouchableOpacity
@@ -77,7 +91,6 @@ const LoginScreen = () => {
           onPress={() => {
             console.log('Navigate to Register Screen')
           }
-
           }>
           <Text style={styles.signupLinkText}>
             Don't have an account? Register
@@ -87,8 +100,6 @@ const LoginScreen = () => {
 
     </View>
   )
-
-
 }
 
 export default LoginScreen
