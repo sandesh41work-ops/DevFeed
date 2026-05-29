@@ -4,9 +4,49 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '../../shared/components/Button';
 import Input from '../../shared/components/Input';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../../shared/services/firebase';
+
+async function testFirebaseLogin() {
+  try {
+    const userCredential =
+      await signInWithEmailAndPassword(
+        auth,
+        'sandesh@gmail.com',
+        'password124'
+      );
+
+    console.log(
+      'User logged in:',
+      userCredential.user.email
+    );
+  } catch (error: any) {
+    console.log(error.code);
+    console.log(error.message);
+  }
+}
+
+async function testSignup() {
+  try {
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        'sandesh@gmail.com',
+        'password124'
+      );
+
+    console.log(
+      'User created:',
+      userCredential.user.email
+    );
+  } catch (error: any) {
+    console.log(error.code);
+    console.log(error.message);
+  }
+}
 
 const LoginScreen = () => {
   const [email, setEmail] = useState<string>('')
@@ -14,6 +54,10 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
+
+  useEffect(() => {
+    testSignup();
+  }, []);
 
   function addDelay() {
     // function for test the loading indicator 
