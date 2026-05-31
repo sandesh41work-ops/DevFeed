@@ -9,6 +9,7 @@ import Button from '../../shared/components/Button';
 import Input from '../../shared/components/Input';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../shared/services/firebase';
+import { loginUser } from './authService';
 
 async function testFirebaseLogin() {
   try {
@@ -53,11 +54,6 @@ const LoginScreen = () => {
   const [password, setPassword] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
-
-  useEffect(() => {
-    testSignup();
-  }, []);
 
   function addDelay() {
     // function for test the loading indicator 
@@ -69,7 +65,7 @@ const LoginScreen = () => {
 
 
 
-  function handleLogin(email: string, password: string) {
+  async function handleLogin(email: string, password: string) {
     let userEmail = email.trim();
     let userPassword = password.trim();
 
@@ -91,7 +87,19 @@ const LoginScreen = () => {
       return false;
     }
     setError("");
-    return true;
+    setLoading(true);
+
+    try {
+      const user = await loginUser(userEmail, userPassword);
+      console.log("loggin success: ", user);
+    } catch (error) {
+      console.log(error);
+      setError("Invalid Credentials : Login Failed..")
+    }
+    finally {
+
+      setLoading(false);
+    }
   }
 
   return (
