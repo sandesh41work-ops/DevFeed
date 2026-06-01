@@ -14,5 +14,7 @@ export const getTopStories = async (): Promise<number[]> => {
 
 export const getStory = async (id: number) => {
     const response = await apiClient.get(`/item/${id}.json`)
+    console.log("API Call ::: /item/:id :::")
+    console.log(response.data);
     return response.data
 }
