@@ -4,12 +4,13 @@ type ButtonProps = {
     onPress: () => undefined | Promise<void>;
     disabled?: boolean;
     loading?: boolean;
-    style? : object;
+    style?: object | StyleProp<ViewStyle>;
+    textStyle?: object | StyleProp<ViewStyle>;
 }
 
-import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, ViewStyle, StyleProp } from 'react-native'
 
-const Button = ({ title, onPress, disabled, loading, style }: ButtonProps) => {
+const Button = ({ title, onPress, disabled, loading, style, textStyle }: ButtonProps) => {
     return (
         <TouchableOpacity
             onPress={onPress}
@@ -19,7 +20,7 @@ const Button = ({ title, onPress, disabled, loading, style }: ButtonProps) => {
             {
                 loading ? (
                     <ActivityIndicator color="#ffff" size='small' />)
-                    : (<Text style={styles.buttonText}> {title} </Text>)
+                    : (<Text style={[styles.buttonText, textStyle]}> {title} </Text>)
             }
 
         </TouchableOpacity>
