@@ -4,13 +4,19 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from '../../shared/components/Button';
 import Input from '../../shared/components/Input';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../shared/services/firebase';
 import { loginUser } from './authService';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../shared/types/navigation';
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+
+// test functions for firebase auth, you can run these in useEffect to test the login and signup functionality without UI 
 async function testFirebaseLogin() {
   try {
     const userCredential =
@@ -49,11 +55,14 @@ async function testSignup() {
   }
 }
 
+
 const LoginScreen = () => {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+
+  const navigation = useNavigation<NavigationProp>();
 
   function addDelay() {
     // function for test the loading indicator 
@@ -62,8 +71,6 @@ const LoginScreen = () => {
       setLoading(false)
     }, 10000);
   }
-
-
 
   async function handleLogin(email: string, password: string) {
     let userEmail = email.trim();
@@ -142,6 +149,7 @@ const LoginScreen = () => {
           style={styles.signupLink}
           onPress={() => {
             console.log('Navigate to Register Screen')
+            navigation.navigate("SignUp");
           }
           }>
           <Text style={styles.signupLinkText}>
