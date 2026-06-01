@@ -1,15 +1,15 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import { TouchableOpacity } from 'react-native'
-import Button from '../../shared/components/Button'
-import Input from '../../shared/components/Input'
-import { registerUser } from './authService'
-import { useNavigation } from '@react-navigation/native'
-import LoginScreen from './LoginScreen'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../shared/types/navigation'
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { TouchableOpacity } from "react-native";
+import Button from "../../shared/components/Button";
+import Input from "../../shared/components/Input";
+import { registerUser } from "./authService";
+import { useNavigation } from "@react-navigation/native";
+import LoginScreen from "./LoginScreen";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../shared/types/navigation";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState<string>("");
@@ -21,55 +21,51 @@ const SignUpScreen = () => {
   const navigation = useNavigation<NavigationProp>();
 
   function addDelay() {
-    // function for test the loading indicator 
-    setLoading(true)
+    // function for test the loading indicator
+    setLoading(true);
     setTimeout(() => {
-      setLoading(false)
+      setLoading(false);
     }, 10000);
   }
   const handleSignUp = async () => {
     if (!email || !password || !confirmPassword) {
-      setError('All fields are required')
-      return
+      setError("All fields are required");
+      return;
     }
-    if (!email.includes('@')) {
-      setError('Enter a valid email')
-      return
+    if (!email.includes("@")) {
+      setError("Enter a valid email");
+      return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      return
+      setError("Password must be at least 6 characters");
+      return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
+      setError("Passwords do not match");
+      return;
     }
     try {
-      setLoading(true)
-      setError('')
-      await registerUser(email, password)
+      setLoading(true);
+      setError("");
+      await registerUser(email, password);
 
       // auth state listener handles navigation automatically
     } catch (e: any) {
-      setError(e.message || 'Signup failed')
+      setError(e.message || "Signup failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-
-        <Text style={styles.subtitle}>
-          Create Account to continue
-        </Text>
+        <Text style={styles.subtitle}>Create Account to continue</Text>
 
         <Input
           value={email}
-          placeholder='Enter your email'
+          placeholder="Enter your email"
           onChangeText={setEmail}
           keyboardType="email-address"
-
         />
         <Input
           placeholder="Enter your password"
@@ -85,17 +81,19 @@ const SignUpScreen = () => {
           secureTextEntry={true}
         />
 
-        {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
+        {error ? (
+          <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+        ) : null}
 
         <Button
-          title='Create Account'
+          title="Create Account"
           disabled={!email || !password}
           loading={loading}
           onPress={() => {
             addDelay(); // for test the loading indicator
-            console.log("Email: ", email)
-            console.log("Password :", password)
-            console.log("confirm password : ", confirmPassword)
+            console.log("Email: ", email);
+            console.log("Password :", password);
+            console.log("confirm password : ", confirmPassword);
             handleSignUp();
           }}
         />
@@ -103,34 +101,34 @@ const SignUpScreen = () => {
         <TouchableOpacity
           style={styles.signupLink}
           onPress={() => {
-            console.log('Navigate to Login Screen')
+            console.log("Navigate to Login Screen");
             navigation.navigate("Login");
-          }
-          }>
+          }}
+        >
           <Text style={styles.signupLinkText}>
             Already Have Account? Login instead
           </Text>
         </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default SignUpScreen
+export default SignUpScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f4f7',
-    justifyContent: 'center',
+    backgroundColor: "#f2f4f7",
+    justifyContent: "center",
     paddingHorizontal: 20,
   },
 
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 25,
     borderRadius: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -142,36 +140,34 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#111',
+    fontWeight: "700",
+    color: "#111",
     marginBottom: 6,
   },
 
   subtitle: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 25,
   },
 
   input: {
     height: 52,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 16,
     fontSize: 16,
-    backgroundColor: '#fafafa',
-
+    backgroundColor: "#fafafa",
   },
 
   signupLink: {
     marginTop: 15,
   },
   signupLinkText: {
-    color: '#2563eb',
+    color: "#2563eb",
     fontSize: 14,
-    textAlign: 'center',
-  }
-})
-
+    textAlign: "center",
+  },
+});

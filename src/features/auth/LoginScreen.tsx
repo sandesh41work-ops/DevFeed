@@ -1,35 +1,29 @@
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import Button from "../../shared/components/Button";
+import Input from "../../shared/components/Input";
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native'
-import { useState } from 'react'
-import Button from '../../shared/components/Button';
-import Input from '../../shared/components/Input';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../shared/services/firebase';
-import { loginUser } from './authService';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../shared/types/navigation';
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../../shared/services/firebase";
+import { loginUser } from "./authService";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../shared/types/navigation";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// test functions for firebase auth, you can run these in useEffect to test the login and signup functionality without UI 
+// test functions for firebase auth, you can run these in useEffect to test the login and signup functionality without UI
 async function testFirebaseLogin() {
   try {
-    const userCredential =
-      await signInWithEmailAndPassword(
-        auth,
-        'sandesh@gmail.com',
-        'password124'
-      );
-
-    console.log(
-      'User logged in:',
-      userCredential.user.email
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      "sandesh@gmail.com",
+      "password124",
     );
+
+    console.log("User logged in:", userCredential.user.email);
   } catch (error: any) {
     console.log(error.code);
     console.log(error.message);
@@ -38,37 +32,32 @@ async function testFirebaseLogin() {
 
 async function testSignup() {
   try {
-    const userCredential =
-      await createUserWithEmailAndPassword(
-        auth,
-        'sandesh@gmail.com',
-        'password124'
-      );
-
-    console.log(
-      'User created:',
-      userCredential.user.email
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      "sandesh@gmail.com",
+      "password124",
     );
+
+    console.log("User created:", userCredential.user.email);
   } catch (error: any) {
     console.log(error.code);
     console.log(error.message);
   }
 }
 
-
 const LoginScreen = () => {
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const navigation = useNavigation<NavigationProp>();
 
   function addDelay() {
-    // function for test the loading indicator 
-    setLoading(true)
+    // function for test the loading indicator
+    setLoading(true);
     setTimeout(() => {
-      setLoading(false)
+      setLoading(false);
     }, 10000);
   }
 
@@ -101,10 +90,8 @@ const LoginScreen = () => {
       console.log("loggin success: ", user);
     } catch (error) {
       console.log(error);
-      setError("Invalid Credentials : Login Failed..")
-    }
-    finally {
-
+      setError("Invalid Credentials : Login Failed..");
+    } finally {
       setLoading(false);
     }
   }
@@ -112,17 +99,13 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-
-        <Text style={styles.subtitle}>
-          Login to continue
-        </Text>
+        <Text style={styles.subtitle}>Login to continue</Text>
 
         <Input
           value={email}
-          placeholder='Enter your email'
+          placeholder="Enter your email"
           onChangeText={setEmail}
           keyboardType="email-address"
-
         />
         <Input
           placeholder="Enter your password"
@@ -131,52 +114,53 @@ const LoginScreen = () => {
           secureTextEntry={true}
         />
 
-        {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
+        {error ? (
+          <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+        ) : null}
 
         <Button
-          title='Login'
+          title="Login"
           disabled={!email || !password}
           loading={loading}
           onPress={() => {
             // addDelay(); // for test the loading indicator
             handleLogin(email, password);
-            console.log("Email: ", email)
-            console.log("Password :", password)
+            console.log("Email: ", email);
+            console.log("Password :", password);
           }}
         />
 
         <TouchableOpacity
           style={styles.signupLink}
           onPress={() => {
-            console.log('Navigate to Register Screen')
+            console.log("Navigate to Register Screen");
             navigation.navigate("SignUp");
-          }
-          }>
+          }}
+        >
           <Text style={styles.signupLinkText}>
             Don't have an account? Register
           </Text>
         </TouchableOpacity>
       </View>
-
     </View>
-  )
-}
+  );
+};
 
-export default LoginScreen
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f4f7',
-    justifyContent: 'center',
+    backgroundColor: "#f2f4f7",
+    justifyContent: "center",
     paddingHorizontal: 20,
   },
 
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 25,
     borderRadius: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -188,36 +172,34 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#111',
+    fontWeight: "700",
+    color: "#111",
     marginBottom: 6,
   },
 
   subtitle: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 25,
   },
 
   input: {
     height: 52,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 16,
     fontSize: 16,
-    backgroundColor: '#fafafa',
-
+    backgroundColor: "#fafafa",
   },
 
   signupLink: {
     marginTop: 15,
   },
   signupLinkText: {
-    color: '#2563eb',
+    color: "#2563eb",
     fontSize: 14,
-    textAlign: 'center',
-  }
-})
-
+    textAlign: "center",
+  },
+});
