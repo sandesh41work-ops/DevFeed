@@ -1,7 +1,7 @@
 
 type ButtonProps = {
     title: string;
-    onPress: () => undefined;
+    onPress: () => undefined | Promise<void>;
     disabled?: boolean;
     loading?: boolean;
 }
