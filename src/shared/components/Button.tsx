@@ -4,16 +4,17 @@ type ButtonProps = {
     onPress: () => undefined | Promise<void>;
     disabled?: boolean;
     loading?: boolean;
+    style? : object;
 }
 
 import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 
-const Button = ({ title, onPress, disabled, loading }: ButtonProps) => {
+const Button = ({ title, onPress, disabled, loading, style }: ButtonProps) => {
     return (
         <TouchableOpacity
             onPress={onPress}
             disabled={disabled}
-            style={[styles.button, (disabled) && styles.disabled]}
+            style={[styles.button, (disabled) && styles.disabled, style]}
         >
             {
                 loading ? (
