@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-nativ
 import { getStory, getTopStories } from '../../shared/services/api';
 import { Story } from '../../shared/types/story';
 import StoryCard from '../../shared/components/StoryCard';
-
+import Button from '../../shared/components/Button';
 const HomeScreen = () => {
   const [loading, setLoading] = useState(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -27,13 +27,20 @@ const HomeScreen = () => {
     }
   }
   if (loading) return <ActivityIndicator />
-  if (error) return <Text>{error}</Text>
+  if (error) return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>{error}</Text>
+      <Button title="Retry" onPress={fetchStories} />
+    </View>
+  )
   return (
     <View>
       <FlatList
         data={stories}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => <StoryCard story={item} />}
+        onRefresh={fetchStories}
+        refreshing={loading}
       />
     </View>
   )
