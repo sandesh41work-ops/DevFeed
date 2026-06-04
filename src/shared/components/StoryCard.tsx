@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Story } from "../types/story";
+import React from "react";
 
-const StoryCard = ({ story }: { story: Story }) => {
+const StoryCard = React.memo(({ story }: { story: Story }) => {
   return (
     <TouchableOpacity activeOpacity={0.8} style={styles.card}>
       <Text style={styles.title}>{story.title}</Text>
@@ -23,7 +24,7 @@ const StoryCard = ({ story }: { story: Story }) => {
       </Text>
     </TouchableOpacity>
   );
-};
+});
 
 export default StoryCard;
 

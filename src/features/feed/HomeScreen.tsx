@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -23,7 +23,7 @@ const HomeScreen = () => {
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const loadMore = async () => {
+  const loadMore = useCallback(async () => {
     if (loadingMore) return;
     const nextPage = page + 1
     const start = page * PAGE_SIZE
@@ -35,10 +35,7 @@ const HomeScreen = () => {
     setStories(prev => [...prev, ...newStories])  // append, don't replace
     setPage(nextPage)
     setLoadingMore(false)
-  }
-  useEffect(() => {
-    fetchStories();
-  }, []);
+  }, [page, ids, loadingMore]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -48,7 +45,11 @@ const HomeScreen = () => {
     });
   }, [navigation]);
 
-  const fetchStories = async () => {
+  const renderItem = useCallback(({ item }: { item: Story }) => (
+    <StoryCard story={item} />
+  ), []);
+
+  const fetchStories = useCallback(async () => {
     try {
       setLoading(true);
       const ids = await getTopStories();
@@ -66,8 +67,11 @@ const HomeScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // only run once on mount
 
+  useEffect(() => {
+    fetchStories();
+  }, [fetchStories]);
 
   if (loading) return <ActivityIndicator />;
   if (error)
@@ -82,7 +86,7 @@ const HomeScreen = () => {
       <FlatList
         data={stories}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <StoryCard story={item} />}
+        renderItem={renderItem}
         onRefresh={fetchStories}
         refreshing={loading}
         onEndReached={loadMore}
