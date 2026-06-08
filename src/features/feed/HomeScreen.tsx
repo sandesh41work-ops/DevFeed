@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -12,6 +12,7 @@ import StoryCard from "../../shared/components/StoryCard";
 import Button from "../../shared/components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { logOutUser } from "../auth/authService";
+import SearchBar from "../../shared/components/SearchBar";
 
 const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -22,7 +23,14 @@ const HomeScreen = () => {
   const PAGE_SIZE = 10;
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
+  const reRenderCount = useRef(0);
+  useEffect(() => {
+    reRenderCount.current += 1;
+    console.log("HomeScreen re-rendered", reRenderCount.current);
+  });
+  
   const loadMore = useCallback(async () => {
     if (loadingMore) return;
     const nextPage = page + 1;
@@ -73,6 +81,10 @@ const HomeScreen = () => {
     fetchStories();
   }, [fetchStories]);
 
+  const filteredStories = stories.filter((story) =>
+    story.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   if (loading) return <ActivityIndicator />;
   if (error)
     return (
@@ -82,9 +94,10 @@ const HomeScreen = () => {
       </View>
     );
   return (
-    <View>
+    <View style={{ flex: 1 }}>
+      <SearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder="Search stories..." />
       <FlatList
-        data={stories}
+        data={filteredStories}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         onRefresh={fetchStories}
