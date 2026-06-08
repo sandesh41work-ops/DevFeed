@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -30,9 +30,13 @@ const HomeScreen = () => {
     reRenderCount.current += 1;
     console.log("HomeScreen re-rendered", reRenderCount.current);
   });
-  
+
   const loadMore = useCallback(async () => {
-    if (loadingMore) return;
+    // console.log("Load more triggered. Current page:", page);
+    // console.log("serach query : ", searchQuery);
+    // console.log("loadingMore:", loadingMore);
+
+    if (loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
     const start = page * PAGE_SIZE;
     const end = start + PAGE_SIZE;
@@ -43,7 +47,7 @@ const HomeScreen = () => {
     setStories((prev) => [...prev, ...newStories]); // append, don't replace
     setPage(nextPage);
     setLoadingMore(false);
-  }, [page, ids, loadingMore]);
+  }, [page, ids, loadingMore, searchQuery]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -81,9 +85,13 @@ const HomeScreen = () => {
     fetchStories();
   }, [fetchStories]);
 
-  const filteredStories = stories.filter((story) =>
-    story.title.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredStories = useMemo(() => {
+    console.log("Filtering stories with query:", searchQuery);
+    return stories.filter((story) =>
+      story.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [stories, searchQuery]);
+
 
   if (loading) return <ActivityIndicator />;
   if (error)
