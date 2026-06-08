@@ -25,16 +25,16 @@ const HomeScreen = () => {
 
   const loadMore = useCallback(async () => {
     if (loadingMore) return;
-    const nextPage = page + 1
-    const start = page * PAGE_SIZE
-    const end = start + PAGE_SIZE
-    const nextIds = ids.slice(start, end)
-    if (nextIds.length === 0) return
-    setLoadingMore(true)
-    const newStories = await Promise.all(nextIds.map(id => getStory(id)))
-    setStories(prev => [...prev, ...newStories])  // append, don't replace
-    setPage(nextPage)
-    setLoadingMore(false)
+    const nextPage = page + 1;
+    const start = page * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    const nextIds = ids.slice(start, end);
+    if (nextIds.length === 0) return;
+    setLoadingMore(true);
+    const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
+    setStories((prev) => [...prev, ...newStories]); // append, don't replace
+    setPage(nextPage);
+    setLoadingMore(false);
   }, [page, ids, loadingMore]);
 
   useLayoutEffect(() => {
@@ -45,9 +45,10 @@ const HomeScreen = () => {
     });
   }, [navigation]);
 
-  const renderItem = useCallback(({ item }: { item: Story }) => (
-    <StoryCard story={item} />
-  ), []);
+  const renderItem = useCallback(
+    ({ item }: { item: Story }) => <StoryCard story={item} />,
+    [],
+  );
 
   const fetchStories = useCallback(async () => {
     try {
@@ -61,7 +62,6 @@ const HomeScreen = () => {
       const data = await Promise.all(storyPromises);
 
       setStories(data);
-
     } catch (error) {
       setError("Failed to load stories");
     } finally {
@@ -91,9 +91,7 @@ const HomeScreen = () => {
         refreshing={loading}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          loadingMore ? <ActivityIndicator /> : null
-        }
+        ListFooterComponent={loadingMore ? <ActivityIndicator /> : null}
       />
     </View>
   );
