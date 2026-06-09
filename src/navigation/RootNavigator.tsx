@@ -9,7 +9,7 @@ import { auth } from "../shared/services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { ActivityIndicator } from "react-native";
 import SignUpScreen from "../features/auth/SignUpScreen";
-
+import ArticleDetailScreen from "../features/feed/ArticleDetailScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
@@ -30,7 +30,10 @@ function RootNavigator() {
     <NavigationContainer>
       <Stack.Navigator>
         {user ? (
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="ArticleDetail" component={ArticleDetailScreen} />
+          </>
         ) : (
           <>
             <Stack.Screen name="SignUp" component={SignUpScreen} />
