@@ -24,6 +24,7 @@ const HomeScreen = () => {
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const reRenderCount = useRef(0);
   useEffect(() => {
@@ -81,16 +82,24 @@ const HomeScreen = () => {
     }
   }, []); // only run once on mount
 
+    useEffect(() =>{
+      const timeOutId = setTimeout(() => {
+        setDebouncedSearch(searchQuery);
+      }, 500); // debounce by 500ms
+
+      return () => clearTimeout(timeOutId); // cleanup on unmount or query change
+    }, [searchQuery]);
+    
   useEffect(() => {
     fetchStories();
   }, [fetchStories]);
 
   const filteredStories = useMemo(() => {
-    console.log("Filtering stories with query:", searchQuery);
+    console.log("Filtering stories with query:", debouncedSearch);
     return stories.filter((story) =>
-      story.title.toLowerCase().includes(searchQuery.toLowerCase()),
+      story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
-  }, [stories, searchQuery]);
+  }, [stories, debouncedSearch]);
 
 
   if (loading) return <ActivityIndicator />;
