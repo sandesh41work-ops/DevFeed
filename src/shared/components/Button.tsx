@@ -1,6 +1,6 @@
 type ButtonProps = {
   title: string;
-  onPress: () => undefined | Promise<void>;
+  onPress: () => undefined | Promise<void> | void;
   disabled?: boolean;
   loading?: boolean;
   style?: object | StyleProp<ViewStyle>;
