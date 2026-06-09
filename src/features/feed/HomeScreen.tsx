@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   StyleSheet,
   Text,
@@ -13,6 +12,7 @@ import Button from "../../shared/components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { logOutUser } from "../auth/authService";
 import SearchBar from "../../shared/components/SearchBar";
+import Loader from "../../shared/components/Loader";
 
 const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -110,7 +110,7 @@ const HomeScreen = () => {
   }, [stories, debouncedSearch]);
 
 
-  if (loading) return <ActivityIndicator />;
+  if (loading) return <Loader size="large" />;
   if (error)
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -129,7 +129,7 @@ const HomeScreen = () => {
         refreshing={loading}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={loadingMore ? <ActivityIndicator /> : null}
+        ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
         ListEmptyComponent={emptyListComponent}
       />
     </View>
