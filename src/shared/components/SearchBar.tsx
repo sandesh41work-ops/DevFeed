@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type SearchBarProps = {
     value: string;
@@ -24,6 +24,9 @@ const SearchBar = ({
                 clearButtonMode="while-editing"
             />
             {/* Todo : Clear Icon */}
+            <TouchableOpacity onPress={() => onChangeText("")} style={{ position: "absolute", right: 40, top: 15, padding: 4 }}>
+                <Text style={{ fontSize: 20, color: "#6d6262" }}>X</Text>
+            </TouchableOpacity>
         </View>
     );
 };
