@@ -1,7 +1,8 @@
+import { Story } from "./story"
 
 export type RootStackParamList = {
   Login: undefined
   Home: undefined
   SignUp : undefined
-  ArticleDetail: { articleId: string; title: string }
+  ArticleDetail: { story: Story }
 }
