@@ -2,8 +2,9 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Story } from "../types/story";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Image } from "react-native";
 
+
+import Favicon from "./FavIcon";
 const StoryCard = React.memo(({ story }: { story: Story }) => {
   const navigation = useNavigation<any>();
   return (
@@ -13,29 +14,13 @@ const StoryCard = React.memo(({ story }: { story: Story }) => {
       onPress={() => navigation.navigate("ArticleDetail", { story })}
     >
       <View style={styles.header}>
-        <Image
-          source={{
-            uri: `https://www.google.com/s2/favicons?domain=${story.url}&sz=64`,
-          }}
-          style={styles.favicon}
-        />
+        <Favicon url={story.url} />
 
         <View style={styles.headerContent}>
           <Text style={styles.title}>{story.title}</Text>
           <Text style={styles.domain}>{story.url}</Text>
         </View>
       </View>
-
-      <View style={styles.badgeContainer}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>▲ {story.score}</Text>
-        </View>
-
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>💬 {story.descendants ?? 0}</Text>
-        </View>
-      </View>
-
       <Text style={styles.meta}>
         {story.by} • {story.time}
       </Text>
@@ -125,5 +110,18 @@ const styles = StyleSheet.create({
 
     elevation: 2,
     marginRight: 8,
+  },
+  fallbackIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: "#E5E7EB",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+
+  fallbackText: {
+    fontSize: 18,
   },
 });
