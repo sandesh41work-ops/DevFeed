@@ -63,6 +63,14 @@ const HomeScreen = () => {
     [],
   );
 
+  const emptyListComponent = useMemo(() => {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 50 }}>
+        <Text style={{ fontSize: 16, color: "#262424" }}>No stories found.</Text>
+      </View>
+    );
+  }, []);
+
   const fetchStories = useCallback(async () => {
     try {
       setLoading(true);
@@ -82,14 +90,14 @@ const HomeScreen = () => {
     }
   }, []); // only run once on mount
 
-    useEffect(() =>{
-      const timeOutId = setTimeout(() => {
-        setDebouncedSearch(searchQuery);
-      }, 500); // debounce by 500ms
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500); // debounce by 500ms
 
-      return () => clearTimeout(timeOutId); // cleanup on unmount or query change
-    }, [searchQuery]);
-    
+    return () => clearTimeout(timeOutId); // cleanup on unmount or query change
+  }, [searchQuery]);
+
   useEffect(() => {
     fetchStories();
   }, [fetchStories]);
@@ -122,6 +130,7 @@ const HomeScreen = () => {
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={loadingMore ? <ActivityIndicator /> : null}
+        ListEmptyComponent={emptyListComponent}
       />
     </View>
   );
