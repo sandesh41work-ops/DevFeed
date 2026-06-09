@@ -3,6 +3,8 @@ import { Image, StyleSheet, Text, View } from "react-native";
 
 const Favicon = React.memo(({ url }: { url?: string }) => {
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   if (!url || error) {
     return (
       <View style={styles.fallbackIcon}>
@@ -12,13 +14,23 @@ const Favicon = React.memo(({ url }: { url?: string }) => {
   }
 
   return (
-    <Image
-      source={{
-        uri: `https://www.google.com/s2/favicons?domain=${url}&sz=64`,
-      }}
-      style={styles.favicon}
-      onError={() => setError(true)}
-    />
+    <>
+      <Image
+        source={{
+          uri: `https://www.google.com/s2/favicons?domain=${url}&sz=64`,
+        }}
+        style={styles.favicon}
+        onLoad={() => setLoading(false)}
+        onError={() => {
+          (setLoading(false), setError(true));
+        }}
+      />
+      {loading && (
+        <View style={styles.fallbackIcon}>
+          <Text style={styles.fallbackText}>🌐</Text>
+        </View>
+      )}
+    </>
   );
 });
 const styles = StyleSheet.create({
