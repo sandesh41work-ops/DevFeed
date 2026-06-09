@@ -1,10 +1,16 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Story } from "../types/story";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const StoryCard = React.memo(({ story }: { story: Story }) => {
+  const navigation = useNavigation<any>();
   return (
-    <TouchableOpacity activeOpacity={0.8} style={styles.card}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={styles.card}
+      onPress={() => navigation.navigate("ArticleDetail", { story })}
+    >
       <Text style={styles.title}>{story.title}</Text>
 
       <Text style={styles.domain}>{story.url}</Text>
