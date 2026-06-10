@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { logOutUser } from "../auth/authService";
 import SearchBar from "../../shared/components/SearchBar";
 import Loader from "../../shared/components/Loader";
+import SkeletonCard from "../../shared/components/SkeletonCard";
 
 const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -110,7 +111,13 @@ const HomeScreen = () => {
   }, [stories, debouncedSearch]);
 
 
-  if (loading) return <Loader size="large" />;
+  if (loading) return (
+    <FlatList
+      data={[1, 2, 3, 4, 5, 6, 7, 8]}
+      keyExtractor={item => item.toString()}
+      renderItem={() => <SkeletonCard />}
+    />
+  )
   if (error)
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
