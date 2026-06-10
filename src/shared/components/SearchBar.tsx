@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-
+import { useTheme } from "../hooks/useTheme";
+import Input from "./Input";
 type SearchBarProps = {
     value: string;
     onChangeText: (text: string) => void;
@@ -12,16 +13,13 @@ const SearchBar = ({
     onChangeText,
     placeholder = "Search stories...",
 }: SearchBarProps) => {
+    const {colors} = useTheme();
     return (
-        <View style={styles.container}>
-            <TextInput
+        <View style={[styles.container, {backgroundColor: colors.background}]}>
+            <Input
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
-                style={styles.input}
-                autoCorrect={false}
-                autoCapitalize="none"
-                clearButtonMode="while-editing"
             />
             {/* Todo : Clear Icon */}
             <TouchableOpacity onPress={() => onChangeText("")} style={{ position: "absolute", right: 40, top: 15, padding: 4 }}>
