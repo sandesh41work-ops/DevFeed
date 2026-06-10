@@ -1,5 +1,5 @@
-import { KeyboardTypeOptions } from "react-native";
-import { StyleSheet, TextInput } from "react-native";
+import { KeyboardTypeOptions, StyleSheet, TextInput } from "react-native";
+import { useTheme } from "../hooks/useTheme";
 
 type InputProps = {
   placeholder: string;
@@ -16,11 +16,20 @@ const Input = ({
   secureTextEntry,
   keyboardType,
 }: InputProps) => {
+  const { colors } = useTheme();
+
   return (
     <TextInput
-      style={styles.input}
+      style={[
+        styles.input,
+        {
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          color: colors.text,
+        },
+      ]}
       placeholder={placeholder}
-      placeholderTextColor="#999"
+      placeholderTextColor={colors.subtext}
       value={value}
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
@@ -36,11 +45,9 @@ const styles = StyleSheet.create({
   input: {
     height: 52,
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 16,
     fontSize: 16,
-    backgroundColor: "#fafafa",
   },
 });
