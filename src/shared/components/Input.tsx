@@ -1,12 +1,14 @@
-import { KeyboardTypeOptions, StyleSheet, TextInput } from "react-native";
+import { KeyboardTypeOptions, StyleSheet, TextInput, TextStyle } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
+import { StyleProp } from "react-native";
 type InputProps = {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   keyboardType?: KeyboardTypeOptions;
+  customStyles?: StyleProp<TextStyle>;
 };
 
 const Input = ({
@@ -15,6 +17,7 @@ const Input = ({
   onChangeText,
   secureTextEntry,
   keyboardType,
+  customStyles,
 }: InputProps) => {
   const { colors } = useTheme();
 
@@ -27,6 +30,7 @@ const Input = ({
           borderColor: colors.border,
           color: colors.text,
         },
+        customStyles
       ]}
       placeholder={placeholder}
       placeholderTextColor={colors.subtext}

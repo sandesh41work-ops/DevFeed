@@ -128,7 +128,7 @@ const HomeScreen = () => {
     );
   return (
     <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
-      <SearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder="Search stories..." />
+      <SearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder="Search stories..."  />
       <FlatList
         data={filteredStories}
         keyExtractor={(item) => item.id.toString()}
