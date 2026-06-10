@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { useTheme } from "../hooks/useTheme";
 import { Story } from "../types/story";
 import Favicon from "./FavIcon";
 
@@ -33,36 +34,86 @@ const getTimeAgo = (unixTime: number) => {
 
 const StoryCard = memo(({ story }: { story: Story }) => {
   const navigation = useNavigation<any>();
+  const { colors, isDark } = useTheme();
 
   return (
     <TouchableOpacity
       activeOpacity={0.85}
-      style={styles.card}
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card,
+          shadowColor: isDark ? "#000" : "#000",
+        },
+      ]}
       onPress={() => navigation.navigate("ArticleDetail", { story })}
     >
       <View style={styles.header}>
         <Favicon url={story.url} />
 
         <View style={styles.headerContent}>
-          <Text style={styles.title} numberOfLines={3}>
+          <Text
+            style={[
+              styles.title,
+              {
+                color: colors.text,
+              },
+            ]}
+            numberOfLines={3}
+          >
             {story.title}
           </Text>
 
-          <Text style={styles.domain}>
+          <Text
+            style={[
+              styles.domain,
+              {
+                color: colors.subtext,
+              },
+            ]}
+          >
             {getDomain(story.url)}
           </Text>
         </View>
       </View>
 
       <View style={styles.badgeContainer}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>
+        <View
+          style={[
+            styles.badge,
+            {
+              backgroundColor: isDark ? "#333333" : "#F3F4F6",
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.badgeText,
+              {
+                color: colors.text,
+              },
+            ]}
+          >
             ⬆️ {story.score}
           </Text>
         </View>
 
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>
+        <View
+          style={[
+            styles.badge,
+            {
+              backgroundColor: isDark ? "#333333" : "#F3F4F6",
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.badgeText,
+              {
+                color: colors.text,
+              },
+            ]}
+          >
             💬 {story.descendants ?? 0}
           </Text>
         </View>
@@ -76,7 +127,14 @@ const StoryCard = memo(({ story }: { story: Story }) => {
         )}
       </View>
 
-      <Text style={styles.meta}>
+      <Text
+        style={[
+          styles.meta,
+          {
+            color: colors.subtext,
+          },
+        ]}
+      >
         {story.by} • {getTimeAgo(story.time)}
       </Text>
     </TouchableOpacity>
@@ -87,13 +145,11 @@ export default StoryCard;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
     marginHorizontal: 16,
     marginVertical: 8,
     padding: 16,
     borderRadius: 18,
 
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -116,14 +172,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#111827",
     lineHeight: 24,
   },
 
   domain: {
     marginTop: 6,
     fontSize: 13,
-    color: "#6B7280",
   },
 
   badgeContainer: {
@@ -133,18 +187,15 @@ const styles = StyleSheet.create({
   },
 
   badge: {
-    backgroundColor: "#F3F4F6",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
-
     marginRight: 8,
   },
 
   badgeText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#374151",
   },
 
   trendingBadge: {
@@ -163,6 +214,5 @@ const styles = StyleSheet.create({
   meta: {
     marginTop: 14,
     fontSize: 13,
-    color: "#6B7280",
   },
 });

@@ -14,7 +14,7 @@ import { logOutUser } from "../auth/authService";
 import SearchBar from "../../shared/components/SearchBar";
 import Loader from "../../shared/components/Loader";
 import SkeletonCard from "../../shared/components/SkeletonCard";
-
+import { useTheme } from "../../shared/hooks/useTheme";
 const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -27,6 +27,7 @@ const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  const { colors } = useTheme();
   const reRenderCount = useRef(0);
   useEffect(() => {
     reRenderCount.current += 1;
@@ -126,7 +127,7 @@ const HomeScreen = () => {
       </View>
     );
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
       <SearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder="Search stories..." />
       <FlatList
         data={filteredStories}
