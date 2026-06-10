@@ -20,6 +20,7 @@ const SearchBar = ({
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
+                customStyles = {{marginBottom : 1}}
             />
             {/* Todo : Clear Icon */}
             <TouchableOpacity onPress={() => onChangeText("")} style={{ position: "absolute", right: 40, top: 15, padding: 4 }}>
@@ -34,17 +35,8 @@ export default React.memo(SearchBar);
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderBottomWidth: 1,
-        borderColor: "#ddd",
-    },
-
-    input: {
-        height: 50,
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        backgroundColor: "#fff",
+        paddingVertical: 10,
+        // borderBottomWidth: 1,
+        // borderColor: "#47474783",
     },
 });
