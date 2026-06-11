@@ -10,11 +10,13 @@ import { onAuthStateChanged } from "firebase/auth";
 import { ActivityIndicator } from "react-native";
 import SignUpScreen from "../features/auth/SignUpScreen";
 import ArticleDetailScreen from "../features/feed/ArticleDetailScreen";
+import { useTheme } from "../shared/hooks/useTheme";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const { colors } = useTheme();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -28,7 +30,15 @@ function RootNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+
+        },
+        headerTitleStyle: {
+          color: colors.text,
+        },
+      }}>
         {user ? (
           <>
             <Stack.Screen name="Home" component={HomeScreen} />

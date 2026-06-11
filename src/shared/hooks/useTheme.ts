@@ -4,7 +4,7 @@ export const useTheme = () => {
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
 
-  console.log("Theme:", colorScheme);
+  // console.log("Theme:", colorScheme);
 
   return {
     isDark,
