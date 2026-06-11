@@ -4,7 +4,7 @@ export const useTheme = () => {
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
 
-  console.log("Theme:", colorScheme);
+  // console.log("Theme:", colorScheme);
 
   return {
     isDark,
@@ -15,6 +15,7 @@ export const useTheme = () => {
       subtext: isDark ? '#aaaaaa' : '#555555',
       border: isDark ? '#333333' : '#eeeeee',
       accent: '#FF6600', // Hacker News orange — same in both modes
+      skeleton: isDark ? '#3a3a3a' : '#E0E0E0',
     }
   }
 }
