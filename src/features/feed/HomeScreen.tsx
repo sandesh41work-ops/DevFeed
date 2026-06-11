@@ -19,38 +19,35 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
   const [error, setError] = useState<string>("");
-  const [ids, setIds] = useState<Set<number>>(new Set());
+  const [ids, setIds] = useState<number[]>([]);
   const navigation = useNavigation();
   const PAGE_SIZE = 10;
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const isFetchingRef = useRef(false);
 
   const { colors } = useTheme();
   const reRenderCount = useRef(0);
   useEffect(() => {
     reRenderCount.current += 1;
-    // console.log("HomeScreen re-rendered", reRenderCount.current);
+    console.log("HomeScreen re-rendered", reRenderCount.current);
   });
 
   const loadMore = useCallback(async () => {
     // console.log("Load more triggered. Current page:", page);
     // console.log("serach query : ", searchQuery);
     // console.log("loadingMore:", loadingMore);
-    console.log("loadMore called");
-    console.log("Loading State:", loadingMore);
+
     if (loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
     const start = page * PAGE_SIZE;
     const end = start + PAGE_SIZE;
-    const nextIds = Array.from(ids).slice(start, end);
+    const nextIds = ids.slice(start, end);
     if (nextIds.length === 0) return;
-    console.log("Next Page : ", nextPage);
     setLoadingMore(true);
     const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
-    setStories((prev) => [...prev, ...newStories]); // appending, not replacing
+    setStories((prev) => [...prev, ...newStories]); // append, don't replace
     setPage(nextPage);
     setLoadingMore(false);
   }, [page, ids, loadingMore, searchQuery]);
@@ -80,9 +77,9 @@ const HomeScreen = () => {
     try {
       setLoading(true);
       const ids = await getTopStories();
-      setIds(new Set(ids));
-      const firstPageIds = Array.from(new Set(ids)).slice(0, PAGE_SIZE);
-      // console.log(firstPageIds);
+      setIds(ids);
+      const firstPageIds = ids.slice(0, PAGE_SIZE);
+      console.log(firstPageIds);
       const storyPromises = firstPageIds.map((id) => getStory(id));
 
       const data = await Promise.all(storyPromises);
@@ -108,7 +105,7 @@ const HomeScreen = () => {
   }, [fetchStories]);
 
   const filteredStories = useMemo(() => {
-    // console.log("Filtering stories with query:", debouncedSearch);
+    console.log("Filtering stories with query:", debouncedSearch);
     return stories.filter((story) =>
       story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
@@ -131,7 +128,7 @@ const HomeScreen = () => {
     );
   return (
     <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
-      <SearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder="Search stories..." />
+      <SearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder="Search stories..."  />
       <FlatList
         data={filteredStories}
         keyExtractor={(item) => item.id.toString()}
