@@ -77,7 +77,7 @@ const HomeScreen = () => {
           marginTop: 50,
         }}
       >
-        <Text style={{ fontSize: 16, color: "#262424" }}>
+        <Text style={[{ fontSize: 16, color: "#262424" }, {color : colors.text}]}>
           No stories found.
         </Text>
       </View>
@@ -132,7 +132,12 @@ const HomeScreen = () => {
         <FlatList
           data={[1, 2, 3, 4, 5, 6, 7, 8]}
           keyExtractor={(item) => item.toString()}
-          renderItem={() => <SkeletonCard />}
+          renderItem={() =>
+            <View style={[{flex : 1}, {backgroundColor : colors.card}]}>
+
+              <SkeletonCard />
+            </View>
+          }
         />
       ) : error ? (
         <View
