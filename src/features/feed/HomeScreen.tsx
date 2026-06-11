@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { getStory, getTopStories } from "../../shared/services/api";
 import { Story } from "../../shared/types/story";
 import StoryCard from "../../shared/components/StoryCard";
@@ -67,8 +69,17 @@ const HomeScreen = () => {
 
   const emptyListComponent = useMemo(() => {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 50 }}>
-        <Text style={{ fontSize: 16, color: "#262424" }}>No stories found.</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 50,
+        }}
+      >
+        <Text style={{ fontSize: 16, color: "#262424" }}>
+          No stories found.
+        </Text>
       </View>
     );
   }, []);
@@ -110,37 +121,42 @@ const HomeScreen = () => {
       story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
   }, [stories, debouncedSearch]);
-
-
-  if (loading) return (
-    <FlatList
-      data={[1, 2, 3, 4, 5, 6, 7, 8]}
-      keyExtractor={item => item.toString()}
-      renderItem={() => <SkeletonCard />}
-    />
-  )
-  if (error)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>{error}</Text>
-        <Button title="Retry" onPress={fetchStories} />
-      </View>
-    );
   return (
-    <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
-      <SearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder="Search stories..."  />
-      <FlatList
-        data={filteredStories}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        onRefresh={fetchStories}
-        refreshing={loading}
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
-        ListEmptyComponent={emptyListComponent}
+    <>
+      <SearchBar
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search stories..."
       />
-    </View>
+      {loading ? (
+        <FlatList
+          data={[1, 2, 3, 4, 5, 6, 7, 8]}
+          keyExtractor={(item) => item.toString()}
+          renderItem={() => <SkeletonCard />}
+        />
+      ) : error ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text>{error}</Text>
+          <Button title="Retry" onPress={fetchStories} />
+        </View>
+      ) : (
+        <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+          <FlatList
+            data={filteredStories}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            onRefresh={fetchStories}
+            refreshing={loading}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
+            ListEmptyComponent={emptyListComponent}
+          />
+        </View>
+      )}
+    </>
   );
 };
 
