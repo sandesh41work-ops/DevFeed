@@ -33,8 +33,8 @@ function RootNavigator() {
       <Stack.Navigator screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
-
         },
+        headerTintColor : colors.subtext,
         headerTitleStyle: {
           color: colors.text,
         },

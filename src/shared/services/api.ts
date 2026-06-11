@@ -8,8 +8,8 @@ const apiClient = axios.create({
 
 export const getTopStories = async (): Promise<number[]> => {
     const response = await apiClient.get('/topstories.json')
-    console.log("API Call ::: /topstories :::")
-    console.log("Number of top stories:", response.data.length);
+    // console.log("API Call ::: /topstories :::")
+    // console.log("Number of top stories:", response.data.length);
     return response.data;
 }
 

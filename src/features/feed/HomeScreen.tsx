@@ -28,12 +28,13 @@ const HomeScreen = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+    const isFetching = useRef(false);
 
   const { colors } = useTheme();
   const reRenderCount = useRef(0);
   useEffect(() => {
     reRenderCount.current += 1;
-    console.log("HomeScreen re-rendered", reRenderCount.current);
+    // console.log("HomeScreen re-rendered", reRenderCount.current);
   });
 
   const loadMore = useCallback(async () => {
@@ -41,17 +42,28 @@ const HomeScreen = () => {
     // console.log("serach query : ", searchQuery);
     // console.log("loadingMore:", loadingMore);
 
-    if (loadingMore || searchQuery.length > 0) return;
+    if (isFetching.current || loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
     const start = page * PAGE_SIZE;
     const end = start + PAGE_SIZE;
     const nextIds = ids.slice(start, end);
     if (nextIds.length === 0) return;
-    setLoadingMore(true);
+    try {
+      isFetching.current = true
+       setLoadingMore(true);
+    console.log("page ", page);
     const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
-    setStories((prev) => [...prev, ...newStories]); // append, don't replace
     setPage(nextPage);
-    setLoadingMore(false);
+
+    setStories((prev) => [...prev, ...newStories]); // append, don't replace
+    
+    } catch (error) {
+      console.warn(error)
+    } finally {
+      isFetching.current = false
+        setLoadingMore(false);
+    }
+ 
   }, [page, ids, loadingMore, searchQuery]);
 
   useLayoutEffect(() => {
@@ -90,14 +102,14 @@ const HomeScreen = () => {
       const ids = await getTopStories();
       setIds(ids);
       const firstPageIds = ids.slice(0, PAGE_SIZE);
-      console.log(firstPageIds);
+      // console.log(firstPageIds);
       const storyPromises = firstPageIds.map((id) => getStory(id));
 
       const data = await Promise.all(storyPromises);
 
       setStories(data);
     } catch (error) {
-      setError("Failed to load stories");
+      setError((error as Error)?.toString());
     } finally {
       setLoading(false);
     }
@@ -116,7 +128,7 @@ const HomeScreen = () => {
   }, [fetchStories]);
 
   const filteredStories = useMemo(() => {
-    console.log("Filtering stories with query:", debouncedSearch);
+    // console.log("Filtering stories with query:", debouncedSearch);
     return stories.filter((story) =>
       story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
@@ -141,9 +153,9 @@ const HomeScreen = () => {
         />
       ) : error ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" , backgroundColor : colors.background }}
         >
-          <Text>{error}</Text>
+          <Text style={{color : colors.text}}>{error}</Text>
           <Button title="Retry" onPress={fetchStories} />
         </View>
       ) : (
