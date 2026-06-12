@@ -1,11 +1,16 @@
-import React from "react";
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import Button from "../../shared/components/Button";
 import { Story } from "../../shared/types/story";
 import { useTheme } from "../../shared/hooks/useTheme";
-
+import { useEffect, useState } from "react";
+import {
+  addBookmark,
+  isBookmarked,
+  removeBookmark,
+} from "../../shared/services/bookmarkService";
 const ArticleDetailScreen = () => {
+  const [bookmarked, setBookmarked] = useState(false);
   const route = useRoute<any>();
   const { story }: { story: Story } = route.params;
 
@@ -17,6 +22,19 @@ const ArticleDetailScreen = () => {
     }
   };
 
+  useEffect(() => {
+    isBookmarked(story.id).then(setBookmarked);
+  }, []);
+
+
+  const toggleBookmark = async () => {
+    if (bookmarked) {
+      await removeBookmark(story.id);
+    } else {
+      await addBookmark(story);
+    }
+    setBookmarked(!bookmarked);
+  };
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View
@@ -68,8 +86,28 @@ const ArticleDetailScreen = () => {
           </Text>
         </View>
 
-        {story.url && <Button title="Read Full Article" onPress={openURL} />}
+        <View style={styles.buttonRow}>
+          {story.url && (
+            <Button
+              style={styles.actionButton}
+              title="Read Article"
+              onPress={openURL}
+            />
+          )}
+
+          <Button
+            style={[{
+              padding: 10,
+              margin: 10,
+              width: "auto",
+              backgroundColor: bookmarked ? "#EF4444" : colors.accent,
+            }, styles.actionButton]}
+            title={bookmarked ? "Remove" : "Bookmark"}
+            onPress={toggleBookmark}
+          />
+        </View>
       </View>
+
     </View>
   );
 };
@@ -77,6 +115,7 @@ const ArticleDetailScreen = () => {
 export default ArticleDetailScreen;
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     backgroundColor: "#F4F4F4",
@@ -132,5 +171,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "#444",
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+
+  actionButton: {
+    flex: 1,
   },
 });
