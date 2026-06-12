@@ -5,7 +5,7 @@ const BOOKMARKS_KEY = "bookmarks";
 
 export const getBookmarks = async (): Promise<Story[]> => {
     const data = await AsyncStorage.getItem(BOOKMARKS_KEY);
-    const parsedData = data ? JSON.parse(data) : [];
+    // const parsedData = data ? JSON.parse(data) : [];
     // const titles = parsedData.map((story) : Story  => story.title);
     // titles.forEach(title => {
     //     console.log(title)
