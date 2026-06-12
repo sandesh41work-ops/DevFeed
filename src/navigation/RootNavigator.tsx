@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../features/auth/LoginScreen";
 import HomeScreen from "../features/feed/HomeScreen";
 import { User } from "firebase/auth";
-import { RootStackParamList } from "../shared/types/navigation";
+import { RootStackParamList, TabParamList } from "../shared/types/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "../shared/services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -11,7 +11,57 @@ import { ActivityIndicator } from "react-native";
 import SignUpScreen from "../features/auth/SignUpScreen";
 import ArticleDetailScreen from "../features/feed/ArticleDetailScreen";
 import { useTheme } from "../shared/hooks/useTheme";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import BookmarksScreen from "../features/bookmarks/BookmarksScreen";
+import { Ionicons } from "@expo/vector-icons";
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tabs = createBottomTabNavigator<TabParamList>();
+
+function MainTabNavigator() {
+  const { colors } = useTheme();
+  return (
+    <Tabs.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          height : 70,
+          paddingBottom: 8, // Adjusts spacing from the absolute physical bottom edge
+          paddingTop: 8,    // Adjusts spacing from the top edge of the bar
+        },
+        tabBarItemStyle: {
+          justifyContent: "center", // Centering the inner item contents vertically
+          alignItems: "center",     // Centering the inner item contents horizontally
+        },
+        tabBarActiveTintColor: colors.text,
+        tabBarInactiveTintColor: colors.subtext,
+       
+        tabBarIcon: ({ color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap;
+
+          if (route.name === "Feed") {
+            iconName = "newspaper-outline";
+          } else {
+            iconName = "bookmark-outline";
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tabs.Screen
+        name="Feed"
+        component={HomeScreen}
+        options={{ title: "Feed" }}
+      />
+      <Tabs.Screen
+        name="Bookmarks"
+        component={BookmarksScreen}
+        options={{ title: "Bookmarks" }}
+      />
+    </Tabs.Navigator>
+  );
+}
 
 function RootNavigator() {
   const [user, setUser] = useState<User | null>(null);
@@ -30,19 +80,31 @@ function RootNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.background,
-        },
-        headerTintColor : colors.subtext,
-        headerTitleStyle: {
-          color: colors.text,
-        },
-      }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
+          headerTintColor: colors.subtext,
+          headerTitleStyle: {
+            color: colors.text,
+          },
+        }}
+      >
         {user ? (
           <>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="ArticleDetail" component={ArticleDetailScreen} />
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabNavigator}
+              options={{ headerShown: false }} // Hides double headers
+            />
+            <Stack.Screen
+              name="ArticleDetail"
+              component={ArticleDetailScreen}
+              options={{
+                title: "Article",
+              }}
+            />
           </>
         ) : (
           <>
