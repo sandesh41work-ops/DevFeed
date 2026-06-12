@@ -17,6 +17,7 @@ import SearchBar from "../../shared/components/SearchBar";
 import Loader from "../../shared/components/Loader";
 import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useTheme } from "../../shared/hooks/useTheme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -133,50 +134,60 @@ const HomeScreen = () => {
       story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
   }, [stories, debouncedSearch]);
+  const insets = useSafeAreaInsets();
   return (
     <>
-      <SearchBar
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search stories..."
-      />
-      {loading ? (
-        <FlatList
-          data={[1, 2, 3, 4, 5, 6, 7, 8]}
-          keyExtractor={(item) => item.toString()}
-          renderItem={() => (
-            <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
-              <SkeletonCard />
-            </View>
-          )}
+      <View style={[
+        styles.screenContainer,
+        {
+          backgroundColor: colors.background,
+          // 2. Dynamically push EVERYTHING down past the phone's notch/status bar
+          paddingTop: insets.top > 0 ? insets.top : 12
+        }
+      ]}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Search stories..."
         />
-      ) : error ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: colors.background,
-          }}
-        >
-          <Text style={{ color: colors.text }}>{error}</Text>
-          <Button title="Retry" onPress={fetchStories} />
-        </View>
-      ) : (
-        <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+        {loading ? (
           <FlatList
-            data={filteredStories}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            onRefresh={fetchStories}
-            refreshing={loading}
-            onEndReached={loadMore}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
-            ListEmptyComponent={emptyListComponent}
+            data={[1, 2, 3, 4, 5, 6, 7, 8]}
+            keyExtractor={(item) => item.toString()}
+            renderItem={() => (
+              <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
+                <SkeletonCard />
+              </View>
+            )}
           />
-        </View>
-      )}
+        ) : error ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: colors.background,
+            }}
+          >
+            <Text style={{ color: colors.text }}>{error}</Text>
+            <Button title="Retry" onPress={fetchStories} />
+          </View>
+        ) : (
+          <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+            <FlatList
+              data={filteredStories}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              onRefresh={fetchStories}
+              refreshing={loading}
+              onEndReached={loadMore}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
+              ListEmptyComponent={emptyListComponent}
+            />
+          </View>
+        )}
+      </View>
     </>
   );
 };
@@ -188,5 +199,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ef4444",
     paddingHorizontal: 12,
     height: 36,
+  },
+  screenContainer: {
+    flex: 1, // Ensures the layout takes up the full display height
   },
 });
