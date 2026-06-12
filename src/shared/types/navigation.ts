@@ -6,3 +6,7 @@ export type RootStackParamList = {
   SignUp : undefined
   ArticleDetail: { story: Story }
 }
+export type TabParamList = {
+  Feed: undefined;
+  Bookmarks: undefined;
+};
