@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
 
   trendingBadge: {
     backgroundColor: "#FEF3C7",
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 999,
   },
