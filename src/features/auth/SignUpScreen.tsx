@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import LoginScreen from "./LoginScreen";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../shared/types/navigation";
-
+import { useTheme } from "../../shared/hooks/useTheme";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const SignUpScreen = () => {
@@ -17,8 +17,8 @@ const SignUpScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
   const navigation = useNavigation<NavigationProp>();
+  const { colors, isDark } = useTheme();
 
   function addDelay() {
     // function for test the loading indicator
@@ -57,61 +57,100 @@ const SignUpScreen = () => {
     }
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.subtitle}>Create Account to continue</Text>
+  <View
+    style={[
+      styles.container,
+      {
+        backgroundColor: colors.background,
+      },
+    ]}
+  >
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card,
+          shadowColor: isDark ? "#000" : "#000",
+        },
+      ]}
+    >
+      <Text
+        style={{
+          fontSize: 28,
+          fontWeight: "700",
+          color: colors.text,
+          marginBottom: 8,
+        }}
+      >
+        Create Account
+      </Text>
 
-        <Input
-          value={email}
-          placeholder="Enter your email"
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <Input
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        />
+      <Text
+        style={[
+          styles.subtitle,
+          {
+            color: colors.subtext,
+          },
+        ]}
+      >
+        Create Account to continue
+      </Text>
 
-        <Input
-          placeholder="Confirm your password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry={true}
-        />
+      <Input
+        value={email}
+        placeholder="Enter your email"
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
 
-        {error ? (
-          <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
-        ) : null}
+      <Input
+        placeholder="Enter your password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={true}
+      />
 
-        <Button
-          title="Create Account"
-          disabled={!email || !password}
-          loading={loading}
-          onPress={() => {
-            addDelay(); // for test the loading indicator
-            console.log("Email: ", email);
-            console.log("Password :", password);
-            console.log("confirm password : ", confirmPassword);
-            handleSignUp();
-          }}
-        />
+      <Input
+        placeholder="Confirm your password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry={true}
+      />
 
-        <TouchableOpacity
-          style={styles.signupLink}
-          onPress={() => {
-            console.log("Navigate to Login Screen");
-            navigation.navigate("Login");
-          }}
+      {error ? (
+        <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+      ) : null}
+
+      <Button
+        title="Create Account"
+        disabled={!email || !password}
+        loading={loading}
+        onPress={() => {
+          console.log("Email: ", email);
+          console.log("Password :", password);
+          console.log("Confirm Password :", confirmPassword);
+          handleSignUp();
+        }}
+      />
+
+      <TouchableOpacity
+        style={styles.signupLink}
+        onPress={() => navigation.navigate("Login")}
+      >
+        <Text
+          style={[
+            styles.signupLinkText,
+            {
+              color: colors.accent,
+            },
+          ]}
         >
-          <Text style={styles.signupLinkText}>
-            Already Have Account? Login instead
-          </Text>
-        </TouchableOpacity>
-      </View>
+          Already Have Account? Login instead
+        </Text>
+      </TouchableOpacity>
     </View>
-  );
+  </View>
+);
 };
 
 export default SignUpScreen;

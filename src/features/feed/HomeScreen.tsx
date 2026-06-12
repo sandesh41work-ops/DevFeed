@@ -28,7 +28,7 @@ const HomeScreen = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-    const isFetching = useRef(false);
+  const isFetching = useRef(false);
 
   const { colors } = useTheme();
   const reRenderCount = useRef(0);
@@ -49,21 +49,19 @@ const HomeScreen = () => {
     const nextIds = ids.slice(start, end);
     if (nextIds.length === 0) return;
     try {
-      isFetching.current = true
-       setLoadingMore(true);
-    console.log("page ", page);
-    const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
-    setPage(nextPage);
+      isFetching.current = true;
+      setLoadingMore(true);
+      console.log("page ", page);
+      const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
+      setPage(nextPage);
 
-    setStories((prev) => [...prev, ...newStories]); // append, don't replace
-    
+      setStories((prev) => [...prev, ...newStories]); // append, don't replace
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
     } finally {
-      isFetching.current = false
-        setLoadingMore(false);
+      isFetching.current = false;
+      setLoadingMore(false);
     }
- 
   }, [page, ids, loadingMore, searchQuery]);
 
   useLayoutEffect(() => {
@@ -89,7 +87,9 @@ const HomeScreen = () => {
           marginTop: 50,
         }}
       >
-        <Text style={[{ fontSize: 16, color: "#262424" }, {color : colors.text}]}>
+        <Text
+          style={[{ fontSize: 16, color: "#262424" }, { color: colors.text }]}
+        >
           No stories found.
         </Text>
       </View>
@@ -144,18 +144,22 @@ const HomeScreen = () => {
         <FlatList
           data={[1, 2, 3, 4, 5, 6, 7, 8]}
           keyExtractor={(item) => item.toString()}
-          renderItem={() =>
-            <View style={[{flex : 1}, {backgroundColor : colors.card}]}>
-
+          renderItem={() => (
+            <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
               <SkeletonCard />
             </View>
-          }
+          )}
         />
       ) : error ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" , backgroundColor : colors.background }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: colors.background,
+          }}
         >
-          <Text style={{color : colors.text}}>{error}</Text>
+          <Text style={{ color: colors.text }}>{error}</Text>
           <Button title="Retry" onPress={fetchStories} />
         </View>
       ) : (

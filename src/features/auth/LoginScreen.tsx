@@ -11,6 +11,7 @@ import { loginUser } from "./authService";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../shared/types/navigation";
+import { useTheme } from "../../shared/hooks/useTheme";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -46,6 +47,7 @@ async function testSignup() {
 }
 
 const LoginScreen = () => {
+  const { colors, isDark } = useTheme();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -97,9 +99,33 @@ const LoginScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.subtitle}>Login to continue</Text>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor: colors.card,
+            shadowColor: isDark ? "#000" : "#000",
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.subtitle,
+            {
+              color: colors.subtext,
+            },
+          ]}
+        >
+          Login to continue
+        </Text>
 
         <Input
           value={email}
@@ -107,6 +133,7 @@ const LoginScreen = () => {
           onChangeText={setEmail}
           keyboardType="email-address"
         />
+
         <Input
           placeholder="Enter your password"
           value={password}
@@ -123,21 +150,22 @@ const LoginScreen = () => {
           disabled={!email || !password}
           loading={loading}
           onPress={() => {
-            // addDelay(); // for test the loading indicator
             handleLogin(email, password);
-            console.log("Email: ", email);
-            console.log("Password :", password);
           }}
         />
 
         <TouchableOpacity
           style={styles.signupLink}
-          onPress={() => {
-            console.log("Navigate to Register Screen");
-            navigation.navigate("SignUp");
-          }}
+          onPress={() => navigation.navigate("SignUp")}
         >
-          <Text style={styles.signupLinkText}>
+          <Text
+            style={[
+              styles.signupLinkText,
+              {
+                color: colors.accent,
+              },
+            ]}
+          >
             Don't have an account? Register
           </Text>
         </TouchableOpacity>
