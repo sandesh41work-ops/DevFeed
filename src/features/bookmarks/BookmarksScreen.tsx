@@ -54,6 +54,11 @@ const BookmarksScreen = () => {
         >
           No BookMarks Found...
         </Text>
+        <Text
+          style={[{ fontSize: 16, color: "#262424", marginTop: 25 }, { color: colors.subtext }]}
+        >
+          Tap the bookmark button on any article
+        </Text>
       </View>
     );
   }, []);
