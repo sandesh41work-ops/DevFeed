@@ -73,10 +73,10 @@ const HomeScreen = () => {
     });
   }, [navigation]);
 
-  const renderItem = useCallback(
+  const renderItem = useCallback( 
     ({ item }: { item: Story }) => <StoryCard story={item} />,
     [],
-  );
+  );  
 
   const emptyListComponent = useMemo(() => {
     return (
