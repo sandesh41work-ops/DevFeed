@@ -14,6 +14,7 @@ const BookmarksScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [error, setError] = useState<string>("");
   const [searchBookMark, setSearchBookMark] = useState<string>("");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const isFocuesed = useIsFocused();
@@ -63,9 +64,21 @@ const BookmarksScreen = () => {
     );
   }, []);
 
+
   const renderStoryItem = useCallback(({ item }: { item: Story }) => {
     return <StoryCard story={item} />;
   }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await fetchBookMarks();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [])
   return (
     <View
       style={[
@@ -87,6 +100,8 @@ const BookmarksScreen = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderStoryItem}
         ListEmptyComponent={emptyBookMarksListCompnent}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
       />
     </View>
   );

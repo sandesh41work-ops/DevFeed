@@ -18,6 +18,8 @@ import Loader from "../../shared/components/Loader";
 import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
+
 const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -30,6 +32,7 @@ const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const isFetching = useRef(false);
+  const { isConnected } = useNetworkStatus();
 
   const { colors } = useTheme();
   const reRenderCount = useRef(0);
@@ -73,10 +76,10 @@ const HomeScreen = () => {
     });
   }, [navigation]);
 
-  const renderItem = useCallback( 
+  const renderItem = useCallback(
     ({ item }: { item: Story }) => <StoryCard story={item} />,
     [],
-  );  
+  );
 
   const emptyListComponent = useMemo(() => {
     return (
@@ -135,6 +138,8 @@ const HomeScreen = () => {
     );
   }, [stories, debouncedSearch]);
   const insets = useSafeAreaInsets();
+
+
   return (
     <>
       <View style={[
@@ -145,6 +150,13 @@ const HomeScreen = () => {
           paddingTop: insets.top > 0 ? insets.top : 12
         }
       ]}>
+        {!isConnected && (
+          <View style={styles.networkBanner}>
+            <Text style={styles.networkBannerText}>
+              No internet connection
+            </Text>
+          </View>
+        )}
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -202,5 +214,17 @@ const styles = StyleSheet.create({
   },
   screenContainer: {
     flex: 1, // Ensures the layout takes up the full display height
+  },
+  networkBanner: {
+    backgroundColor: "#dc2626",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  networkBannerText: {
+    color: "#fff",
+    fontWeight: "600",
   },
 });
