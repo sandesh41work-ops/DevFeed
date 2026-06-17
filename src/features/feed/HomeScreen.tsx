@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { getStory, getTopStories } from "../../shared/services/api";
+import { getStory } from "../../shared/services/api";
 import { Story } from "../../shared/types/story";
 import StoryCard from "../../shared/components/StoryCard";
 import Button from "../../shared/components/Button";
@@ -19,12 +19,10 @@ import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
+import { useStoriesQuery } from "./useStoriesQuery";
 
 const HomeScreen = () => {
-  const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
-  const [error, setError] = useState<string>("");
-  const [ids, setIds] = useState<number[]>([]);
   const navigation = useNavigation();
   const PAGE_SIZE = 10;
   const [page, setPage] = useState(1);
@@ -33,40 +31,45 @@ const HomeScreen = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const isFetching = useRef(false);
   const { isConnected } = useNetworkStatus();
-
   const { colors } = useTheme();
-  const reRenderCount = useRef(0);
+  const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery();
+
+  const loadFirstPage = useCallback(async (ids: number[]) => {
+    try {
+      const firstPageIds = ids.slice(0, PAGE_SIZE);
+      const data = await Promise.all(firstPageIds.map((id) => getStory(id)));
+      setStories(data);
+      setPage(1);
+    } catch (e) {
+      console.warn(e);
+    }
+  }, []);
+
   useEffect(() => {
-    reRenderCount.current += 1;
-    // console.log("HomeScreen re-rendered", reRenderCount.current);
-  });
-
+    if (allIds.length > 0) {
+      loadFirstPage(allIds);
+    }
+  }, [allIds]);
   const loadMore = useCallback(async () => {
-    // console.log("Load more triggered. Current page:", page);
-    // console.log("serach query : ", searchQuery);
-    // console.log("loadingMore:", loadingMore);
-
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
     const start = page * PAGE_SIZE;
     const end = start + PAGE_SIZE;
-    const nextIds = ids.slice(start, end);
+    const nextIds = allIds.slice(start, end); // use allIds from React Query
     if (nextIds.length === 0) return;
     try {
       isFetching.current = true;
       setLoadingMore(true);
-      console.log("page ", page);
       const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
+      setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
-
-      setStories((prev) => [...prev, ...newStories]); // append, don't replace
-    } catch (error) {
-      console.warn(error);
+    } catch (e) {
+      console.warn(e);
     } finally {
       isFetching.current = false;
       setLoadingMore(false);
     }
-  }, [page, ids, loadingMore, searchQuery]);
+  }, [page, allIds, loadingMore, searchQuery]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -100,25 +103,6 @@ const HomeScreen = () => {
     );
   }, []);
 
-  const fetchStories = useCallback(async () => {
-    try {
-      setLoading(true);
-      const ids = await getTopStories();
-      setIds(ids);
-      const firstPageIds = ids.slice(0, PAGE_SIZE);
-      // console.log(firstPageIds);
-      const storyPromises = firstPageIds.map((id) => getStory(id));
-
-      const data = await Promise.all(storyPromises);
-
-      setStories(data);
-    } catch (error) {
-      setError((error as Error)?.toString());
-    } finally {
-      setLoading(false);
-    }
-  }, []); // only run once on mount
-
   useEffect(() => {
     const timeOutId = setTimeout(() => {
       setDebouncedSearch(searchQuery);
@@ -126,10 +110,6 @@ const HomeScreen = () => {
 
     return () => clearTimeout(timeOutId); // cleanup on unmount or query change
   }, [searchQuery]);
-
-  useEffect(() => {
-    fetchStories();
-  }, [fetchStories]);
 
   const filteredStories = useMemo(() => {
     // console.log("Filtering stories with query:", debouncedSearch);
@@ -139,22 +119,21 @@ const HomeScreen = () => {
   }, [stories, debouncedSearch]);
   const insets = useSafeAreaInsets();
 
-
   return (
     <>
-      <View style={[
-        styles.screenContainer,
-        {
-          backgroundColor: colors.background,
-          // 2. Dynamically push EVERYTHING down past the phone's notch/status bar
-          paddingTop: insets.top > 0 ? insets.top : 12
-        }
-      ]}>
+      <View
+        style={[
+          styles.screenContainer,
+          {
+            backgroundColor: colors.background,
+            // 2. Dynamically push EVERYTHING down past the phone's notch/status bar
+            paddingTop: insets.top > 0 ? insets.top : 12,
+          },
+        ]}
+      >
         {!isConnected && (
           <View style={styles.networkBanner}>
-            <Text style={styles.networkBannerText}>
-              No internet connection
-            </Text>
+            <Text style={styles.networkBannerText}>No internet connection</Text>
           </View>
         )}
         <SearchBar
@@ -162,7 +141,7 @@ const HomeScreen = () => {
           onChangeText={setSearchQuery}
           placeholder="Search stories..."
         />
-        {loading ? (
+        {isLoading ? (
           <FlatList
             data={[1, 2, 3, 4, 5, 6, 7, 8]}
             keyExtractor={(item) => item.toString()}
@@ -181,8 +160,9 @@ const HomeScreen = () => {
               backgroundColor: colors.background,
             }}
           >
-            <Text style={{ color: colors.text }}>{error}</Text>
-            <Button title="Retry" onPress={fetchStories} />
+            <Text style={{ color: colors.text }}>{"error"}</Text>
+            {/* refetch from react query */}
+            <Button title="Retry" onPress={()=> {refetch}} />
           </View>
         ) : (
           <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
@@ -190,8 +170,8 @@ const HomeScreen = () => {
               data={filteredStories}
               keyExtractor={(item) => item.id.toString()}
               renderItem={renderItem}
-              onRefresh={fetchStories}
-              refreshing={loading}
+              onRefresh={refetch}
+              refreshing={isLoading}
               onEndReached={loadMore}
               onEndReachedThreshold={0.5}
               ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
