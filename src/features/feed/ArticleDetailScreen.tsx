@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import Button from "../../shared/components/Button";
 import { Story } from "../../shared/types/story";
@@ -9,6 +9,7 @@ import {
   isBookmarked,
   removeBookmark,
 } from "../../shared/services/bookmarkService";
+import Discussion from "../discussion/Discussion";
 const ArticleDetailScreen = () => {
   const [bookmarked, setBookmarked] = useState(false);
   const route = useRoute<any>();
@@ -36,79 +37,87 @@ const ArticleDetailScreen = () => {
     setBookmarked(!bookmarked);
   };
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View
-        style={[
-          styles.card,
-          { backgroundColor: colors.card },
-          {
-            backgroundColor: colors.card,
-            borderWidth: 1,
-            borderColor: colors.border,
-          },
-        ]}
-      >
-        <Text style={[styles.title, { color: colors.text }]}>
-          {story.title}
-        </Text>
+    <ScrollView>
 
-        <Text style={[styles.author, { color: colors.subtext }]}>
-          By {story.by}
-        </Text>
-
-        <Text style={[styles.date, { color: colors.subtext }]}>
-          {publishedDate.toLocaleString()}
-        </Text>
-
-        <View style={styles.statsRow}>
-          <View style={[styles.statCard, { backgroundColor: colors.border }]}>
-            <Text style={[styles.statValue, { color: colors.accent }]}>
-              {story.score}
-            </Text>
-            <Text style={[styles.statLabel, { color: colors.subtext }]}>
-              Points
-            </Text>
-          </View>
-
-          <View style={[styles.statCard, { backgroundColor: colors.border }]}>
-            <Text style={[styles.statValue, { color: colors.accent }]}>
-              {story.descendants ?? 0}
-            </Text>
-            <Text style={[styles.statLabel, { color: colors.subtext }]}>
-              Comments
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.typeContainer}>
-          <Text style={[styles.typeText, { color: colors.text }]}>
-            Type: {story.type}
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: colors.card },
+            {
+              backgroundColor: colors.card,
+              borderWidth: 1,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <Text style={[styles.title, { color: colors.text }]}>
+            {story.title}
           </Text>
-        </View>
 
-        <View style={styles.buttonRow}>
-          {story.url && (
+          <Text style={[styles.author, { color: colors.subtext }]}>
+            By {story.by}
+          </Text>
+
+          <Text style={[styles.date, { color: colors.subtext }]}>
+            {publishedDate.toLocaleString()}
+          </Text>
+
+          <View style={styles.statsRow}>
+            <View style={[styles.statCard, { backgroundColor: colors.border }]}>
+              <Text style={[styles.statValue, { color: colors.accent }]}>
+                {story.score}
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.subtext }]}>
+                Points
+              </Text>
+            </View>
+
+            <View style={[styles.statCard, { backgroundColor: colors.border }]}>
+              <Text style={[styles.statValue, { color: colors.accent }]}>
+                {story.descendants ?? 0}
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.subtext }]}>
+                Comments
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.typeContainer}>
+            <Text style={[styles.typeText, { color: colors.text }]}>
+              Type: {story.type}
+            </Text>
+          </View>
+
+          <View style={styles.buttonRow}>
+            {story.url && (
+              <Button
+                style={styles.actionButton}
+                title="Read Article"
+                onPress={openURL}
+              />
+            )}
+
             <Button
-              style={styles.actionButton}
-              title="Read Article"
-              onPress={openURL}
+              style={[{
+                padding: 10,
+                margin: 10,
+                width: "auto",
+                backgroundColor: bookmarked ? "#EF4444" : colors.accent,
+              }, styles.actionButton]}
+              title={bookmarked ? "Remove" : "Bookmark"}
+              onPress={toggleBookmark}
             />
-          )}
-
-          <Button
-            style={[{
-              padding: 10,
-              margin: 10,
-              width: "auto",
-              backgroundColor: bookmarked ? "#EF4444" : colors.accent,
-            }, styles.actionButton]}
-            title={bookmarked ? "Remove" : "Bookmark"}
-            onPress={toggleBookmark}
-          />
+          </View>
         </View>
-      </View>
 
-    </View>
+        <Discussion>
+
+        </Discussion>
+      </View>
+      
+    </ScrollView>
+
   );
 };
 
