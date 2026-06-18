@@ -19,3 +19,4 @@ export const getStory = async (id: number) => {
     // console.log("Story data:", response.data)
     return response.data
 }
+export const getItem = getStory;

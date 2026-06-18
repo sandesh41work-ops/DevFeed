@@ -4,27 +4,53 @@ import Button from "../../shared/components/Button";
 import { Story } from "../../shared/types/story";
 import { useTheme } from "../../shared/hooks/useTheme";
 import StoryDetailsCard from "../../shared/components/StoryDetailsCard";
+
+import Discussion from "../discussion/Discussion";
+import { useState } from "react";
+import DiscussionCard from "../../shared/components/DiscussionCard";
+
+
 const ArticleDetailScreen = () => {
   const route = useRoute<any>();
   const { story }: { story: Story } = route.params;
+
   const { colors } = useTheme();
+
+  const [showDiscussion, setShowDiscussion] = useState(false);
+
+  const commentCount = story.descendants ?? 0;
+
   return (
     <ScrollView>
-
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
         <StoryDetailsCard story={story} />
 
+        {!showDiscussion ? (
+          <DiscussionCard
+            commentCount={commentCount}
+            onPress={() => setShowDiscussion(true)}
+          />
+        ) : (
+          <Discussion
+            storyId={story.id}
+            commentCount={commentCount}
+          />
+        )}
       </View>
-
     </ScrollView>
-
   );
 };
 
 export default ArticleDetailScreen;
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#F4F4F4",
