@@ -10,7 +10,7 @@ import DiscussionCard from "../../shared/components/DiscussionCard";
 import { useCommentsQuery } from "./useCommentQuery";
 import { getStory } from "../../shared/services/api";
 import { useQuery } from "@tanstack/react-query";
-
+import { TouchableOpacity } from "react-native";
 import { Comment } from "../../shared/types/comment";
 import CommentItem from "./CommentItem";
 type DiscussionProps = {
@@ -22,6 +22,7 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const { colors } = useTheme();
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const { data: story, isLoading: isStoryLoading } = useQuery({
     queryKey: ["story", storyId],
@@ -29,9 +30,12 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
     enabled: expanded,
   });
 
-  const commentIds = story?.kids ?? [];
+  const allCommentIds = story?.kids ?? [];
+  const commentIds = allCommentIds.slice(0, visibleCount);
   const { data: comments = [], isLoading: isCommentsLoading } =
     useCommentsQuery(commentIds);
+
+
   const handleOpenDiscussion = () => {
     setExpanded(true);
   };
@@ -84,10 +88,19 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
         <CommentItem key={comment.id} comment={comment} />
       ))}
 
-      {commentIds.length > 10 && (
-        <Text style={[styles.placeholder, { color: colors.accent }]}>
-          Load More Comments...
-        </Text>
+      {visibleCount < allCommentIds.length && (
+        <TouchableOpacity
+          onPress={() => setVisibleCount(prev => prev + 10)}
+        >
+          <Text
+            style={[
+              styles.placeholder,
+              { color: colors.accent }
+            ]}
+          >
+            Load More Comments
+          </Text>
+        </TouchableOpacity> 
       )}
     </View>
   );
