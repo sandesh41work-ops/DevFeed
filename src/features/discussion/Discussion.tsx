@@ -115,14 +115,17 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
         },
       ]}
     >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>
-          💬 Discussion
-        </Text>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <View style={styles.headerTop}>
+          <Text style={[styles.title, { color: colors.text }]}>
+            Discussion ({commentCount})
+          </Text>
 
-        <Text style={[styles.count, { color: colors.subtext }]}>
-          {commentCount} comments
-        </Text>
+          <TouchableOpacity style={styles.sortButton}>
+            <Text style={[styles.sortIcon, { color: colors.subtext }]}>⇅</Text>
+            <Text style={[styles.sortText, { color: colors.subtext }]}>Top</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {comments.map((comment: Comment) => (
@@ -167,12 +170,41 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    marginBottom: 20,
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "700",
+  },
+
+  sortButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+
+  sortIcon: {
+    fontSize: 14,
+  },
+
+  sortText: {
+    fontSize: 12,
+    fontWeight: "600",
   },
 
   count: {

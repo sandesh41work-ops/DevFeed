@@ -20,7 +20,7 @@ const ArticleDetailScreen = () => {
       style={[styles.scrollView, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.scrollContent}
     >
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StoryDetailsCard story={story} />
 
         {!showDiscussion ? (
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 24,
   },
   container: {
     flex: 1,

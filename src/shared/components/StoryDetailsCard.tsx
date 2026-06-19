@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { Linking, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import Button from "./Button";
 import { Story } from "../types/story";
@@ -82,6 +82,23 @@ const StoryDetailsCard = ({ story }: Props) => {
                 </View>
             </View>
 
+            <View style={[styles.actionRow, { borderTopColor: colors.border, borderBottomColor: colors.border }]}>
+                <TouchableOpacity style={styles.actionItem}>
+                    <Text style={[styles.actionText, { color: colors.text }]}>🔖</Text>
+                    <Text style={[styles.actionLabel, { color: colors.text }]}>Save</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.actionItem}>
+                    <Text style={[styles.actionText, { color: colors.text }]}>↗️</Text>
+                    <Text style={[styles.actionLabel, { color: colors.text }]}>Share</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.actionItem}>
+                    <Text style={[styles.actionText, { color: colors.text }]}>🔗</Text>
+                    <Text style={[styles.actionLabel, { color: colors.text }]}>Open</Text>
+                </TouchableOpacity>
+            </View>
+
             <View style={styles.typeContainer}>
                 <Text style={[styles.typeText, { color: colors.text }]}>
                     Type: {story.type}
@@ -160,6 +177,30 @@ const styles = StyleSheet.create({
 
     statLabel: {
         marginTop: 4,
+    },
+
+    actionRow: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center",
+        paddingVertical: 12,
+        marginVertical: 12,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+    },
+
+    actionItem: {
+        alignItems: "center",
+        gap: 4,
+    },
+
+    actionText: {
+        fontSize: 18,
+    },
+
+    actionLabel: {
+        fontSize: 12,
+        fontWeight: "600",
     },
 
     typeContainer: {
