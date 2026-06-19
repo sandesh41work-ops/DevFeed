@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useTheme } from "../../shared/hooks/useTheme";
 import DiscussionCard from "../../shared/components/DiscussionCard";
 import { useCommentsQuery } from "./useCommentQuery";
 import { getStory } from "../../shared/services/api";
 import { useQuery } from "@tanstack/react-query";
-import CommentHtml from "../../shared/components/Comment";
+
+import { Comment } from "../../shared/types/comment";
+import CommentItem from "./CommentItem";
 type DiscussionProps = {
   storyId: number;
   commentCount: number;
@@ -73,21 +80,10 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
         </Text>
       </View>
 
-      {comments.map((comment: any) => (
-        <View key={comment.id} style={styles.comment}>
-          <Text style={[styles.author, { color: colors.text }]}>
-            {comment.by ?? "Unknown"}
-          </Text>
-
-          <CommentHtml html={comment.text ?? "No comment text available"} />
-
-          {comment.kids?.length ? (
-            <Text style={[styles.replyCount, { color: colors.accent }]}>
-              💬 {comment.kids.length} replies
-            </Text>
-          ) : null}
-        </View>
+      {comments.map((comment: Comment) => (
+        <CommentItem key={comment.id} comment={comment} />
       ))}
+
       {commentIds.length > 10 && (
         <Text style={[styles.placeholder, { color: colors.accent }]}>
           Load More Comments...
