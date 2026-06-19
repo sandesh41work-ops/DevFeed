@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import { useTheme } from "../../shared/hooks/useTheme";
 import DiscussionCard from "../../shared/components/DiscussionCard";
-import { useCommentsQuery } from "./useCommentQuery";
 import { getStory } from "../../shared/services/api";
 import { useQuery } from "@tanstack/react-query";
 import { TouchableOpacity } from "react-native";
@@ -20,9 +19,11 @@ type DiscussionProps = {
 
 const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
   const [expanded, setExpanded] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(false);
 
   const { colors } = useTheme();
-  const [visibleCount, setVisibleCount] = useState(10);
 
   const { data: story, isLoading: isStoryLoading } = useQuery({
     queryKey: ["story", storyId],
@@ -31,14 +32,53 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
   });
 
   const allCommentIds = story?.kids ?? [];
-  const commentIds = allCommentIds.slice(0, visibleCount);
-  const { data: comments = [], isLoading: isCommentsLoading } =
-    useCommentsQuery(commentIds);
 
+  useEffect(() => {
+    if (!expanded) {
+      setComments([]);
+      setVisibleCount(10);
+      return;
+    }
+
+    if (!story) {
+      return;
+    }
+
+    const nextIds = allCommentIds.slice(comments.length, visibleCount);
+    if (nextIds.length === 0) {
+      return;
+    }
+
+    let isCanceled = false;
+    setIsCommentsLoading(true);
+
+    Promise.all(nextIds.map(getStory))
+      .then((newComments) => {
+        if (!isCanceled) {
+          setComments((prev) => [...prev, ...newComments]);
+        }
+      })
+      .catch(() => {
+        if (!isCanceled) {
+          setComments((prev) => prev);
+        }
+      })
+      .finally(() => {
+        if (!isCanceled) {
+          setIsCommentsLoading(false);
+        }
+      });
+
+    return () => {
+      isCanceled = true;
+    };
+  }, [expanded, story, visibleCount, allCommentIds.length, comments.length]);
 
   const handleOpenDiscussion = () => {
     setExpanded(true);
   };
+
+  const isInitialLoading = isStoryLoading || (isCommentsLoading && comments.length === 0);
 
   if (!expanded) {
     return (
@@ -48,7 +88,8 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
       />
     );
   }
-  if (isStoryLoading || isCommentsLoading) {
+
+  if (isInitialLoading) {
     return (
       <View
         style={[
@@ -88,9 +129,18 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
         <CommentItem key={comment.id} comment={comment} />
       ))}
 
-      {visibleCount < allCommentIds.length && (
+      {isCommentsLoading && comments.length > 0 && (
+        <View style={styles.loadingMore}>
+          <ActivityIndicator size="small" color={colors.accent} />
+          <Text style={[styles.loadingText, { color: colors.subtext }]}>Loading more comments…</Text>
+        </View>
+      )}
+
+      {comments.length < allCommentIds.length && (
         <TouchableOpacity
-          onPress={() => setVisibleCount(prev => prev + 10)}
+          onPress={() => setVisibleCount((prev) => prev + 10)}
+          disabled={isCommentsLoading}
+          style={isCommentsLoading ? styles.disabledButton : undefined}
         >
           <Text
             style={[
@@ -100,7 +150,7 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
           >
             Load More Comments
           </Text>
-        </TouchableOpacity> 
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -148,6 +198,18 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
+  loadingMore: {
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+
+  loadingText: {
+    fontSize: 14,
+  },
+
   replyCount: {
     marginTop: 8,
     fontWeight: "600",
@@ -157,5 +219,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontWeight: "600",
     textAlign: "center",
+  },
+
+  disabledButton: {
+    opacity: 0.5,
   },
 });

@@ -16,15 +16,11 @@ const ArticleDetailScreen = () => {
   const commentCount = story.descendants ?? 0;
   
   return (
-    <ScrollView>
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: colors.background,
-          },
-        ]}
-      >
+    <ScrollView
+      style={[styles.scrollView, { backgroundColor: colors.background }]}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <View style={styles.container}>
         <StoryDetailsCard story={story} />
 
         {!showDiscussion ? (
@@ -46,9 +42,14 @@ const ArticleDetailScreen = () => {
 export default ArticleDetailScreen;
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#F4F4F4",
     padding: 16,
   },
   card: {
