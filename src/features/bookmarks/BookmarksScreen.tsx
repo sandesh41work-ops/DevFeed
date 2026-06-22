@@ -9,6 +9,9 @@ import { getBookmarks } from "../../shared/services/bookmarkService";
 import { FlatList } from "react-native";
 import StoryCard from "../../shared/components/StoryCard";
 import { useMemo } from "react";
+import SwipeableStoryCard from "../../shared/components/SwipeableStoryCard";
+import { removeBookmark } from "../../shared/services/bookmarkService";
+
 const BookmarksScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -64,11 +67,19 @@ const BookmarksScreen = () => {
     );
   }, []);
 
+const handleDelete = useCallback(async (id: number) => {
+  await removeBookmark(id)
+  setStories(prev => prev.filter(s => s.id !== id))
+}, [])
 
-  const renderStoryItem = useCallback(({ item }: { item: Story }) => {
-    return <StoryCard story={item} />;
-  }, []);
-
+const renderStoryItem = useCallback(({ item }: { item: Story }) => {
+  return (
+    <SwipeableStoryCard
+      story={item}
+      onDelete={handleDelete}
+    />
+  )
+}, [handleDelete])
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
