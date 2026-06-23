@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import Button from "../../shared/components/Button";
@@ -9,6 +9,7 @@ import LoginScreen from "./LoginScreen";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../shared/types/navigation";
 import { useTheme } from "../../shared/hooks/useTheme";
+import { Platform } from "react-native";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const SignUpScreen = () => {
@@ -57,100 +58,110 @@ const SignUpScreen = () => {
     }
   };
   return (
-  <View
-    style={[
-      styles.container,
-      {
-        backgroundColor: colors.background,
-      },
-    ]}
-  >
-    <View
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.card,
-          shadowColor: isDark ? "#000" : "#000",
-        },
-      ]}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text
-        style={{
-          fontSize: 28,
-          fontWeight: "700",
-          color: colors.text,
-          marginBottom: 8,
-        }}
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
       >
-        Create Account
-      </Text>
-
-      <Text
-        style={[
-          styles.subtitle,
-          {
-            color: colors.subtext,
-          },
-        ]}
-      >
-        Create Account to continue
-      </Text>
-
-      <Input
-        value={email}
-        placeholder="Enter your email"
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-
-      <Input
-        placeholder="Enter your password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry={true}
-      />
-
-      <Input
-        placeholder="Confirm your password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry={true}
-      />
-
-      {error ? (
-        <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
-      ) : null}
-
-      <Button
-        title="Create Account"
-        disabled={!email || !password}
-        loading={loading}
-        onPress={() => {
-          console.log("Email: ", email);
-          console.log("Password :", password);
-          console.log("Confirm Password :", confirmPassword);
-          handleSignUp();
-        }}
-      />
-
-      <TouchableOpacity
-        style={styles.signupLink}
-        onPress={() => navigation.navigate("Login")}
-      >
-        <Text
+        <View
           style={[
-            styles.signupLinkText,
+            styles.container,
             {
-              color: colors.accent,
+              backgroundColor: colors.background,
             },
           ]}
         >
-          Already Have Account? Login instead
-        </Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: colors.card,
+                shadowColor: isDark ? "#000" : "#000",
+              },
+            ]}
+          >
+            <Text
+              style={{
+                fontSize: 28,
+                fontWeight: "700",
+                color: colors.text,
+                marginBottom: 8,
+              }}
+            >
+              Create Account
+            </Text>
+
+            <Text
+              style={[
+                styles.subtitle,
+                {
+                  color: colors.subtext,
+                },
+              ]}
+            >
+              Create Account to continue
+            </Text>
+
+            <Input
+              value={email}
+              placeholder="Enter your email"
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+
+            <Input
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+            />
+
+            <Input
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry={true}
+            />
+
+            {error ? (
+              <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+            ) : null}
+
+            <Button
+              title="Create Account"
+              disabled={!email || !password}
+              loading={loading}
+              onPress={() => {
+                console.log("Email: ", email);
+                console.log("Password :", password);
+                console.log("Confirm Password :", confirmPassword);
+                handleSignUp();
+              }}
+            />
+
+            <TouchableOpacity
+              style={styles.signupLink}
+              onPress={() => navigation.navigate("Login")}
+            >
+              <Text
+                style={[
+                  styles.signupLinkText,
+                  {
+                    color: colors.accent,
+                  },
+                ]}
+              >
+                Already Have Account? Login instead
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
 };
 
 export default SignUpScreen;

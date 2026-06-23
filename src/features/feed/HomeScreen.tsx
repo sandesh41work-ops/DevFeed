@@ -35,26 +35,32 @@ const HomeScreen = () => {
   const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery();
   const [loading, setLoading] = useState(false);
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
-  useEffect( ()=>{
-      console.log("isLoading : ", isLoading , "Fetchign first page : ", fetchingFirstPage)
-      setLoading(isLoading || fetchingFirstPage); 
-  }, [isLoading, fetchingFirstPage])
-  const loadFirstPage = useCallback(async (ids: number[]) => {
-    setFetchingFirstPage(true);
-    try {
-
-      const firstPageIds = ids.slice(0, PAGE_SIZE);
-      const data = await Promise.all(firstPageIds.map((id) => getStory(id)));
-      setStories(data);
-      setPage(1);
-    } catch (e) {
-      console.warn(e);
-    }
-    finally{
-      console.log("Finallly Called...")
-      setFetchingFirstPage(false);
-    }
-  }, [fetchingFirstPage]);
+  useEffect(() => {
+    console.log(
+      "isLoading : ",
+      isLoading,
+      "Fetchign first page : ",
+      fetchingFirstPage,
+    );
+    setLoading(isLoading || fetchingFirstPage);
+  }, [isLoading, fetchingFirstPage]);
+  const loadFirstPage = useCallback(
+    async (ids: number[]) => {
+      setFetchingFirstPage(true);
+      try {
+        const firstPageIds = ids.slice(0, PAGE_SIZE);
+        const data = await Promise.all(firstPageIds.map((id) => getStory(id)));
+        setStories(data);
+        setPage(1);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        console.log("Finallly Called...");
+        setFetchingFirstPage(false);
+      }
+    },
+    [fetchingFirstPage],
+  );
 
   useEffect(() => {
     if (allIds.length > 0) {
@@ -173,7 +179,12 @@ const HomeScreen = () => {
           >
             <Text style={{ color: colors.text }}>{"error"}</Text>
             {/* refetch from react query */}
-            <Button title="Retry" onPress={()=> {refetch}} />
+            <Button
+              title="Retry"
+              onPress={() => {
+                refetch;
+              }}
+            />
           </View>
         ) : (
           <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>

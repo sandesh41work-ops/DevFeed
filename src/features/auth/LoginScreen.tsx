@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { useState } from "react";
 import Button from "../../shared/components/Button";
 import Input from "../../shared/components/Input";
@@ -12,7 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../shared/types/navigation";
 import { useTheme } from "../../shared/hooks/useTheme";
-
+import { Platform } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 // test functions for firebase auth, you can run these in useEffect to test the login and signup functionality without UI
@@ -99,78 +100,90 @@ const LoginScreen = () => {
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View
-        style={[
-          styles.card,
-          {
-            backgroundColor: colors.card,
-            shadowColor: isDark ? "#000" : "#000",
-          },
-        ]}
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text
+
+        <View
           style={[
-            styles.subtitle,
+            styles.container,
             {
-              color: colors.subtext,
+              backgroundColor: colors.background,
             },
           ]}
         >
-          Login to continue
-        </Text>
-
-        <Input
-          value={email}
-          placeholder="Enter your email"
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-
-        <Input
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        />
-
-        {error ? (
-          <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
-        ) : null}
-
-        <Button
-          title="Login"
-          disabled={!email || !password}
-          loading={loading}
-          onPress={() => {
-            handleLogin(email, password);
-          }}
-        />
-
-        <TouchableOpacity
-          style={styles.signupLink}
-          onPress={() => navigation.navigate("SignUp")}
-        >
-          <Text
+          <View
             style={[
-              styles.signupLinkText,
+              styles.card,
               {
-                color: colors.accent,
+                backgroundColor: colors.card,
+                shadowColor: isDark ? "#000" : "#000",
               },
             ]}
           >
-            Don't have an account? Register
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+            <Text
+              style={[
+                styles.subtitle,
+                {
+                  color: colors.subtext,
+                },
+              ]}
+            >
+              Login to continue
+            </Text>
+
+            <Input
+              value={email}
+              placeholder="Enter your email"
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+
+            <Input
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+            />
+
+            {error ? (
+              <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+            ) : null}
+
+            <Button
+              title="Login"
+              disabled={!email || !password}
+              loading={loading}
+              onPress={() => {
+                handleLogin(email, password);
+              }}
+            />
+
+            <TouchableOpacity
+              style={styles.signupLink}
+              onPress={() => navigation.navigate("SignUp")}
+            >
+              <Text
+                style={[
+                  styles.signupLinkText,
+                  {
+                    color: colors.accent,
+                  },
+                ]}
+              >
+                Don't have an account? Register
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
