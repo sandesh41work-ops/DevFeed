@@ -33,9 +33,16 @@ const HomeScreen = () => {
   const { isConnected } = useNetworkStatus();
   const { colors } = useTheme();
   const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery();
-
+  const [loading, setLoading] = useState(false);
+  const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
+  useEffect( ()=>{
+      console.log("isLoading : ", isLoading , "Fetchign first page : ", fetchingFirstPage)
+      setLoading(isLoading || fetchingFirstPage); 
+  }, [isLoading, fetchingFirstPage])
   const loadFirstPage = useCallback(async (ids: number[]) => {
+    setFetchingFirstPage(true);
     try {
+
       const firstPageIds = ids.slice(0, PAGE_SIZE);
       const data = await Promise.all(firstPageIds.map((id) => getStory(id)));
       setStories(data);
@@ -43,7 +50,11 @@ const HomeScreen = () => {
     } catch (e) {
       console.warn(e);
     }
-  }, []);
+    finally{
+      console.log("Finallly Called...")
+      setFetchingFirstPage(false);
+    }
+  }, [fetchingFirstPage]);
 
   useEffect(() => {
     if (allIds.length > 0) {
@@ -141,7 +152,7 @@ const HomeScreen = () => {
           onChangeText={setSearchQuery}
           placeholder="Search stories..."
         />
-        {isLoading ? (
+        {loading ? (
           <FlatList
             data={[1, 2, 3, 4, 5, 6, 7, 8]}
             keyExtractor={(item) => item.toString()}
@@ -171,7 +182,7 @@ const HomeScreen = () => {
               keyExtractor={(item) => item.id.toString()}
               renderItem={renderItem}
               onRefresh={refetch}
-              refreshing={isLoading}
+              refreshing={loading}
               onEndReached={loadMore}
               onEndReachedThreshold={0.5}
               ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
