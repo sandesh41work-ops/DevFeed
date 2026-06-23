@@ -35,13 +35,11 @@ DevFeed is a React Native news reader app built with Expo and TypeScript. It pro
 
 ## Screens
 
-- `Login`
-- `Sign Up`
-- `Feed`
-- `Bookmarks`
-- `Article Detail`
-- `Discussion`
-
+![Login Screen](screenshot/IOS/LoginScreen.png)
+![Feed Screen](screenshot/IOS/Feed.png)
+![Article Detail](screenshot/IOS/ArticleDetailsScree.png)
+![Bookmarks](screenshot/IOS/Bookmarks.png)
+![Discussion](screenshot/IOS/Discussions.png)
 ---
 
 ## Getting Started
