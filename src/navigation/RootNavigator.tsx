@@ -14,6 +14,7 @@ import { useTheme } from "../shared/hooks/useTheme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BookmarksScreen from "../features/bookmarks/BookmarksScreen";
 import { Ionicons } from "@expo/vector-icons";
+import {View} from "react-native"
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<TabParamList>();
 
@@ -25,24 +26,24 @@ function MainTabNavigator() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.background,
-          height : 70,
+          height: 70,
           paddingBottom: 8, // Adjusts spacing from the absolute physical bottom edge
-          paddingTop: 8,    // Adjusts spacing from the top edge of the bar
+          paddingTop: 8, // Adjusts spacing from the top edge of the bar
         },
         tabBarItemStyle: {
           justifyContent: "center", // Centering the inner item contents vertically
-          alignItems: "center",     // Centering the inner item contents horizontally
+          alignItems: "center", // Centering the inner item contents horizontally
         },
         tabBarActiveTintColor: colors.text,
         tabBarInactiveTintColor: colors.subtext,
-       
-        tabBarIcon: ({ color, size }) => {
+
+        tabBarIcon: ({ color, size, focused }) => {
           let iconName: keyof typeof Ionicons.glyphMap;
 
           if (route.name === "Feed") {
-            iconName = "newspaper-outline";
+            iconName = focused ? "newspaper" : "newspaper-outline";
           } else {
-            iconName = "bookmark-outline";
+            iconName = focused ? "bookmark" : "bookmark-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -76,7 +77,23 @@ function RootNavigator() {
     return unsubscribe; // cleanup
   }, []);
 
-  if (loading) return <ActivityIndicator />;
+  if (loading) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.background,
+      }}
+    >
+      <ActivityIndicator
+        size="large"
+        color={colors.accent}
+      />
+    </View>
+  );
+}
 
   return (
     <NavigationContainer>

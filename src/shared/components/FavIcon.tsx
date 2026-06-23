@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-
+import { Ionicons } from "@expo/vector-icons";
 const Favicon = React.memo(({ url }: { url?: string }) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,11 @@ const Favicon = React.memo(({ url }: { url?: string }) => {
       />
       {loading && (
         <View style={styles.fallbackIcon}>
-          <Text style={styles.fallbackText}>🌐</Text>
+          <Ionicons
+            name="globe-outline"
+            size={18}
+            color="#6B7280"
+          />
         </View>
       )}
     </>

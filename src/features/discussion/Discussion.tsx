@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { TouchableOpacity } from "react-native";
 import { Comment } from "../../shared/types/comment";
 import CommentItem from "./CommentItem";
+import { Ionicons } from "@expo/vector-icons";
 type DiscussionProps = {
   storyId: number;
   commentCount: number;
@@ -122,7 +123,11 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
           </Text>
 
           <TouchableOpacity style={styles.sortButton}>
-            <Text style={[styles.sortIcon, { color: colors.subtext }]}>⇅</Text>
+            <Ionicons
+              name="swap-vertical"
+              size={14}
+              color={colors.subtext}
+            />
             <Text style={[styles.sortText, { color: colors.subtext }]}>Top</Text>
           </TouchableOpacity>
         </View>
