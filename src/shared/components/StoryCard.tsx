@@ -1,12 +1,7 @@
 import React, { memo } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../hooks/useTheme";
 import { Story } from "../types/story";
 import Favicon from "./FavIcon";
@@ -24,11 +19,9 @@ const getDomain = (url?: string) => {
 const getTimeAgo = (unixTime: number) => {
   const now = Math.floor(Date.now() / 1000);
   const diff = now - unixTime;
-
   if (diff < 60) return `${diff}s ago`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-
   return `${Math.floor(diff / 86400)}d ago`;
 };
 
@@ -86,16 +79,12 @@ const StoryCard = memo(({ story }: { story: Story }) => {
             },
           ]}
         >
-          <Text
-            style={[
-              styles.badgeText,
-              {
-                color: colors.text,
-              },
-            ]}
-          >
-            ⬆️ {story.score}
-          </Text>
+          <View style={styles.badgeContent}>
+            <Ionicons name="arrow-up" size={14} color={colors.text} />
+            <Text style={[styles.badgeText, { color: colors.text }]}>
+              {story.score}
+            </Text>
+          </View>
         </View>
 
         <View
@@ -106,25 +95,18 @@ const StoryCard = memo(({ story }: { story: Story }) => {
             },
           ]}
         >
-          <Text
-            style={[
-              styles.badgeText,
-              {
-                color: colors.text,
-              },
-            ]}
-          >
-            💬 {story.descendants ?? 0}
-          </Text>
-        </View>
-
-        {story.score > 500 && (
-          <View style={styles.trendingBadge}>
-            <Text style={styles.trendingText}>
-              🔥 Trending
+          <View style={styles.badgeContent}>
+            <Ionicons name="chatbubble-outline" size={14} color={colors.text} />
+            <Text style={[styles.badgeText, { color: colors.text }]}>
+              {story.descendants ?? 0}
             </Text>
           </View>
-        )}
+        </View>
+
+        <View style={styles.trendingBadge}>
+          <Ionicons name="flame" size={14} color="#92400E" />
+          <Text style={styles.trendingText}>Trending</Text>
+        </View>
       </View>
 
       <Text
@@ -198,13 +180,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  trendingBadge: {
-    backgroundColor: "#FEF3C7",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-
   trendingText: {
     fontSize: 12,
     fontWeight: "700",
@@ -214,5 +189,19 @@ const styles = StyleSheet.create({
   meta: {
     marginTop: 14,
     fontSize: 13,
+  },
+  badgeContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  trendingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#FEF3C7",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
   },
 });
