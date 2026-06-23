@@ -1,4 +1,10 @@
-import { Linking, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+    Linking,
+    StyleSheet,
+    Text,
+    View,
+    TouchableOpacity,
+} from "react-native";
 import { useEffect, useState } from "react";
 import Button from "./Button";
 import { Story } from "../types/story";
@@ -8,7 +14,7 @@ import {
     isBookmarked,
     removeBookmark,
 } from "../services/bookmarkService";
-
+import { Ionicons } from "@expo/vector-icons";
 type Props = {
     story: Story;
 };
@@ -62,6 +68,12 @@ const StoryDetailsCard = ({ story }: Props) => {
 
             <View style={styles.statsRow}>
                 <View style={[styles.statCard, { backgroundColor: colors.border }]}>
+                    <Ionicons
+                        name="arrow-up-circle-outline"
+                        size={24}
+                        color={colors.accent}
+                    />
+
                     <Text style={[styles.statValue, { color: colors.accent }]}>
                         {story.score}
                     </Text>
@@ -70,8 +82,13 @@ const StoryDetailsCard = ({ story }: Props) => {
                         Points
                     </Text>
                 </View>
-
                 <View style={[styles.statCard, { backgroundColor: colors.border }]}>
+                    <Ionicons
+                        name="chatbubble-ellipses-outline"
+                        size={24}
+                        color={colors.accent}
+                    />
+
                     <Text style={[styles.statValue, { color: colors.accent }]}>
                         {story.descendants ?? 0}
                     </Text>
@@ -82,19 +99,40 @@ const StoryDetailsCard = ({ story }: Props) => {
                 </View>
             </View>
 
-            <View style={[styles.actionRow, { borderTopColor: colors.border, borderBottomColor: colors.border }]}>
-                <TouchableOpacity style={styles.actionItem}>
-                    <Text style={[styles.actionText, { color: colors.text }]}>🔖</Text>
-                    <Text style={[styles.actionLabel, { color: colors.text }]}>Save</Text>
+            <View
+                style={[
+                    styles.actionRow,
+                    {
+                        borderTopColor: colors.border,
+                        borderBottomColor: colors.border,
+                    },
+                ]}
+            >
+                <TouchableOpacity style={styles.actionItem} onPress={toggleBookmark}>
+                    <Ionicons
+                        name={bookmarked ? "bookmark" : "bookmark-outline"}
+                        size={22}
+                        color={bookmarked ? "#EF4444" : colors.text}
+                    />
+                    <Text
+                        style={[
+                            styles.actionLabel,
+                            { color: bookmarked ? "#EF4444" : colors.text },
+                        ]}
+                    >
+                        Save
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionItem}>
-                    <Text style={[styles.actionText, { color: colors.text }]}>↗️</Text>
-                    <Text style={[styles.actionLabel, { color: colors.text }]}>Share</Text>
+                    <Ionicons name="share-social-outline" size={22} color={colors.text} />
+                    <Text style={[styles.actionLabel, { color: colors.text }]}>
+                        Share
+                    </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionItem}>
-                    <Text style={[styles.actionText, { color: colors.text }]}>🔗</Text>
+                <TouchableOpacity style={styles.actionItem} onPress={openURL}>
+                    <Ionicons name="open-outline" size={22} color={colors.text} />
                     <Text style={[styles.actionLabel, { color: colors.text }]}>Open</Text>
                 </TouchableOpacity>
             </View>
@@ -165,6 +203,9 @@ const styles = StyleSheet.create({
 
     statCard: {
         flex: 1,
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: 12,
         padding: 16,
         borderRadius: 12,
         alignItems: "center",
