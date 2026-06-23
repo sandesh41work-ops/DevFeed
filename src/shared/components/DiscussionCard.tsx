@@ -1,98 +1,52 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../shared/hooks/useTheme";
-
+import { Ionicons } from "@expo/vector-icons";
 type DiscussionCardProps = {
   commentCount: number;
   onPress: () => void;
 };
 
-const DiscussionCard = ({
-  commentCount,
-  onPress,
-}: DiscussionCardProps) => {
+const DiscussionCard = ({ commentCount, onPress }: DiscussionCardProps) => {
   const { colors } = useTheme();
 
   return (
     <Pressable
       onPress={onPress}
-      style={[
+      style={({ pressed }) => [
         styles.card,
         {
           backgroundColor: colors.card,
           borderColor: colors.border,
+          opacity: pressed ? 0.8 : 1,
         },
       ]}
     >
       <View style={styles.header}>
         <View style={styles.titleContainer}>
-          <Text
-            style={[
-              styles.icon,
-              { color: colors.accent },
-            ]}
-          >
-            💬
-          </Text>
+          <Ionicons
+            name="chatbubbles-outline"
+            size={24}
+            color={colors.accent}
+          />
 
           <View>
-            <Text
-              style={[
-                styles.title,
-                { color: colors.text },
-              ]}
-            >
+            <Text style={[styles.title, { color: colors.text }]}>
               Discussion
             </Text>
 
-            <Text
-              style={[
-                styles.count,
-                { color: colors.subtext },
-              ]}
-            >
+            <Text style={[styles.count, { color: colors.subtext }]}>
               {commentCount} comments
             </Text>
           </View>
         </View>
 
-        <Text
-          style={[
-            styles.chevron,
-            { color: colors.subtext },
-          ]}
-        >
-          ↓
-        </Text>
+        <Ionicons name="chevron-forward" size={20} color={colors.subtext} />
       </View>
 
-      <Text
-        style={[
-          styles.description,
-          { color: colors.subtext },
-        ]}
-      >
-        Explore insights, opinions, and
-        discussions from the Hacker News
+      <Text style={[styles.description, { color: colors.subtext }]}>
+        Explore insights, opinions, and discussions from the Hacker News
         community.
       </Text>
-
-      <View
-        style={[
-          styles.button,
-          {
-            backgroundColor: colors.accent,
-          },
-        ]}
-      >
-        <Text style={styles.buttonText}>
-          View Discussion
-        </Text>
-      </View>
     </Pressable>
   );
 };

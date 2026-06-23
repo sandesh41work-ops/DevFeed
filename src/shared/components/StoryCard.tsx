@@ -80,7 +80,7 @@ const StoryCard = memo(({ story }: { story: Story }) => {
           ]}
         >
           <View style={styles.badgeContent}>
-            <Ionicons name="arrow-up" size={14} color={colors.text} />
+            <Ionicons name="thumbs-up-outline" size={14} color={colors.text} />
             <Text style={[styles.badgeText, { color: colors.text }]}>
               {story.score}
             </Text>
@@ -103,10 +103,12 @@ const StoryCard = memo(({ story }: { story: Story }) => {
           </View>
         </View>
 
-        <View style={styles.trendingBadge}>
-          <Ionicons name="flame" size={14} color="#92400E" />
-          <Text style={styles.trendingText}>Trending</Text>
-        </View>
+        {story.score > 500 && (
+          <View style={styles.trendingBadge}>
+            <Ionicons name="flame" size={14} color="#92400E" />
+            <Text style={styles.trendingText}>Trending</Text>
+          </View>
+        )}
       </View>
 
       <Text
@@ -166,8 +168,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 14,
+    flexWrap: "wrap",
   },
-
   badge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
