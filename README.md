@@ -35,11 +35,35 @@ DevFeed is a React Native news reader app built with Expo and TypeScript. It pro
 
 ## Screens
 
-![Login Screen](screenshot/IOS/LoginScreen.png)
-![Feed Screen](screenshot/IOS/Feed.png)
-![Article Detail](screenshot/IOS/ArticleDetailsScree.png)
-![Bookmarks](screenshot/IOS/Bookmarks.png)
-![Discussion](screenshot/IOS/Discussions.png)
+## 📱 Screenshots
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="screenshot/IOS/LoginScreen.png" width="220" /><br/>
+      <b>Login Screen</b>
+    </td>
+    <td align="center">
+      <img src="screenshot/IOS/Feed.png" width="220" /><br/>
+      <b>Feed Screen</b>
+    </td>
+    <td align="center">
+      <img src="screenshot/IOS/ArticleDetailsScree.png" width="220" /><br/>
+      <b>Article Detail</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshot/IOS/Bookmarks.png" width="220" /><br/>
+      <b>Bookmarks</b>
+    </td>
+    <td align="center">
+      <img src="screenshot/IOS/Discussions.png" width="220" /><br/>
+      <b>Discussion</b>
+    </td>
+  </tr>
+</table>
+
 ---
 
 ## Getting Started
@@ -64,6 +88,7 @@ npm start
 ```
 
 Then choose:
+
 - `npm run android`
 - `npm run ios`
 - `npm run web`
@@ -75,6 +100,7 @@ Then choose:
 The app uses Firebase Authentication in firebase.ts.
 
 If you want to use your own Firebase project:
+
 - create a Firebase app
 - enable Email/Password authentication
 - replace the `firebaseConfig` values in firebase.ts
