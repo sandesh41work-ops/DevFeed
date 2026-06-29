@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Button from "./Button";
 import { Story } from "../types/story";
 import { useTheme } from "../hooks/useTheme";
@@ -15,6 +15,7 @@ import {
   removeBookmark,
 } from "../services/bookmarkService";
 import { Ionicons } from "@expo/vector-icons";
+import { Share } from "react-native";
 type Props = {
   story: Story;
 };
@@ -29,22 +30,33 @@ const StoryDetailsCard = ({ story }: Props) => {
     isBookmarked(story.id).then(setBookmarked);
   }, [story.id]);
 
-  const openURL = () => {
+  const openURL = useCallback(() => {
     if (story.url) {
       Linking.openURL(story.url);
     }
-  };
-
+  }, [story.url]);
   const toggleBookmark = async () => {
-    if (bookmarked) {
-      await removeBookmark(story.id);
-    } else {
-      await addBookmark(story);
-    }
+    const next = !bookmarked;
 
-    setBookmarked(!bookmarked);
+    setBookmarked(next);
+
+    try {
+      if (next) {
+        await addBookmark(story);
+      } else {
+        await removeBookmark(story.id);
+      }
+    } catch {
+      setBookmarked(!next);
+    }
   };
 
+  const shareStory = async () => {
+    await Share.share({
+      title: story.title,
+      message: story.url ?? story.title,
+    });
+  };
   return (
     <View
       style={[
@@ -112,7 +124,7 @@ const StoryDetailsCard = ({ story }: Props) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionItem}>
+        <TouchableOpacity style={styles.actionItem} onPress={shareStory}>
           <Ionicons name="share-social-outline" size={22} color={colors.text} />
           <Text style={[styles.actionLabel, { color: colors.text }]}>
             Share
