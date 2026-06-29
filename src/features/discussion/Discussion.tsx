@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { useTheme } from "../../shared/hooks/useTheme";
 import DiscussionCard from "../../shared/components/DiscussionCard";
-import { getStory } from "../../shared/services/api";
+import { getStory } from "../../shared/services/hackerNewsServices";
 import { useQuery } from "@tanstack/react-query";
 import { TouchableOpacity } from "react-native";
 import { Comment } from "../../shared/types/comment";

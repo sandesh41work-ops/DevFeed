@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { getStory } from "../../shared/services/api";
+import { getStory } from "../../shared/services/hackerNewsServices";
 import { Story } from "../../shared/types/story";
 import StoryCard from "../../shared/components/StoryCard";
 import Button from "../../shared/components/Button";
@@ -36,12 +36,12 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
   useEffect(() => {
-    console.log(
-      "isLoading : ",
-      isLoading,
-      "Fetchign first page : ",
-      fetchingFirstPage,
-    );
+    // console.log(
+    //   "isLoading : ",
+    //   isLoading,
+    //   "Fetchign first page : ",
+    //   fetchingFirstPage,
+    // );
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
   const loadFirstPage = useCallback(
@@ -55,7 +55,7 @@ const HomeScreen = () => {
       } catch (e) {
         console.warn(e);
       } finally {
-        console.log("Finallly Called...");
+        // console.log("Finallly Called...");
         setFetchingFirstPage(false);
       }
     },

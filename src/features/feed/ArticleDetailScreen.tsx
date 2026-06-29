@@ -6,15 +6,18 @@ import StoryDetailsCard from "../../shared/components/StoryDetailsCard";
 import Discussion from "../discussion/Discussion";
 import { useState } from "react";
 import DiscussionCard from "../../shared/components/DiscussionCard";
+import SummaryCard from "../../shared/components/SummaryCard";
+import Summary from "../summary/Summary";
 
 
 const ArticleDetailScreen = () => {
   const route = useRoute<any>();
   const { story }: { story: Story } = route.params;
   const { colors } = useTheme();
-  const [showDiscussion, setShowDiscussion] = useState(false);
+  const [showDiscussion, setShowDiscussion] = useState<boolean>(false);
   const commentCount = story.descendants ?? 0;
-  
+  const [showSummary, setShowSummary] = useState<boolean>(false)
+
   return (
     <ScrollView
       style={[styles.scrollView, { backgroundColor: colors.background }]}
@@ -22,6 +25,17 @@ const ArticleDetailScreen = () => {
     >
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StoryDetailsCard story={story} />
+
+        {
+          !showSummary ? (
+            <SummaryCard onPress={() => setShowSummary(true)} />
+          ) : (
+            <Summary
+              articleId={story.id}
+              url={story.url}
+            />
+          )}
+
 
         {!showDiscussion ? (
           <DiscussionCard
@@ -34,6 +48,8 @@ const ArticleDetailScreen = () => {
             commentCount={commentCount}
           />
         )}
+
+
       </View>
     </ScrollView>
   );
