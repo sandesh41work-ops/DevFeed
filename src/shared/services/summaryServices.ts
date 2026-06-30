@@ -12,7 +12,7 @@ const summaryClient = axios.create({
 
 export type SummaryResponse = {
   title: string;
-  summary: string[];
+  summary: string;
 };
 
 export const getSummary = async (
