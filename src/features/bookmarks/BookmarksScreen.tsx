@@ -27,7 +27,7 @@ const BookmarksScreen = () => {
       setLoading(true);
       let data = await getBookmarks();
       setStories(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Something went wrong");
       console.warn(error);
@@ -39,7 +39,7 @@ const BookmarksScreen = () => {
     if (isFocuesed) {
       //load all stories on screen mount
       fetchBookMarks();
-      console.log("Fetching bookMarks on every render");
+      // console.log("Fetching bookMarks on every render");
     }
   }, [isFocuesed]);
 

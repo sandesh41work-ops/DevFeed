@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getTopStories } from '../../shared/services/api'
+import { getTopStories } from '../../shared/services/hackerNewsServices'
 
 export const useStoriesQuery = () => {
   return useQuery({

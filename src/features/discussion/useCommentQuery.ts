@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getStory } from "../../shared/services/api";
+import { getStory } from "../../shared/services/hackerNewsServices";
 
 export const useCommentsQuery = (commentIds: number[]) => {
   return useQuery({
