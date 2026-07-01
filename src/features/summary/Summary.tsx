@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { useSummaryQuery } from "./useSummaryQuery";
@@ -11,7 +11,7 @@ type Props = {
 const Summary = ({ articleId, url }: Props) => {
     const { colors } = useTheme();
 
-    const { data, isLoading, error } = useSummaryQuery(articleId, url);
+    const { data, isLoading, error, refetch } = useSummaryQuery(articleId, url);
     const summary = data?.summary;
     const isBulletSummary = Array.isArray(summary);
 
@@ -42,6 +42,9 @@ const Summary = ({ articleId, url }: Props) => {
                 <View style={styles.center}>
                     <Ionicons name="alert-circle-outline" size={28} color="#EF4444" />
                     <Text style={[styles.message, { color: "#EF4444" }]}>Failed to generate summary.</Text>
+                    <TouchableOpacity onPress={() => refetch()} style={styles.retryButton}>
+                        <Text style={[styles.retryText, { color: colors.accent }]}>Try again</Text>
+                    </TouchableOpacity>
                 </View>
             )}
 
@@ -115,5 +118,14 @@ const styles = StyleSheet.create({
     message: {
         marginTop: 12,
         fontSize: 15,
+    },
+
+    retryButton: {
+        marginTop: 12,
+    },
+
+    retryText: {
+        fontSize: 15,
+        fontWeight: "600",
     },
 });
