@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Home: undefined
   SignUp : undefined
   ArticleDetail: { story: Story }
+  ArticleWebView: { url: string; title?: string }
 }
 export type TabParamList = {
   Feed: undefined;
