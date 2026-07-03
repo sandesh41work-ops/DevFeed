@@ -1,11 +1,11 @@
 import {
-  Linking,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
 } from "react-native";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import Button from "./Button";
 import { Story } from "../types/story";
 import { useTheme } from "../hooks/useTheme";
@@ -30,11 +30,15 @@ const StoryDetailsCard = ({ story }: Props) => {
     isBookmarked(story.id).then(setBookmarked);
   }, [story.id]);
 
-  const openURL = useCallback(() => {
+  const navigation = useNavigation<any>();
+  const openArticle = useCallback(() => {
     if (story.url) {
-      Linking.openURL(story.url);
+      navigation.navigate("ArticleWebView", {
+        url: story.url,
+        title: story.title,
+      });
     }
-  }, [story.url]);
+  }, [navigation, story.title, story.url]);
   const toggleBookmark = async () => {
     const next = !bookmarked;
 
@@ -131,7 +135,7 @@ const StoryDetailsCard = ({ story }: Props) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionItem} onPress={openURL}>
+        <TouchableOpacity style={styles.actionItem} onPress={openArticle}>
           <Ionicons name="open-outline" size={22} color={colors.text} />
           <Text style={[styles.actionLabel, { color: colors.text }]}>Open</Text>
         </TouchableOpacity>
@@ -148,7 +152,7 @@ const StoryDetailsCard = ({ story }: Props) => {
           <Button
             style={styles.actionButton}
             title="Read Article"
-            onPress={openURL}
+            onPress={openArticle}
           />
         )}
 

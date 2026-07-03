@@ -10,6 +10,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { ActivityIndicator } from "react-native";
 import SignUpScreen from "../features/auth/SignUpScreen";
 import ArticleDetailScreen from "../features/feed/ArticleDetailScreen";
+import ArticleWebViewScreen from "../features/feed/ArticleWebViewScreen";
 import { useTheme } from "../shared/hooks/useTheme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BookmarksScreen from "../features/bookmarks/BookmarksScreen";
@@ -121,6 +122,13 @@ function RootNavigator() {
               options={{
                 title: "Article",
               }}
+            />
+            <Stack.Screen
+              name="ArticleWebView"
+              component={ArticleWebViewScreen}
+              options={({ route }) => ({
+                title: route.params?.title ?? "Article",
+              })}
             />
           </>
         ) : (
