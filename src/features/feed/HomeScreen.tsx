@@ -20,6 +20,7 @@ import { useTheme } from "../../shared/hooks/useTheme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
 import { useStoriesQuery } from "./useStoriesQuery";
+import AppHeader from "../../shared/components/AppHeader";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -148,6 +149,7 @@ const HomeScreen = () => {
           },
         ]}
       >
+        <AppHeader />
         {!isConnected && (
           <View style={styles.networkBanner}>
             <Text style={styles.networkBannerText}>No internet connection</Text>
