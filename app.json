@@ -11,7 +11,8 @@
     },
     "android": {
       "predictiveBackGestureEnabled": false,
-      "package": "com.sandesh41.DevFeed"
+      "package": "com.sandesh41.DevFeed",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
