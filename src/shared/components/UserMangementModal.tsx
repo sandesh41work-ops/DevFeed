@@ -7,11 +7,12 @@ import {
   useWindowDimensions,
   TouchableOpacity,
 } from "react-native";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../services/firebase";
 import { useTheme } from "../hooks/useTheme";
-
+import { updateUserDisplayName } from "../../features/auth/authService";
+import { TextInput } from "react-native-gesture-handler";
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -20,10 +21,34 @@ type Props = {
 const UserManagementModal = ({ visible, onClose }: Props) => {
   const { height } = useWindowDimensions();
   const { colors } = useTheme();
-
   const currentUser = auth.currentUser;
+  const [name, setName] = useState(currentUser?.displayName || "");
+  const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    setName(currentUser?.displayName ?? "");
+  }, [visible]);
 
+  const handleSaveUsername = async () => {
+    const username = name.trim();
+
+    if (!username) return;
+
+    try {
+      setSaving(true);
+
+      await updateUserDisplayName(username);
+
+      // Refresh the current user
+      await auth.currentUser?.reload();
+
+      onClose();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSaving(false);
+    }
+  };
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -72,16 +97,50 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
             <Ionicons name="person" size={36} color={colors.subtext} />
           </View>
 
-          <Text
-            style={[
-              styles.name,
-              {
-                color: colors.text,
-              },
-            ]}
-          >
-            {currentUser?.displayName || "Username not set"}
-          </Text>
+          {currentUser?.displayName ? (
+            <Text
+              style={[
+                styles.name,
+                {
+                  color: colors.text,
+                },
+              ]}
+            >
+              {currentUser.displayName}
+            </Text>
+          ) : (
+            <>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                placeholder="Username not set - Set your username"
+                placeholderTextColor={colors.subtext}
+                style={[
+                  styles.input,
+                  {
+                    color: colors.text,
+                    borderColor: colors.border,
+                    backgroundColor: colors.background,
+                  },
+                ]}
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.saveButton,
+                  {
+                    backgroundColor: colors.accent,
+                  },
+                ]}
+                onPress={handleSaveUsername}
+                disabled={saving}
+              >
+                <Text style={styles.saveButtonText}>
+                  {saving ? "Saving..." : "Save Username"}
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
 
           <Text
             style={[
@@ -206,5 +265,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 12,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    marginBottom: 16,
+  },
+
+  saveButton: {
+    height: 48,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
