@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
 import { useStoriesQuery } from "./useStoriesQuery";
 import AppHeader from "../../shared/components/AppHeader";
+import Footer from "../../shared/components/Footer";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -198,7 +199,7 @@ const HomeScreen = () => {
               refreshing={loading}
               onEndReached={loadMore}
               onEndReachedThreshold={0.5}
-              ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
+              ListFooterComponent={<Footer loadingMore={loadingMore} />}
               ListEmptyComponent={emptyListComponent}
             />
           </View>
