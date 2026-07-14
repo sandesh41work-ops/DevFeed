@@ -22,6 +22,12 @@ import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
 import { useStoriesQuery } from "./useStoriesQuery";
 import AppHeader from "../../shared/components/AppHeader";
 import Footer from "../../shared/components/Footer";
+import Animated, {
+  FadeInDown,
+  LinearTransition,
+  SlideInDown,
+  SlideOutUp,
+} from "react-native-reanimated";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -99,13 +105,18 @@ const HomeScreen = () => {
   }, [navigation]);
 
   const renderItem = useCallback(
-    ({ item }: { item: Story }) => <StoryCard story={item} />,
+    ({ item }: { item: Story }) => (
+      <Animated.View layout={LinearTransition.springify()}>
+        <StoryCard story={item} />
+      </Animated.View>
+    ),
     [],
   );
-
   const emptyListComponent = useMemo(() => {
     return (
-      <View
+      <Animated.View
+        entering={FadeInDown.duration(250)}
+        layout={LinearTransition.springify()}
         style={{
           flex: 1,
           justifyContent: "center",
@@ -118,7 +129,7 @@ const HomeScreen = () => {
         >
           No stories found.
         </Text>
-      </View>
+      </Animated.View>
     );
   }, []);
 
@@ -152,9 +163,13 @@ const HomeScreen = () => {
       >
         <AppHeader />
         {!isConnected && (
-          <View style={styles.networkBanner}>
+          <Animated.View
+            entering={SlideInDown}
+            exiting={SlideOutUp}
+            style={styles.networkBanner}
+          >
             <Text style={styles.networkBannerText}>No internet connection</Text>
-          </View>
+          </Animated.View>
         )}
         <SearchBar
           value={searchQuery}
@@ -192,13 +207,21 @@ const HomeScreen = () => {
         ) : (
           <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
             <FlatList
+              initialNumToRender={12}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              updateCellsBatchingPeriod={30}
+              removeClippedSubviews
+              decelerationRate="normal"
+              bounces={true}
+              overScrollMode="always"
               data={filteredStories}
               keyExtractor={(item) => item.id.toString()}
               renderItem={renderItem}
               onRefresh={refetch}
               refreshing={loading}
               onEndReached={loadMore}
-              onEndReachedThreshold={0.5}
+              onEndReachedThreshold={1}
               ListFooterComponent={<Footer loadingMore={loadingMore} />}
               ListEmptyComponent={emptyListComponent}
             />

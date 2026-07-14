@@ -1,20 +1,22 @@
 import React from "react";
 import { View } from "react-native";
 import Loader from "./Loader";
+import Animated, { FadeInDown, LinearTransition } from "react-native-reanimated";
 
 type FooterProps = {
   loadingMore: boolean;
 };
 
 const Footer = ({ loadingMore }: FooterProps) => (
-  <View
+  <Animated.View
+    layout={LinearTransition.springify()}
     style={{
-      height: 60,
+      height: 40,
       justifyContent: "center",
       alignItems: "center",
     }}
   >
     {loadingMore ? <Loader size="small" /> : null}
-  </View>
+  </Animated.View>
 );
 export default Footer;

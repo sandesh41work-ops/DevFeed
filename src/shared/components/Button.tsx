@@ -1,20 +1,19 @@
-type ButtonProps = {
-  title: string;
-  onPress: () => undefined | Promise<void> | void;
-  disabled?: boolean;
-  loading?: boolean;
-  style?: object | StyleProp<ViewStyle>;
-  textStyle?: object | StyleProp<ViewStyle>;
-};
-
+import { TextStyle, ViewStyle, StyleProp } from "react-native";
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  ViewStyle,
-  StyleProp,
 } from "react-native";
+
+type ButtonProps = {
+  title: string;
+  onPress: () => undefined | Promise<void> | void;
+  disabled?: boolean;
+  loading?: boolean;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+};
 
 const Button = ({
   title,

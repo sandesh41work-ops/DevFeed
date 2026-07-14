@@ -121,6 +121,9 @@ function RootNavigator() {
               component={ArticleDetailScreen}
               options={{
                 title: "Article",
+                animation: "slide_from_right",
+                
+                // Slide in from the right
               }}
             />
             <Stack.Screen
