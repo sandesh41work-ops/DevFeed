@@ -56,7 +56,7 @@ export default DiscussionCard;
 const styles = StyleSheet.create({
   card: {
     marginTop: 16,
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1,
     padding: 20,
   },

@@ -27,15 +27,15 @@ const ArticleDetailScreen = () => {
         <StoryDetailsCard story={story} />
 
         {
-          !showSummary ? (
-            <SummaryCard onPress={() => setShowSummary(true)} />
-          ) : (
-            <Summary
-              articleId={story.id}
+          showSummary ? (
+            <Summary articleId={story.id}
               url={story.url}
+              onClose={() => setShowSummary(false)} />
+          ) : (
+            <SummaryCard
+              onPress={() => setShowSummary(true)}
             />
           )}
-
 
         {!showDiscussion ? (
           <DiscussionCard

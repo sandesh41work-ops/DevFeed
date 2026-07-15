@@ -77,15 +77,11 @@ const StoryDetailsCard = ({ story }: Props) => {
           ? new URL(story.url).hostname.replace("www.", "")
           : "news.ycombinator.com"}
       </Text>
-     
+
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <View style={styles.infoItem}>
-            <Ionicons
-              name="arrow-up-outline"
-              size={16}
-              color={colors.accent}
-            />
+            <Ionicons name="arrow-up-outline" size={16} color={colors.accent} />
 
             <Text style={[styles.statValue, { color: colors.text }]}>
               {story.score} Points
@@ -95,45 +91,24 @@ const StoryDetailsCard = ({ story }: Props) => {
 
         <View style={[styles.infoRow, { marginTop: 18 }]}>
           <View style={styles.infoItem}>
-            <Ionicons
-              name="person-outline"
-              size={16}
-              color={colors.accent}
-            />
+            <Ionicons name="person-outline" size={16} color={colors.accent} />
 
-            <Text
-              style={[
-                styles.infoText,
-                { color: colors.subtext },
-              ]}
-            >
+            <Text style={[styles.infoText, { color: colors.subtext }]}>
               Published by{" "}
-              <Text
-                style={[
-                  styles.authorName,
-                  { color: colors.text },
-                ]}
-              >
+              <Text style={[styles.authorName, { color: colors.text }]}>
                 {story.by}
+              </Text>{" "}
+              on{" "}
+              <Text style={[styles.authorName, { color: colors.text }]}>
+                {publishedDate.toLocaleDateString(undefined, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
               </Text>
-               {" "}on{" "}
-               <Text
-               style={[
-                  styles.authorName,
-                  { color: colors.text },
-                ]}
-            >
-              {publishedDate.toLocaleDateString(undefined, {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
-            </Text>
             </Text>
           </View>
         </View>
-
-        
       </View>
       <Button
         title="Read Article"
@@ -152,7 +127,13 @@ const StoryDetailsCard = ({ story }: Props) => {
       />
 
       <View style={styles.actionRow}>
-        <TouchableOpacity style={[styles.actionButton, {width:"50%", justifyContent: "center"}]} onPress={toggleBookmark}>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { width: "50%", justifyContent: "center" },
+          ]}
+          onPress={toggleBookmark}
+        >
           <Ionicons
             name={bookmarked ? "bookmark" : "bookmark-outline"}
             size={18}
@@ -171,7 +152,13 @@ const StoryDetailsCard = ({ story }: Props) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.actionButton, {width:"50%", justifyContent: "center"}]} onPress={shareStory}>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { width: "50%", justifyContent: "center" },
+          ]}
+          onPress={shareStory}
+        >
           <Ionicons name="share-social-outline" size={18} color={colors.text} />
 
           <Text
@@ -200,8 +187,8 @@ const styles = StyleSheet.create({
 
   title: {
     fontFamily: "IBMPlexSans_600SemiBold",
-    fontSize: 25,
-    lineHeight: 34,
+    fontSize: 21,
+    lineHeight: 30,
   },
 
   domain: {
@@ -215,13 +202,6 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
 
-
-
-
-
-
-
-
   statsRow: {
     flexDirection: "row",
     marginTop: 22,
@@ -233,7 +213,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 28,
   },
-
 
   readButton: {
     backgroundColor: "#FF6600",
@@ -261,44 +240,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-
-
-
   dateHint: {
     marginLeft: 6,
     fontFamily: "IBMPlexSans_600SemiBold",
     fontSize: 13,
   },
 
- 
-
   authorName: {
-  fontFamily: "IBMPlexSans_600SemiBold",
-},
+    fontFamily: "IBMPlexSans_600SemiBold",
+  },
+  infoContainer: {
+    marginVertical: 20,
+  },
 
-infoContainer: {
-  marginVertical: 20,
-},
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 
-infoRow: {
-  flexDirection: "row",
-  alignItems: "center",
-},
+  infoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 
-infoItem: {
-  flexDirection: "row",
-  alignItems: "center",
-},
+  infoText: {
+    marginLeft: 8,
+    fontFamily: "IBMPlexSans_400Regular",
+    fontSize: 14,
+  },
 
-infoText: {
-  marginLeft: 8,
-  fontFamily: "IBMPlexSans_400Regular",
-  fontSize: 14,
-},
-
-statValue: {
-  marginLeft: 8,
-  fontFamily: "IBMPlexMono_600SemiBold",
-  fontSize: 15,
-},
+  statValue: {
+    marginLeft: 8,
+    fontFamily: "IBMPlexMono_600SemiBold",
+    fontSize: 15,
+  },
 });
