@@ -26,16 +26,10 @@ const ArticleDetailScreen = () => {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StoryDetailsCard story={story} />
 
-        {
-          showSummary ? (
-            <Summary articleId={story.id}
-              url={story.url}
-              onClose={() => setShowSummary(false)} />
-          ) : (
-            <SummaryCard
-              onPress={() => setShowSummary(true)}
-            />
-          )}
+        <SummaryCard
+          articleId={story.id}
+          url={story.url}
+        />
 
         {!showDiscussion ? (
           <DiscussionCard

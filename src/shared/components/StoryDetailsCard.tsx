@@ -81,7 +81,11 @@ const StoryDetailsCard = ({ story }: Props) => {
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <View style={styles.infoItem}>
-            <Ionicons name="arrow-up-outline" size={16} color={colors.accent} />
+            <Ionicons
+              name="arrow-up-outline"
+              size={16}
+              color={colors.accent}
+            />
 
             <Text style={[styles.statValue, { color: colors.text }]}>
               {story.score} Points
@@ -91,15 +95,34 @@ const StoryDetailsCard = ({ story }: Props) => {
 
         <View style={[styles.infoRow, { marginTop: 18 }]}>
           <View style={styles.infoItem}>
-            <Ionicons name="person-outline" size={16} color={colors.accent} />
+            <Ionicons
+              name="person-outline"
+              size={16}
+              color={colors.accent}
+            />
 
-            <Text style={[styles.infoText, { color: colors.subtext }]}>
+            <Text
+              style={[
+                styles.infoText,
+                { color: colors.subtext },
+              ]}
+            >
               Published by{" "}
-              <Text style={[styles.authorName, { color: colors.text }]}>
+              <Text
+                style={[
+                  styles.authorName,
+                  { color: colors.text },
+                ]}
+              >
                 {story.by}
-              </Text>{" "}
-              on{" "}
-              <Text style={[styles.authorName, { color: colors.text }]}>
+              </Text>
+              {" "}on{" "}
+              <Text
+                style={[
+                  styles.authorName,
+                  { color: colors.text },
+                ]}
+              >
                 {publishedDate.toLocaleDateString(undefined, {
                   day: "numeric",
                   month: "short",
@@ -109,6 +132,8 @@ const StoryDetailsCard = ({ story }: Props) => {
             </Text>
           </View>
         </View>
+
+
       </View>
       <Button
         title="Read Article"
@@ -127,13 +152,7 @@ const StoryDetailsCard = ({ story }: Props) => {
       />
 
       <View style={styles.actionRow}>
-        <TouchableOpacity
-          style={[
-            styles.actionButton,
-            { width: "50%", justifyContent: "center" },
-          ]}
-          onPress={toggleBookmark}
-        >
+        <TouchableOpacity style={[styles.actionButton, { width: "50%", justifyContent: "center" }]} onPress={toggleBookmark}>
           <Ionicons
             name={bookmarked ? "bookmark" : "bookmark-outline"}
             size={18}
@@ -152,13 +171,7 @@ const StoryDetailsCard = ({ story }: Props) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.actionButton,
-            { width: "50%", justifyContent: "center" },
-          ]}
-          onPress={shareStory}
-        >
+        <TouchableOpacity style={[styles.actionButton, { width: "50%", justifyContent: "center" }]} onPress={shareStory}>
           <Ionicons name="share-social-outline" size={18} color={colors.text} />
 
           <Text
@@ -246,10 +259,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 
+
+
   authorName: {
     fontFamily: "IBMPlexSans_600SemiBold",
   },
-  infoContainer: {
+infoContainer: {
     marginVertical: 20,
   },
 
@@ -273,5 +288,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontFamily: "IBMPlexMono_600SemiBold",
     fontSize: 15,
-  },
+  }
 });
+
