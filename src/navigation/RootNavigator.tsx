@@ -119,7 +119,7 @@ function RootNavigator() {
               options={{
                 title: "Article",
                 animation: "slide_from_right",
-
+               
                 // Slide in from the right
               }}
             />
@@ -128,6 +128,8 @@ function RootNavigator() {
               component={ArticleWebViewScreen}
               options={({ route }) => ({
                 title: route.params?.title ?? "Article",
+                animation: "slide_from_right",
+               
               })}
             />
           </>
