@@ -14,13 +14,11 @@ import Button from "../../shared/components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { logOutUser } from "../auth/authService";
 import SearchBar from "../../shared/components/SearchBar";
-import Loader from "../../shared/components/Loader";
 import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
 import { useStoriesQuery } from "./useStoriesQuery";
-import AppHeader from "../../shared/components/AppHeader";
 import Footer from "../../shared/components/Footer";
 import Animated, {
   FadeInDown,
@@ -156,12 +154,10 @@ const HomeScreen = () => {
           styles.screenContainer,
           {
             backgroundColor: colors.background,
-            // 2. Dynamically push EVERYTHING down past the phone's notch/status bar
-            paddingTop: insets.top > 0 ? insets.top : 12,
           },
         ]}
       >
-        <AppHeader />
+        {/* <AppHeader /> */}
         {!isConnected && (
           <Animated.View
             entering={SlideInDown}

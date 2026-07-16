@@ -7,12 +7,9 @@ import { useIsFocused } from "@react-navigation/native";
 import SearchBar from "../../shared/components/SearchBar";
 import { getBookmarks } from "../../shared/services/bookmarkService";
 import { FlatList } from "react-native";
-import StoryCard from "../../shared/components/StoryCard";
 import { useMemo } from "react";
 import SwipeableStoryCard from "../../shared/components/SwipeableStoryCard";
 import { removeBookmark } from "../../shared/services/bookmarkService";
-import AppHeader from "../../shared/components/AppHeader";
-
 const BookmarksScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -97,12 +94,10 @@ const renderStoryItem = useCallback(({ item }: { item: Story }) => {
         styles.screenContainer,
         {
           backgroundColor: colors.background,
-          // 2. Dynamically push EVERYTHING down past the phone's notch/status bar
-          paddingTop: insets.top > 0 ? insets.top : 12,
         },
       ]}
     >
-      <AppHeader />
+      {/* <AppHeader /> */}
       <SearchBar
         value={searchBookMark}
         onChangeText={setSearchBookMark}

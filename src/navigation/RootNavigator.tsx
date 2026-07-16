@@ -16,14 +16,24 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BookmarksScreen from "../features/bookmarks/BookmarksScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
+import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import AppHeader from "../shared/components/AppHeader";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<TabParamList>();
 
 function MainTabNavigator() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background }}>
+      <AppHeader/>
     <Tabs.Navigator
       screenOptions={({ route }) => ({
+        sceneStyle: {
+          backgroundColor: colors.background,
+        },
+        animation: "shift",
         headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.background,
@@ -62,13 +72,14 @@ function MainTabNavigator() {
         options={{ title: "Bookmarks" }}
       />
     </Tabs.Navigator>
+    </View>
   );
 }
 
 function RootNavigator() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -92,9 +103,19 @@ function RootNavigator() {
       </View>
     );
   }
-
+const navigationTheme = {
+  ...(isDark ? DarkTheme : DefaultTheme),
+  colors: {
+    ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+    background: colors.background,
+    card: colors.background,
+    text: colors.text,
+    border: colors.border,
+    primary: colors.accent,
+  },
+};
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
@@ -119,7 +140,7 @@ function RootNavigator() {
               options={{
                 title: "Article",
                 animation: "slide_from_right",
-               
+
                 // Slide in from the right
               }}
             />
@@ -129,7 +150,6 @@ function RootNavigator() {
               options={({ route }) => ({
                 title: route.params?.title ?? "Article",
                 animation: "slide_from_right",
-               
               })}
             />
           </>
