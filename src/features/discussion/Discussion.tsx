@@ -1,11 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
+  View,
 } from "react-native";
+import Animated, {
+  FadeIn,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { getStory } from "../../shared/services/hackerNewsServices";
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +32,11 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
   const [isCommentsLoading, setIsCommentsLoading] = useState(false);
 
   const { colors } = useTheme();
+
+  const rotation = useSharedValue(0);
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
   const { data: story, isLoading: isStoryLoading } = useQuery({
     queryKey: ["story", storyId],
@@ -75,6 +87,13 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
     };
   }, [expanded, story, visibleCount, allCommentIds.length, comments.length]);
 
+  useEffect(() => {
+    rotation.value = withSpring(expanded ? 180 : 0, {
+      damping: 18,
+      stiffness: 180,
+    });
+  }, [expanded]);
+
   const toggleDiscussion = () => {
     setExpanded((prev) => !prev);
   };
@@ -82,7 +101,9 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
   const isInitialLoading = isStoryLoading || (isCommentsLoading && comments.length === 0);
 
   return (
-    <View
+    <Animated.View
+      layout={LinearTransition.springify().stiffness(400)}
+      exiting={undefined}
       style={[
         styles.container,
         {
@@ -112,16 +133,16 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
               </View>
             </View>
 
-            <View style={styles.toggleRow}>
-              <Text style={[styles.toggleText, { color: colors.subtext }]}> 
-                {expanded ? "Hide" : "View"}
-              </Text>
-              <Ionicons
-                name={expanded ? "chevron-up" : "chevron-down"}
-                size={20}
-                color={colors.subtext}
-              />
-            </View>
+            <Animated.View style={chevronStyle}>
+              <View style={styles.toggleRow}>
+              
+                <Ionicons
+                  name="chevron-down"
+                  size={20}
+                  color={colors.subtext}
+                />
+              </View>
+            </Animated.View>
           </View>
         </View>
       </TouchableOpacity>
@@ -130,46 +151,54 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
         <Text style={[styles.description, { color: colors.subtext }]}> 
           Explore insights, opinions, and discussions from the Hacker News community.
         </Text>
-      ) : isInitialLoading ? (
-        <View style={styles.centeredLoading}>
-          <ActivityIndicator size="large" color={colors.accent} />
-        </View>
       ) : (
-        <>
-          {comments.map((comment: Comment) => (
-            <CommentItem key={comment.id} comment={comment} />
-          ))}
-
-          {isCommentsLoading && comments.length > 0 && (
-            <View style={styles.loadingMore}>
-              <ActivityIndicator size="small" color={colors.accent} />
-              <Text style={[styles.loadingText, { color: colors.subtext }]}>Loading more comments…</Text>
+        <Animated.View
+          entering={FadeIn.duration(200)}
+          exiting={undefined}
+          layout={LinearTransition.springify()}
+        >
+          {isInitialLoading ? (
+            <View style={styles.centeredLoading}>
+              <ActivityIndicator size="large" color={colors.accent} />
             </View>
-          )}
+          ) : (
+            <>
+              {comments.map((comment: Comment) => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))}
 
-          {comments.length < allCommentIds.length && (
-            <TouchableOpacity
-              onPress={() => setVisibleCount((prev) => prev + 10)}
-              disabled={isCommentsLoading}
-              style={isCommentsLoading ? styles.disabledButton : undefined}
-            >
-              <Text
-                style={[
-                  styles.placeholder,
-                  { color: colors.accent },
-                ]}
-              >
-                Load More Comments
-              </Text>
-            </TouchableOpacity>
+              {isCommentsLoading && comments.length > 0 && (
+                <View style={styles.loadingMore}>
+                  <Text style={[styles.loadingText, { color: colors.subtext }]}>Loading more comments…</Text>
+                  <ActivityIndicator size="small" color={colors.accent} />
+                </View>
+              )}
+
+              {comments.length < allCommentIds.length && (
+                <TouchableOpacity
+                  onPress={() => setVisibleCount((prev) => prev + 10)}
+                  disabled={isCommentsLoading}
+                  style={isCommentsLoading ? styles.disabledButton : undefined}
+                >
+                  <Text
+                    style={[
+                      styles.placeholder,
+                      { color: colors.accent },
+                    ]}
+                  >
+                    Load More Comments
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
           )}
-        </>
+        </Animated.View>
       )}
-    </View>
+    </Animated.View>
   );
 };
 
-export default DiscussionCard;
+export default memo(DiscussionCard);
 
 const styles = StyleSheet.create({
   container: {

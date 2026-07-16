@@ -1,8 +1,15 @@
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  FadeIn,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { Comment } from "../../shared/types/comment";
 import CommentHtml from "../../shared/components/Comment";
 import { useTheme } from "../../shared/hooks/useTheme";
-import { useState } from "react";
+import { useState, useEffect, memo } from "react";
 import { useCommentsQuery } from "./useCommentQuery";
 import { ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,6 +35,18 @@ const CommentItem = ({
   const { data: childComments = [], isLoading } = useCommentsQuery(
     expanded ? childIds : [],
   );
+
+  const rotation = useSharedValue(0);
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
+  useEffect(() => {
+    rotation.value = withSpring(expanded ? 180 : 0, {
+      damping: 18,
+      stiffness: 180,
+    });
+  }, [expanded]);
 
   const getTimeAgo = (timestamp?: number) => {
     if (!timestamp) return "unknown";
@@ -144,7 +163,7 @@ const CommentItem = ({
   );
 };
 
-export default CommentItem;
+export default memo(CommentItem);
 
 const styles = StyleSheet.create({
   commentWrapper: {
@@ -184,6 +203,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 12,
+    fontFamily : "IBMPlexMono_600SemiBold",
   },
 
   headerContent: {
@@ -197,7 +217,8 @@ const styles = StyleSheet.create({
   },
 
   author: {
-    fontSize: 14,
+    fontFamily: "IBMPlexSans_600SemiBold",
+    fontSize: 15,
     fontWeight: "700",
   },
 
@@ -209,11 +230,15 @@ const styles = StyleSheet.create({
 
   authorBadgeText: {
     color: "#fff",
+    fontFamily: "IBMPlexSans_600SemiBold",
     fontSize: 10,
     fontWeight: "700",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
 
   timestamp: {
+    fontFamily: "IBMPlexSans_400Regular",
     fontSize: 12,
     marginTop: 2,
   },
@@ -241,11 +266,13 @@ const styles = StyleSheet.create({
   },
 
   actionCount: {
+    fontFamily: "IBMPlexSans_600SemiBold",
     fontSize: 12,
     fontWeight: "600",
   },
 
   actionText: {
+    fontFamily: "IBMPlexSans_400Regular",
     fontSize: 12,
     fontWeight: "600",
   },
