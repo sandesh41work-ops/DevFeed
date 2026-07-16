@@ -66,7 +66,12 @@ const CommentItem = ({
   };
 
   return (
-    <View style={[styles.commentWrapper, level > 0 && { marginLeft: Math.min(level*8, 36) }]}>
+    <View
+      style={[
+        styles.commentWrapper,
+        level > 0 && { marginLeft: Math.min(level * 8, 36) },
+      ]}
+    >
       {level > 0 && (
         <View style={[styles.threadLine, { backgroundColor: colors.border }]} />
       )}
@@ -203,7 +208,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 12,
-    fontFamily : "IBMPlexMono_600SemiBold",
+    fontFamily: "IBMPlexMono_600SemiBold",
   },
 
   headerContent: {

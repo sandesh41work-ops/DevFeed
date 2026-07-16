@@ -15,7 +15,7 @@ import { useTheme } from "../shared/hooks/useTheme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BookmarksScreen from "../features/bookmarks/BookmarksScreen";
 import { Ionicons } from "@expo/vector-icons";
-import {View} from "react-native"
+import { View } from "react-native";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<TabParamList>();
 
@@ -79,22 +79,19 @@ function RootNavigator() {
   }, []);
 
   if (loading) {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: colors.background,
-      }}
-    >
-      <ActivityIndicator
-        size="large"
-        color={colors.accent}
-      />
-    </View>
-  );
-}
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
@@ -122,7 +119,7 @@ function RootNavigator() {
               options={{
                 title: "Article",
                 animation: "slide_from_right",
-                
+
                 // Slide in from the right
               }}
             />

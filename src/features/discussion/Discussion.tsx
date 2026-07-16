@@ -98,7 +98,8 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
     setExpanded((prev) => !prev);
   };
 
-  const isInitialLoading = isStoryLoading || (isCommentsLoading && comments.length === 0);
+  const isInitialLoading =
+    isStoryLoading || (isCommentsLoading && comments.length === 0);
 
   return (
     <Animated.View
@@ -112,11 +113,8 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
         },
       ]}
     >
-      <TouchableOpacity
-        activeOpacity={0.85}
-        onPress={toggleDiscussion}
-      >
-        <View style={[styles.header, { borderBottomColor: colors.border }]}> 
+      <TouchableOpacity activeOpacity={0.85} onPress={toggleDiscussion}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <View style={styles.headerTop}>
             <View style={styles.titleContainer}>
               <Ionicons
@@ -126,8 +124,10 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
               />
 
               <View>
-                <Text style={[styles.title, { color: colors.text }]}>Discussion</Text>
-                <Text style={[styles.count, { color: colors.subtext }]}> 
+                <Text style={[styles.title, { color: colors.text }]}>
+                  Discussion
+                </Text>
+                <Text style={[styles.count, { color: colors.subtext }]}>
                   {commentCount} comments
                 </Text>
               </View>
@@ -135,7 +135,6 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
 
             <Animated.View style={chevronStyle}>
               <View style={styles.toggleRow}>
-              
                 <Ionicons
                   name="chevron-down"
                   size={20}
@@ -148,8 +147,9 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
       </TouchableOpacity>
 
       {!expanded ? (
-        <Text style={[styles.description, { color: colors.subtext }]}> 
-          Explore insights, opinions, and discussions from the Hacker News community.
+        <Text style={[styles.description, { color: colors.subtext }]}>
+          Explore insights, opinions, and discussions from the Hacker News
+          community.
         </Text>
       ) : (
         <Animated.View
@@ -169,7 +169,9 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
 
               {isCommentsLoading && comments.length > 0 && (
                 <View style={styles.loadingMore}>
-                  <Text style={[styles.loadingText, { color: colors.subtext }]}>Loading more comments…</Text>
+                  <Text style={[styles.loadingText, { color: colors.subtext }]}>
+                    Loading more comments…
+                  </Text>
                   <ActivityIndicator size="small" color={colors.accent} />
                 </View>
               )}
@@ -180,12 +182,7 @@ const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
                   disabled={isCommentsLoading}
                   style={isCommentsLoading ? styles.disabledButton : undefined}
                 >
-                  <Text
-                    style={[
-                      styles.placeholder,
-                      { color: colors.accent },
-                    ]}
-                  >
+                  <Text style={[styles.placeholder, { color: colors.accent }]}>
                     Load More Comments
                   </Text>
                 </TouchableOpacity>
