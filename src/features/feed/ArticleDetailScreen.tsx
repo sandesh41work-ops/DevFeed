@@ -1,22 +1,17 @@
-import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Story } from "../../shared/types/story";
 import { useTheme } from "../../shared/hooks/useTheme";
 import StoryDetailsCard from "../../shared/components/StoryDetailsCard";
-import Discussion from "../discussion/Discussion";
-import { useState } from "react";
-import DiscussionCard from "../../shared/components/DiscussionCard";
+import DiscussionCard from "../discussion/Discussion";
 import SummaryCard from "../../shared/components/SummaryCard";
-import Summary from "../summary/Summary";
-
+import Discussion from "../discussion/Discussion";
 
 const ArticleDetailScreen = () => {
   const route = useRoute<any>();
   const { story }: { story: Story } = route.params;
   const { colors } = useTheme();
-  const [showDiscussion, setShowDiscussion] = useState<boolean>(false);
   const commentCount = story.descendants ?? 0;
-  const [showSummary, setShowSummary] = useState<boolean>(false)
 
   return (
     <ScrollView
@@ -25,25 +20,8 @@ const ArticleDetailScreen = () => {
     >
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StoryDetailsCard story={story} />
-
-        <SummaryCard
-          articleId={story.id}
-          url={story.url}
-        />
-
-        {!showDiscussion ? (
-          <DiscussionCard
-            commentCount={commentCount}
-            onPress={() => setShowDiscussion(true)}
-          />
-        ) : (
-          <Discussion
-            storyId={story.id}
-            commentCount={commentCount}
-          />
-        )}
-
-
+        <SummaryCard articleId={story.id} url={story.url} />
+        <DiscussionCard storyId={story.id} commentCount={commentCount} />
       </View>
     </ScrollView>
   );
@@ -100,7 +78,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#FF6600", // Hacker News orange
+    color: "#FF6600", 
   },
   statLabel: {
     marginTop: 4,
@@ -123,3 +101,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+ 

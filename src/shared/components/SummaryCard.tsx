@@ -26,12 +26,9 @@ type Props = {
 
 const SummaryCard = ({ articleId, url }: Props) => {
   const { colors } = useTheme();
-
   const [expanded, setExpanded] = useState(false);
   const [enabled, setEnabled] = useState(false);
-
   const rotation = useSharedValue(0);
-
   const chevronStyle = useAnimatedStyle(() => ({
     transform: [
       {
@@ -69,7 +66,7 @@ const SummaryCard = ({ articleId, url }: Props) => {
       style={[
         styles.card,
         {
-            overflow: "hidden",
+          overflow: "hidden",
           backgroundColor: colors.card,
           borderColor: colors.border,
         },
@@ -186,10 +183,7 @@ const SummaryCard = ({ articleId, url }: Props) => {
           )}
 
           {!isLoading && !error && summary && (
-            <Animated.View
-              entering={FadeIn}
-              exiting={undefined}
-            >
+            <Animated.View entering={FadeIn} exiting={undefined}>
               {data?.title && (
                 <Text
                   style={[
