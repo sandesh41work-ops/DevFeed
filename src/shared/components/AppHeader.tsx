@@ -4,6 +4,7 @@ import { useTheme } from "../hooks/useTheme";
 import { memo } from "react";
 import { useState } from "react";
 import UserManagementModal from "./UserMangementModal";
+import { fonts } from "../constants/fonts";
 
 const AppHeader = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,6 +59,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 24,
     fontWeight: "700",
+    fontFamily: fonts.semibold,
     color: "#A33E00",
   },
 

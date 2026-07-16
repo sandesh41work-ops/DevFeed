@@ -5,8 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../hooks/useTheme";
 import { Story } from "../types/story";
 import Favicon from "./FavIcon";
-import { useFonts, IBMPlexSans_600SemiBold, IBMPlexSans_400Regular } from '@expo-google-fonts/ibm-plex-sans';
-import { IBMPlexMono_600SemiBold } from '@expo-google-fonts/ibm-plex-mono';
+import { fonts } from "../constants/fonts";
 const HOT_THRESHOLD = 500;
 
 // 4px baseline grid — every margin/padding below is a multiple of this,
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
   },
 
   domain: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     marginLeft: space(2),
     flexShrink: 1,
     fontSize: 12.5,
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 16.5,
     fontWeight: "500",
     lineHeight: 23,
@@ -182,6 +181,7 @@ const styles = StyleSheet.create({
   },
 
   meta: {
+    fontFamily: fonts.semibold,
     fontSize: 12.5,
     fontWeight: "400",
     flexShrink: 1,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
 
   footerText: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     marginLeft: space(1),
     fontSize: 12.5,
     fontWeight: "500",

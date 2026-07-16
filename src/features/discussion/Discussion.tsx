@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Comment } from "../../shared/types/comment";
 import CommentItem from "./CommentItem";
 import { Ionicons } from "@expo/vector-icons";
+import { fonts } from "../../shared/constants/fonts";
 
 type DiscussionProps = {
   storyId: number;
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "700",
+    fontFamily: fonts.semibold,
   },
 
   titleContainer: {
@@ -247,6 +249,7 @@ const styles = StyleSheet.create({
   sortText: {
     fontSize: 12,
     fontWeight: "600",
+    fontFamily: fonts.semibold,
   },
 
   toggleRow: {
@@ -258,11 +261,13 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: fonts.semibold,
   },
 
   count: {
     marginTop: 4,
     fontSize: 14,
+    fontFamily: fonts.regular,
   },
 
   comment: {
@@ -293,6 +298,7 @@ const styles = StyleSheet.create({
 
   loadingText: {
     fontSize: 14,
+    fontFamily: fonts.regular,
   },
 
   centeredLoading: {
@@ -305,6 +311,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 14,
     lineHeight: 20,
+    fontFamily: fonts.regular,
   },
 
   replyCount: {
@@ -315,6 +322,7 @@ const styles = StyleSheet.create({
   placeholder: {
     marginTop: 8,
     fontWeight: "600",
+    fontFamily: fonts.semibold,
     textAlign: "center",
   },
 

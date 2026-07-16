@@ -1,4 +1,5 @@
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
+import { fonts } from "../../shared/constants/fonts";
 import Animated, {
   FadeIn,
   LinearTransition,
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 12,
-    fontFamily: "IBMPlexMono_600SemiBold",
+    fontFamily: fonts.mono,
   },
 
   headerContent: {
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
   },
 
   author: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
 
   authorBadgeText: {
     color: "#fff",
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 0.5,
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
   },
 
   timestamp: {
-    fontFamily: "IBMPlexSans_400Regular",
+    fontFamily: fonts.regular,
     fontSize: 12,
     marginTop: 2,
   },
@@ -271,13 +272,13 @@ const styles = StyleSheet.create({
   },
 
   actionCount: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 12,
     fontWeight: "600",
   },
 
   actionText: {
-    fontFamily: "IBMPlexSans_400Regular",
+    fontFamily: fonts.regular,
     fontSize: 12,
     fontWeight: "600",
   },

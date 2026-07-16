@@ -11,6 +11,7 @@ import {
 } from "../services/bookmarkService";
 import { Ionicons } from "@expo/vector-icons";
 import { Share } from "react-native";
+import { fonts } from "../constants/fonts";
 type Props = {
   story: Story;
 };
@@ -199,13 +200,13 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 21,
     lineHeight: 30,
   },
 
   domain: {
-    fontFamily: "IBMPlexSans_400Regular",
+    fontFamily: fonts.regular,
     fontSize: 14,
     marginTop: 12,
   },
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
   },
 
   readButtonText: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 16,
   },
 
@@ -249,20 +250,20 @@ const styles = StyleSheet.create({
 
   actionText: {
     marginLeft: 6,
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 14,
   },
 
   dateHint: {
     marginLeft: 6,
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     fontSize: 13,
   },
 
 
 
   authorName: {
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
   },
 infoContainer: {
     marginVertical: 20,
@@ -280,13 +281,13 @@ infoContainer: {
 
   infoText: {
     marginLeft: 8,
-    fontFamily: "IBMPlexSans_400Regular",
+    fontFamily: fonts.regular,
     fontSize: 14,
   },
 
   statValue: {
     marginLeft: 8,
-    fontFamily: "IBMPlexMono_600SemiBold",
+    fontFamily: fonts.mono,
     fontSize: 15,
   }
 });

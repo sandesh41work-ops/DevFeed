@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { fonts } from "../constants/fonts";
 
 type ButtonProps = {
   title: string;
@@ -32,7 +33,7 @@ const Button = ({
       {loading ? (
         <ActivityIndicator color="#ffff" size="small" />
       ) : (
-        <Text style={[styles.buttonText, textStyle]}> {title} </Text>
+        <Text style={[styles.buttonText, textStyle, { fontFamily: fonts.semibold }]}> {title} </Text>
       )}
     </TouchableOpacity>
   );

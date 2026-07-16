@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { fonts } from "../constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   FadeIn,
@@ -271,18 +272,18 @@ const styles = StyleSheet.create({
 
   heading: {
     fontSize: 18,
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
   },
 
   subHeading: {
     fontSize: 13,
     marginTop: 2,
-    fontFamily: "IBMPlexSans_400Regular",
+    fontFamily: fonts.regular,
   },
 
   articleTitle: {
     fontSize: 16,
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
     marginBottom: 18,
     paddingHorizontal: 16,
   },
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 12,
     marginLeft: 12,
-    fontFamily: "IBMPlexSans_400Regular",
+    fontFamily: fonts.regular,
   },
 
   center: {
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
   message: {
     marginTop: 12,
     fontSize: 15,
-    fontFamily: "IBMPlexSans_400Regular",
+    fontFamily: fonts.regular,
   },
 
   retryButton: {
@@ -322,6 +323,6 @@ const styles = StyleSheet.create({
 
   retryText: {
     fontSize: 15,
-    fontFamily: "IBMPlexSans_600SemiBold",
+    fontFamily: fonts.semibold,
   },
 });
