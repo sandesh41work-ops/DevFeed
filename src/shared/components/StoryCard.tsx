@@ -6,6 +6,7 @@ import { useTheme } from "../hooks/useTheme";
 import { Story } from "../types/story";
 import Favicon from "./FavIcon";
 import { fonts } from "../constants/fonts";
+import { LinearGradient } from "expo-linear-gradient";
 const HOT_THRESHOLD = 500;
 
 // 4px baseline grid — every margin/padding below is a multiple of this,
@@ -53,7 +54,8 @@ const StoryCard = memo(({ story }: { story: Story }) => {
         styles.card,
         {
           backgroundColor: colors.card,
-          borderColor: isDark ? "#232323" : "#F0F0F0",
+
+          borderColor: isDark ? "#232323" : "#a92727",
           opacity: pressed ? 0.85 : 1,
         },
       ]}
@@ -61,68 +63,75 @@ const StoryCard = memo(({ story }: { story: Story }) => {
       accessibilityLabel={`${story.title}, ${story.score} points, by ${story.by}, ${timeAgo} ago, ${commentCount} comments${isHot ? ", trending" : ""}`}
       accessibilityHint="Opens the full story"
     >
-      <View style={styles.header}>
-        <Favicon url={story.url} />
-        <Text
-          style={[styles.domain, { color: colors.subtext }]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {domain}
-        </Text>
-      </View>
-
-      <Text
-        style={[styles.title, { color: colors.text }]}
-        numberOfLines={3}
-        ellipsizeMode="tail"
+      <LinearGradient
+        colors={["rgba(255,102,0,0.03)", "rgba(255,102,0,0)"]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={styles.gradient}
       >
-        {story.title}
-      </Text>
-
-      <View style={styles.footer}>
-        <Text style={[styles.meta, { color: colors.subtext }]}>
-          {story.score} points
-        </Text>
-        <Dot color={isDark ? "#3A3A3A" : "#D9D9D9"} />
-        <Text
-          style={[styles.meta, { color: colors.subtext }]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {story.by}
-        </Text>
-        <Dot color={isDark ? "#3A3A3A" : "#D9D9D9"} />
-        <Text style={[styles.meta, { color: colors.subtext }]}>
-          {timeAgo} ago
-        </Text>
-
-        <View style={styles.spacer} />
-
-        {isHot && (
-          <Ionicons
-            name="flame-outline"
-            size={14}
-            color={colors.accent ?? "#C4501E"}
-            style={styles.hotIcon}
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-          />
-        )}
-
-        <View style={styles.footerItem}>
-          <Ionicons
-            name="chatbubble-outline"
-            size={14}
-            color={colors.subtext}
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-          />
-          <Text style={[styles.footerText, { color: colors.subtext }]}>
-            {commentCount}
+        <View style={styles.header}>
+          <Favicon url={story.url} />
+          <Text
+            style={[styles.domain, { color: colors.subtext }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {domain}
           </Text>
         </View>
-      </View>
+
+        <Text
+          style={[styles.title, { color: colors.text }]}
+          numberOfLines={3}
+          ellipsizeMode="tail"
+        >
+          {story.title}
+        </Text>
+
+        <View style={styles.footer}>
+          <Text style={[styles.meta, { color: colors.subtext }]}>
+            {story.score} upvotes
+          </Text>
+          <Dot color={isDark ? "#3A3A3A" : "#D9D9D9"} />
+          <Text
+            style={[styles.meta, { color: colors.subtext }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {story.by}
+          </Text>
+          <Dot color={isDark ? "#3A3A3A" : "#D9D9D9"} />
+          <Text style={[styles.meta, { color: colors.subtext }]}>
+            {timeAgo} ago
+          </Text>
+
+          <View style={styles.spacer} />
+
+          {isHot && (
+            <Ionicons
+              name="flame-outline"
+              size={14}
+              color={colors.accent ?? "#C4501E"}
+              style={styles.hotIcon}
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+            />
+          )}
+
+          <View style={styles.footerItem}>
+            <Ionicons
+              name="chatbubble-outline"
+              size={14}
+              color={colors.subtext}
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+            />
+            <Text style={[styles.footerText, { color: colors.subtext }]}>
+              {commentCount}
+            </Text>
+          </View>
+        </View>
+      </LinearGradient>
     </Pressable>
   );
 });
@@ -142,9 +151,8 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: space(4),
     marginBottom: space(3),
-    paddingHorizontal: space(5),
-    paddingVertical: space(5),
     borderRadius: space(4.5),
+
     borderWidth: StyleSheet.hairlineWidth,
     // Ensures the whole row clears the 44pt minimum touch target even
     // if title + footer collapse to a single short line.
@@ -213,5 +221,11 @@ const styles = StyleSheet.create({
     marginLeft: space(1),
     fontSize: 12.5,
     fontWeight: "500",
+  },
+  gradient: {
+    paddingHorizontal: space(5),
+    paddingVertical: space(5),
+    flex: 1,
+    borderRadius: space(4.5),
   },
 });
