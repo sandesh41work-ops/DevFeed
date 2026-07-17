@@ -41,6 +41,9 @@ const HomeScreen = () => {
   const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery();
   const [loading, setLoading] = useState(false);
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
+  const showSkeletons =
+    stories.length === 0 && (isLoading || fetchingFirstPage);
+
   useEffect(() => {
     // console.log(
     //   "isLoading : ",
@@ -50,6 +53,8 @@ const HomeScreen = () => {
     // );
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
+
+
   const loadFirstPage = useCallback(
     async (ids: number[]) => {
       setFetchingFirstPage(true);
@@ -73,7 +78,8 @@ const HomeScreen = () => {
       loadFirstPage(allIds);
     }
   }, [allIds]);
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
@@ -82,16 +88,16 @@ const HomeScreen = () => {
     const nextIds = allIds.slice(start, end); // use allIds from React Query
     if (nextIds.length === 0) return;
     try {
-
       isFetching.current = true;
       setLoadingMore(true);
-            await sleep(1500);
+      await sleep(1500);
 
-      const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
+      const newStories = await Promise.all(
+        nextIds.map((id: number) => getStory(id)),
+      );
       setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
-            await sleep(1500);
-
+      await sleep(1500);
     } catch (e) {
       console.warn(e);
     } finally {
@@ -180,7 +186,8 @@ const HomeScreen = () => {
             onChangeText={setSearchQuery}
             placeholder="Search stories..."
           />
-          {loading ? (
+          
+          {showSkeletons ? (
             <FlatList
               data={[1, 2, 3, 4, 5, 6, 7, 8]}
               keyExtractor={(item) => item.toString()}
