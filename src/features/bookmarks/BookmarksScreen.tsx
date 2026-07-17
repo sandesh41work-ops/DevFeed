@@ -10,6 +10,7 @@ import { FlatList } from "react-native";
 import { useMemo } from "react";
 import SwipeableStoryCard from "../../shared/components/SwipeableStoryCard";
 import { removeBookmark } from "../../shared/services/bookmarkService";
+import EmptyState from "../../shared/components/EmptyState";
 const BookmarksScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -43,41 +44,26 @@ const BookmarksScreen = () => {
 
   const emptyBookMarksListCompnent = useMemo(() => {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: 50,
-        }}
-      >
-        <Text
-          style={[{ fontSize: 16, color: "#262424" }, { color: colors.text }]}
-        >
-          No BookMarks Found...
-        </Text>
-        <Text
-          style={[{ fontSize: 16, color: "#262424", marginTop: 25 }, { color: colors.subtext }]}
-        >
-          Tap the bookmark button on any article
-        </Text>
-      </View>
+      <EmptyState
+        image={require("../../../assets/illustrations/no-bookmarks.png")}
+        title="Nothing saved yet"
+        subtitle="Tap the bookmark icon on any story to build your personal reading list."
+        imageSize={220}
+      />
     );
   }, []);
 
-const handleDelete = useCallback(async (id: number) => {
-  await removeBookmark(id)
-  setStories(prev => prev.filter(s => s.id !== id))
-}, [])
+  const handleDelete = useCallback(async (id: number) => {
+    await removeBookmark(id);
+    setStories((prev) => prev.filter((s) => s.id !== id));
+  }, []);
 
-const renderStoryItem = useCallback(({ item }: { item: Story }) => {
-  return (
-    <SwipeableStoryCard
-      story={item}
-      onDelete={handleDelete}
-    />
-  )
-}, [handleDelete])
+  const renderStoryItem = useCallback(
+    ({ item }: { item: Story }) => {
+      return <SwipeableStoryCard story={item} onDelete={handleDelete} />;
+    },
+    [handleDelete],
+  );
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -87,7 +73,7 @@ const renderStoryItem = useCallback(({ item }: { item: Story }) => {
     } finally {
       setRefreshing(false);
     }
-  }, [])
+  }, []);
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View

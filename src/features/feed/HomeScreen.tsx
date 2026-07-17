@@ -16,7 +16,6 @@ import { logOutUser } from "../auth/authService";
 import SearchBar from "../../shared/components/SearchBar";
 import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useTheme } from "../../shared/hooks/useTheme";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
 import { useStoriesQuery } from "./useStoriesQuery";
 import Footer from "../../shared/components/Footer";
@@ -136,9 +135,9 @@ const HomeScreen = () => {
         }}
       >
         <EmptyState
-          buttonText="Clear Search"
-          onPress={() => setSearchQuery("")}
-        />
+               image={require("../../../assets/illustrations/no_results_light.png")}
+               
+             />
       </Animated.View>
     );
   }, []);

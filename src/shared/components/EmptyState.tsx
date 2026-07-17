@@ -17,6 +17,7 @@ type Props = {
   subtitle?: string;
   buttonText?: string;
   onPress?: () => void;
+  imageSize?: number;
 };
 
 const space = (n: number) => n * 4;
@@ -28,6 +29,7 @@ export default function EmptyState({
   subtitle,
   buttonText,
   onPress,
+  imageSize = Math.min(width * 0.8, 320),
 }: Props) {
   const { colors } = useTheme();
 
@@ -41,9 +43,15 @@ export default function EmptyState({
       ]}
     >
       <Image
-        source={require("../../../assets/illustrations/no_results_light.png")}
+        source={image}
         resizeMode="contain"
-        style={styles.image}
+        style={[
+          styles.image,
+          {
+            width: imageSize,
+            height: imageSize,
+          },
+        ]}
       />
 
       <Text
@@ -54,7 +62,7 @@ export default function EmptyState({
           },
         ]}
       >
-        No Results Found !
+        {title ?? "No Results Found!"}
       </Text>
 
       <Text
@@ -65,9 +73,9 @@ export default function EmptyState({
           },
         ]}
       >
-        Try another keyword or browse today's top Hacker News stories.
+        {subtitle ??
+          "Try another keyword or browse today's top Hacker News stories."}
       </Text>
-
       {buttonText && onPress && (
         <Pressable
           onPress={onPress}
