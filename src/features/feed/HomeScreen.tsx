@@ -26,6 +26,7 @@ import Animated, {
   SlideInDown,
   SlideOutUp,
 } from "react-native-reanimated";
+import EmptyState from "../../shared/components/EmptyState";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -54,7 +55,6 @@ const HomeScreen = () => {
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
 
-
   const loadFirstPage = useCallback(
     async (ids: number[]) => {
       setFetchingFirstPage(true);
@@ -79,6 +79,7 @@ const HomeScreen = () => {
     }
   }, [allIds]);
   const sleep = (ms: number) =>
+
     new Promise((resolve) => setTimeout(resolve, ms));
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
@@ -90,14 +91,14 @@ const HomeScreen = () => {
     try {
       isFetching.current = true;
       setLoadingMore(true);
-      await sleep(1500);
+      // await sleep(1500);
 
       const newStories = await Promise.all(
         nextIds.map((id: number) => getStory(id)),
       );
       setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
-      await sleep(1500);
+      // await sleep(1500);
     } catch (e) {
       console.warn(e);
     } finally {
@@ -131,14 +132,13 @@ const HomeScreen = () => {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          marginTop: 50,
+          // marginTop: 50,
         }}
       >
-        <Text
-          style={[{ fontSize: 16, color: "#262424" }, { color: colors.text }]}
-        >
-          No stories found.
-        </Text>
+        <EmptyState
+          buttonText="Clear Search"
+          onPress={() => setSearchQuery("")}
+        />
       </Animated.View>
     );
   }, []);
@@ -169,7 +169,6 @@ const HomeScreen = () => {
             },
           ]}
         >
-          {/* <AppHeader /> */}
           {!isConnected && (
             <Animated.View
               entering={SlideInDown}
@@ -186,7 +185,7 @@ const HomeScreen = () => {
             onChangeText={setSearchQuery}
             placeholder="Search stories..."
           />
-          
+
           {showSkeletons ? (
             <FlatList
               data={[1, 2, 3, 4, 5, 6, 7, 8]}
@@ -227,13 +226,26 @@ const HomeScreen = () => {
                 bounces={true}
                 overScrollMode="always"
                 data={filteredStories}
+                // data={[]}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
                 onRefresh={refetch}
                 refreshing={loading}
                 onEndReached={loadMore}
                 onEndReachedThreshold={1}
-                ListFooterComponent={<Footer loadingMore={loadingMore} />}
+                // ListFooterComponent={
+                //   filteredStories.length > 0 ? (
+                //     <Footer loadingMore={loadingMore} />
+                //   ) : null
+
+                // } 
+                // 
+                 ListFooterComponent={
+                  filteredStories.length > 0 ? (
+                    <Footer loadingMore={loadingMore} />
+                  ) : null
+                }
+                // ListFooterComponent={null}
                 ListEmptyComponent={emptyListComponent}
               />
             </View>
