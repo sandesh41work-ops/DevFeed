@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LayoutChangeEvent, StyleSheet, View } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import Svg, { Rect } from "react-native-svg";
 import Animated, {
   useAnimatedProps,
   useSharedValue,
@@ -29,13 +29,8 @@ export default function AnimatedBorder({
 
   const offset = useSharedValue(0);
 
-  const perimeter =
-    2 * (size.width + size.height - 2 * strokeWidth);
+  const perimeter = 2 * (size.width + size.height - 2 * strokeWidth);
   const segmentLength = Math.min(80, Math.max(40, perimeter * 0.12));
-  const gradientId = useMemo(
-    () => `beamGradient-${Math.random().toString(36).slice(2)}`,
-    []
-  );
 
   useEffect(() => {
     if (!size.width || !size.height) return;
@@ -46,7 +41,7 @@ export default function AnimatedBorder({
         easing: Easing.linear,
       }),
       -1,
-      false
+      false,
     );
   }, [size, perimeter]);
 
@@ -57,9 +52,7 @@ export default function AnimatedBorder({
   return (
     <View
       style={StyleSheet.absoluteFill}
-      onLayout={(e: LayoutChangeEvent) =>
-        setSize(e.nativeEvent.layout)
-      }
+      onLayout={(e: LayoutChangeEvent) => setSize(e.nativeEvent.layout)}
     >
       <Svg
         pointerEvents="none"
@@ -67,14 +60,6 @@ export default function AnimatedBorder({
         height={size.height}
         style={StyleSheet.absoluteFill}
       >
-        <Defs>
-          <LinearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={color} stopOpacity="0" />
-            <Stop offset="20%" stopColor={color} stopOpacity="0.35" />
-            <Stop offset="50%" stopColor={color} stopOpacity="0.95" />
-            <Stop offset="100%" stopColor={color} stopOpacity="0" />
-          </LinearGradient>
-        </Defs>
         <Rect
           x={strokeWidth / 2}
           y={strokeWidth / 2}
@@ -85,7 +70,7 @@ export default function AnimatedBorder({
           fill="none"
           stroke={color}
           strokeWidth={strokeWidth / 2}
-          opacity={0.12}
+          opacity={0.15}
         />
         <AnimatedRect
           x={strokeWidth / 2}
@@ -95,12 +80,11 @@ export default function AnimatedBorder({
           rx={borderRadius}
           ry={borderRadius}
           fill="none"
-          stroke={`url(#${gradientId})`}
-          strokeWidth={strokeWidth * 1.5}
-          strokeDasharray={[segmentLength, Math.max(perimeter - segmentLength, 1)]}
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeDasharray={[segmentLength, perimeter]}
           animatedProps={animatedProps}
           strokeLinecap="round"
-          opacity={0.95}
         />
       </Svg>
     </View>

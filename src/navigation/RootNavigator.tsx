@@ -26,52 +26,58 @@ function MainTabNavigator() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background }}>
-      <AppHeader/>
-    <Tabs.Navigator
-      screenOptions={({ route }) => ({
-        sceneStyle: {
-          backgroundColor: colors.background,
-        },
-        animation: "shift",
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.background,
-          height: 70,
-          paddingBottom: 8, // Adjusts spacing from the absolute physical bottom edge
-          paddingTop: 8, // Adjusts spacing from the top edge of the bar
-        },
-        tabBarItemStyle: {
-          justifyContent: "center", // Centering the inner item contents vertically
-          alignItems: "center", // Centering the inner item contents horizontally
-        },
-        tabBarActiveTintColor: colors.text,
-        tabBarInactiveTintColor: colors.subtext,
-
-        tabBarIcon: ({ color, size, focused }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
-
-          if (route.name === "Feed") {
-            iconName = focused ? "newspaper" : "newspaper-outline";
-          } else {
-            iconName = focused ? "bookmark" : "bookmark-outline";
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
+    <View
+      style={{
+        flex: 1,
+        paddingTop: insets.top,
+        backgroundColor: colors.background,
+      }}
     >
-      <Tabs.Screen
-        name="Feed"
-        component={HomeScreen}
-        options={{ title: "Feed" }}
-      />
-      <Tabs.Screen
-        name="Bookmarks"
-        component={BookmarksScreen}
-        options={{ title: "Bookmarks" }}
-      />
-    </Tabs.Navigator>
+      <AppHeader />
+      <Tabs.Navigator
+        screenOptions={({ route }) => ({
+          sceneStyle: {
+            backgroundColor: colors.background,
+          },
+          animation: "shift",
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: colors.background,
+            height: 70,
+            paddingBottom: 8, // Adjusts spacing from the absolute physical bottom edge
+            paddingTop: 8, // Adjusts spacing from the top edge of the bar
+          },
+          tabBarItemStyle: {
+            justifyContent: "center", // Centering the inner item contents vertically
+            alignItems: "center", // Centering the inner item contents horizontally
+          },
+          tabBarActiveTintColor: colors.text,
+          tabBarInactiveTintColor: colors.subtext,
+
+          tabBarIcon: ({ color, size, focused }) => {
+            let iconName: keyof typeof Ionicons.glyphMap;
+
+            if (route.name === "Feed") {
+              iconName = focused ? "newspaper" : "newspaper-outline";
+            } else {
+              iconName = focused ? "bookmark" : "bookmark-outline";
+            }
+
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+      >
+        <Tabs.Screen
+          name="Feed"
+          component={HomeScreen}
+          options={{ title: "Feed" }}
+        />
+        <Tabs.Screen
+          name="Bookmarks"
+          component={BookmarksScreen}
+          options={{ title: "Bookmarks" }}
+        />
+      </Tabs.Navigator>
     </View>
   );
 }
@@ -103,21 +109,24 @@ function RootNavigator() {
       </View>
     );
   }
-const navigationTheme = {
-  ...(isDark ? DarkTheme : DefaultTheme),
-  colors: {
-    ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
-    background: colors.background,
-    card: colors.background,
-    text: colors.text,
-    border: colors.border,
-    primary: colors.accent,
-  },
-};
+  const navigationTheme = {
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+      background: colors.background,
+      card: colors.background,
+      text: colors.text,
+      border: colors.border,
+      primary: colors.accent,
+    },
+  };
   return (
     <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
         screenOptions={{
+          contentStyle: {
+            backgroundColor: colors.background,
+          },
           headerStyle: {
             backgroundColor: colors.background,
           },
@@ -140,8 +149,8 @@ const navigationTheme = {
               options={{
                 title: "Article",
                 animation: "slide_from_right",
-
-                // Slide in from the right
+                headerBackButtonDisplayMode: "minimal",
+                presentation: "card",
               }}
             />
             <Stack.Screen

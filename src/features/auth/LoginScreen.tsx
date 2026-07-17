@@ -100,90 +100,90 @@ const LoginScreen = () => {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: colors.background,
-            },
-          ]}
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
         >
           <View
             style={[
-              styles.card,
+              styles.container,
               {
-                backgroundColor: colors.card,
-                shadowColor: isDark ? "#000" : "#000",
+                backgroundColor: colors.background,
               },
             ]}
           >
-            <Text
+            <View
               style={[
-                styles.subtitle,
+                styles.card,
                 {
-                  color: colors.subtext,
+                  backgroundColor: colors.card,
+                  shadowColor: isDark ? "#000" : "#000",
                 },
               ]}
             >
-              Login to continue
-            </Text>
-
-            <Input
-              value={email}
-              placeholder="Enter your email"
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-
-            <Input
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={true}
-            />
-
-            {error ? (
-              <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
-            ) : null}
-
-            <Button
-              title="Login"
-              disabled={!email || !password}
-              loading={loading}
-              onPress={() => {
-                handleLogin(email, password);
-              }}
-            />
-
-            <TouchableOpacity
-              style={styles.signupLink}
-              onPress={() => navigation.navigate("SignUp")}
-            >
               <Text
                 style={[
-                  styles.signupLinkText,
+                  styles.subtitle,
                   {
-                    color: colors.accent,
+                    color: colors.subtext,
                   },
                 ]}
               >
-                Don't have an account? Register
+                Login to continue
               </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
-      </ScrollView>
-    </KeyboardAvoidingView>
+              <Input
+                value={email}
+                placeholder="Enter your email"
+                onChangeText={setEmail}
+                keyboardType="email-address"
+              />
+
+              <Input
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={true}
+              />
+
+              {error ? (
+                <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+              ) : null}
+
+              <Button
+                title="Login"
+                disabled={!email || !password}
+                loading={loading}
+                onPress={() => {
+                  handleLogin(email, password);
+                }}
+              />
+
+              <TouchableOpacity
+                style={styles.signupLink}
+                onPress={() => navigation.navigate("SignUp")}
+              >
+                <Text
+                  style={[
+                    styles.signupLinkText,
+                    {
+                      color: colors.accent,
+                    },
+                  ]}
+                >
+                  Don't have an account? Register
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

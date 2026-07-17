@@ -89,28 +89,30 @@ const renderStoryItem = useCallback(({ item }: { item: Story }) => {
     }
   }, [])
   return (
-    <View
-      style={[
-        styles.screenContainer,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
-      {/* <AppHeader /> */}
-      <SearchBar
-        value={searchBookMark}
-        onChangeText={setSearchBookMark}
-        placeholder="Search stories..."
-      />
-      <FlatList
-        data={stories}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderStoryItem}
-        ListEmptyComponent={emptyBookMarksListCompnent}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-      />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <View
+        style={[
+          styles.screenContainer,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
+        {/* <AppHeader /> */}
+        <SearchBar
+          value={searchBookMark}
+          onChangeText={setSearchBookMark}
+          placeholder="Search stories..."
+        />
+        <FlatList
+          data={stories}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderStoryItem}
+          ListEmptyComponent={emptyBookMarksListCompnent}
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+        />
+      </View>
     </View>
   );
 };

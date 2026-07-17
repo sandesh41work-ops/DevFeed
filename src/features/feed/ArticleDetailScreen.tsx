@@ -14,16 +14,18 @@ const ArticleDetailScreen = () => {
   const commentCount = story.descendants ?? 0;
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <StoryDetailsCard story={story} />
-        <SummaryCard articleId={story.id} url={story.url} />
-        <DiscussionCard storyId={story.id} commentCount={commentCount} />
-      </View>
-    </ScrollView>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView
+        style={[styles.scrollView, { backgroundColor: colors.background }]}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+          <StoryDetailsCard story={story} />
+          <SummaryCard articleId={story.id} url={story.url} />
+          <DiscussionCard storyId={story.id} commentCount={commentCount} />
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -78,14 +80,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#FF6600", 
-  },
-  statLabel: {
-    marginTop: 4,
-    color: "#666",
-  },
-  typeContainer: {
-    marginBottom: 20,
+    color: "#FF6600",
   },
   typeText: {
     fontSize: 14,

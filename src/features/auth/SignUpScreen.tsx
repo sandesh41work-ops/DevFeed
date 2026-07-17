@@ -58,109 +58,111 @@ const SignUpScreen = () => {
     }
   };
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: colors.background,
-            },
-          ]}
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
         >
           <View
             style={[
-              styles.card,
+              styles.container,
               {
-                backgroundColor: colors.card,
-                shadowColor: isDark ? "#000" : "#000",
+                backgroundColor: colors.background,
               },
             ]}
           >
-            <Text
-              style={{
-                fontSize: 28,
-                fontWeight: "700",
-                color: colors.text,
-                marginBottom: 8,
-              }}
-            >
-              Create Account
-            </Text>
-
-            <Text
+            <View
               style={[
-                styles.subtitle,
+                styles.card,
                 {
-                  color: colors.subtext,
+                  backgroundColor: colors.card,
+                  shadowColor: isDark ? "#000" : "#000",
                 },
               ]}
             >
-              Create Account to continue
-            </Text>
+              <Text
+                style={{
+                  fontSize: 28,
+                  fontWeight: "700",
+                  color: colors.text,
+                  marginBottom: 8,
+                }}
+              >
+                Create Account
+              </Text>
 
-            <Input
-              value={email}
-              placeholder="Enter your email"
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-
-            <Input
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={true}
-            />
-
-            <Input
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={true}
-            />
-
-            {error ? (
-              <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
-            ) : null}
-
-            <Button
-              title="Create Account"
-              disabled={!email || !password}
-              loading={loading}
-              onPress={() => {
-                console.log("Email: ", email);
-                console.log("Password :", password);
-                console.log("Confirm Password :", confirmPassword);
-                handleSignUp();
-              }}
-            />
-
-            <TouchableOpacity
-              style={styles.signupLink}
-              onPress={() => navigation.navigate("Login")}
-            >
               <Text
                 style={[
-                  styles.signupLinkText,
+                  styles.subtitle,
                   {
-                    color: colors.accent,
+                    color: colors.subtext,
                   },
                 ]}
               >
-                Already Have Account? Login instead
+                Create Account to continue
               </Text>
-            </TouchableOpacity>
+
+              <Input
+                value={email}
+                placeholder="Enter your email"
+                onChangeText={setEmail}
+                keyboardType="email-address"
+              />
+
+              <Input
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={true}
+              />
+
+              <Input
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={true}
+              />
+
+              {error ? (
+                <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+              ) : null}
+
+              <Button
+                title="Create Account"
+                disabled={!email || !password}
+                loading={loading}
+                onPress={() => {
+                  console.log("Email: ", email);
+                  console.log("Password :", password);
+                  console.log("Confirm Password :", confirmPassword);
+                  handleSignUp();
+                }}
+              />
+
+              <TouchableOpacity
+                style={styles.signupLink}
+                onPress={() => navigation.navigate("Login")}
+              >
+                <Text
+                  style={[
+                    styles.signupLinkText,
+                    {
+                      color: colors.accent,
+                    },
+                  ]}
+                >
+                  Already Have Account? Login instead
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

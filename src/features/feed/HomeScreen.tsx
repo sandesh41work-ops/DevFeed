@@ -149,14 +149,15 @@ const HomeScreen = () => {
 
   return (
     <>
-      <View
-        style={[
-          styles.screenContainer,
-          {
-            backgroundColor: colors.background,
-          },
-        ]}
-      >
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <View
+          style={[
+            styles.screenContainer,
+            {
+              backgroundColor: colors.background,
+            },
+          ]}
+        >
         {/* <AppHeader /> */}
         {!isConnected && (
           <Animated.View
@@ -224,6 +225,7 @@ const HomeScreen = () => {
           </View>
         )}
       </View>
+    </View>
     </>
   );
 };

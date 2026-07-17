@@ -21,7 +21,7 @@ const SearchBar = ({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.searchBox, { backgroundColor: colors.card }]}> 
+      <View style={[styles.searchBox, { backgroundColor: colors.card }]}>
         <AnimatedBorder color={colors.accent} borderRadius={16} />
 
         <Input
