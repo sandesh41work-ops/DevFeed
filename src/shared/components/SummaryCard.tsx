@@ -16,7 +16,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-
+import AnimatedBorder from "./AnimatedBorder";
 import { useTheme } from "../hooks/useTheme";
 import { useSummaryQuery } from "../../features/summary/useSummaryQuery";
 
@@ -73,6 +73,7 @@ const SummaryCard = ({ articleId, url }: Props) => {
         },
       ]}
     >
+      <AnimatedBorder color={colors.accent} borderRadius={16} />
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={handlePress}

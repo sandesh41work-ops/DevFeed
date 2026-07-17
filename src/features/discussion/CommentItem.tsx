@@ -1,8 +1,6 @@
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { fonts } from "../../shared/constants/fonts";
 import Animated, {
-  FadeIn,
-  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -188,6 +186,7 @@ const styles = StyleSheet.create({
   comment: {
     marginBottom: 8,
     paddingBottom: 8,
+    fontFamily : fonts.regular
   },
 
   commentHeader: {

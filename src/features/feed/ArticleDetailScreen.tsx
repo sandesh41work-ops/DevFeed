@@ -5,8 +5,7 @@ import { useTheme } from "../../shared/hooks/useTheme";
 import StoryDetailsCard from "../../shared/components/StoryDetailsCard";
 import DiscussionCard from "../discussion/Discussion";
 import SummaryCard from "../../shared/components/SummaryCard";
-import Discussion from "../discussion/Discussion";
-
+import { LinearGradient } from "expo-linear-gradient";
 const ArticleDetailScreen = () => {
   const route = useRoute<any>();
   const { story }: { story: Story } = route.params;
@@ -19,8 +18,11 @@ const ArticleDetailScreen = () => {
         style={[styles.scrollView, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View
+          style={[styles.container, { backgroundColor: colors.background }]}
+        >
           <StoryDetailsCard story={story} />
+
           <SummaryCard articleId={story.id} url={story.url} />
           <DiscussionCard storyId={story.id} commentCount={commentCount} />
         </View>
@@ -95,5 +97,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flex: 1,
   },
+  gradient: {
+    borderRadius: 18,
+  },
 });
- 
