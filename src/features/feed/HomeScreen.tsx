@@ -73,6 +73,7 @@ const HomeScreen = () => {
       loadFirstPage(allIds);
     }
   }, [allIds]);
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
@@ -81,11 +82,16 @@ const HomeScreen = () => {
     const nextIds = allIds.slice(start, end); // use allIds from React Query
     if (nextIds.length === 0) return;
     try {
+
       isFetching.current = true;
       setLoadingMore(true);
+            await sleep(1500);
+
       const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
       setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
+            await sleep(1500);
+
     } catch (e) {
       console.warn(e);
     } finally {
@@ -104,7 +110,7 @@ const HomeScreen = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: Story }) => (
-      <Animated.View layout={LinearTransition.springify()}>
+      <Animated.View entering={FadeInDown.duration(400)}>
         <StoryCard story={item} />
       </Animated.View>
     ),
@@ -145,7 +151,6 @@ const HomeScreen = () => {
       story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
   }, [stories, debouncedSearch]);
-  const insets = useSafeAreaInsets();
 
   return (
     <>
@@ -158,74 +163,76 @@ const HomeScreen = () => {
             },
           ]}
         >
-        {/* <AppHeader /> */}
-        {!isConnected && (
-          <Animated.View
-            entering={SlideInDown}
-            exiting={SlideOutUp}
-            style={styles.networkBanner}
-          >
-            <Text style={styles.networkBannerText}>No internet connection</Text>
-          </Animated.View>
-        )}
-        <SearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Search stories..."
-        />
-        {loading ? (
-          <FlatList
-            data={[1, 2, 3, 4, 5, 6, 7, 8]}
-            keyExtractor={(item) => item.toString()}
-            renderItem={() => (
-              <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
-                <SkeletonCard />
-              </View>
-            )}
+          {/* <AppHeader /> */}
+          {!isConnected && (
+            <Animated.View
+              entering={SlideInDown}
+              exiting={SlideOutUp}
+              style={styles.networkBanner}
+            >
+              <Text style={styles.networkBannerText}>
+                No internet connection
+              </Text>
+            </Animated.View>
+          )}
+          <SearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search stories..."
           />
-        ) : error ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: colors.background,
-            }}
-          >
-            <Text style={{ color: colors.text }}>{"error"}</Text>
-            {/* refetch from react query */}
-            <Button
-              title="Retry"
-              onPress={() => {
-                refetch;
-              }}
-            />
-          </View>
-        ) : (
-          <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+          {loading ? (
             <FlatList
-              initialNumToRender={12}
-              maxToRenderPerBatch={10}
-              windowSize={10}
-              updateCellsBatchingPeriod={30}
-              removeClippedSubviews
-              decelerationRate="normal"
-              bounces={true}
-              overScrollMode="always"
-              data={filteredStories}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderItem}
-              onRefresh={refetch}
-              refreshing={loading}
-              onEndReached={loadMore}
-              onEndReachedThreshold={1}
-              ListFooterComponent={<Footer loadingMore={loadingMore} />}
-              ListEmptyComponent={emptyListComponent}
+              data={[1, 2, 3, 4, 5, 6, 7, 8]}
+              keyExtractor={(item) => item.toString()}
+              renderItem={() => (
+                <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
+                  <SkeletonCard />
+                </View>
+              )}
             />
-          </View>
-        )}
+          ) : error ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: colors.background,
+              }}
+            >
+              <Text style={{ color: colors.text }}>{"error"}</Text>
+              {/* refetch from react query */}
+              <Button
+                title="Retry"
+                onPress={() => {
+                  refetch;
+                }}
+              />
+            </View>
+          ) : (
+            <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+              <FlatList
+                initialNumToRender={12}
+                maxToRenderPerBatch={10}
+                windowSize={10}
+                updateCellsBatchingPeriod={30}
+                removeClippedSubviews
+                decelerationRate="normal"
+                bounces={true}
+                overScrollMode="always"
+                data={filteredStories}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderItem}
+                onRefresh={refetch}
+                refreshing={loading}
+                onEndReached={loadMore}
+                onEndReachedThreshold={1}
+                ListFooterComponent={<Footer loadingMore={loadingMore} />}
+                ListEmptyComponent={emptyListComponent}
+              />
+            </View>
+          )}
+        </View>
       </View>
-    </View>
     </>
   );
 };

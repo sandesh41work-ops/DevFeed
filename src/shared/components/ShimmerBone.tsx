@@ -10,12 +10,14 @@ interface ShimmerBoneProps {
   width: DimensionValue; // Restricts to numbers, "50%", "auto", etc.
   height: DimensionValue; // Restricts to numbers, "50%", "auto", etc.
   borderRadius?: number;
+style?: any;
 }
 
 export default function ShimmerBone({
   width,
   height,
   borderRadius = 4,
+  style
 }: ShimmerBoneProps) {
   const { isDark, colors } = useTheme();
   const shimmerAnimatedValue = useRef(new Animated.Value(0)).current;
@@ -36,10 +38,11 @@ export default function ShimmerBone({
   });
 
   return (
-    <View
+   <View
       style={[
         styles.boneBase,
         { width, height, borderRadius, backgroundColor: colors.skeleton },
+        style, 
       ]}
     >
       <Animated.View
