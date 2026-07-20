@@ -1,36 +1,16 @@
 import React from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
+import Button from "./Button";
 import { useTheme } from "../hooks/useTheme";
-import { fonts } from "../constants/fonts";
 import { Dimensions } from "react-native";
+import { fonts } from "../constants/fonts";
 
 type Props = {
-  image?: ImageSourcePropType;
-  title?: string;
-  subtitle?: string;
-  buttonText?: string;
-  onPress?: () => void;
-  imageSize?: number;
+  refetch: () => void;
 };
-
 const space = (n: number) => n * 4;
 const { width } = Dimensions.get("window");
-
-export default function EmptyState({
-  image,
-  title,
-  subtitle,
-  buttonText,
-  onPress,
-  imageSize = Math.min(width * 0.8, 320),
-}: Props) {
+export default function ErrorState({ refetch }: Props) {
   const { colors } = useTheme();
 
   return (
@@ -43,15 +23,9 @@ export default function EmptyState({
       ]}
     >
       <Image
-        source={image}
+        source={require("../../../assets/illustrations/error_state.png")}
+        style={styles.image}
         resizeMode="contain"
-        style={[
-          styles.image,
-          {
-            width: imageSize,
-            height: imageSize,
-          },
-        ]}
       />
 
       <Text
@@ -62,7 +36,7 @@ export default function EmptyState({
           },
         ]}
       >
-        {title ?? "No Results Found!"}
+        Oops! Something went wrong
       </Text>
 
       <Text
@@ -73,24 +47,15 @@ export default function EmptyState({
           },
         ]}
       >
-        {subtitle ??
-          "Try another keyword or browse today's top Hacker News stories."}
+       
+        Please check your internet connection and try again.
       </Text>
-      {buttonText && onPress && (
-        <Pressable
-          onPress={onPress}
-          android_ripple={{ color: "#ffffff22" }}
-          style={({ pressed }) => [
-            styles.button,
-            {
-              backgroundColor: colors.accent,
-              opacity: pressed ? 0.9 : 1,
-            },
-          ]}
-        >
-          <Text style={styles.buttonText}>{buttonText}</Text>
-        </Pressable>
-      )}
+      <Button
+        title="Try Again"
+        onPress={refetch}
+        style={[styles.button, {backgroundColor : colors.accent}]}
+
+      />
     </View>
   );
 }
@@ -100,19 +65,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: space(16),
   },
 
   image: {
-    width: Math.min(width * 0.8, 320),
+    width: Math.min(width * 0.8, 300),
     height: Math.min(width * 0.8, 300),
+    paddingVertical : 10
   },
-  // image: {
-  //   width: 380,
-  //   height: 380,
-  // //   marginBottom: space(6),
-  // },
-
   title: {
     fontSize: 24,
     fontFamily: fonts.semibold,
@@ -129,13 +88,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
   },
 
-  button: {
+   button: {
     paddingHorizontal: space(7),
     paddingVertical: space(3.5),
     borderRadius: 16,
     elevation: 2,
+   
   },
-
   buttonText: {
     color: "#fff",
     fontSize: 15,

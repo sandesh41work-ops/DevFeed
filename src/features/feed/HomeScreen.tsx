@@ -19,6 +19,7 @@ import { useTheme } from "../../shared/hooks/useTheme";
 import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
 import { useStoriesQuery } from "./useStoriesQuery";
 import Footer from "../../shared/components/Footer";
+import ErrorState from "../../shared/components/ErrorState";
 import Animated, {
   FadeInDown,
   LinearTransition,
@@ -43,14 +44,9 @@ const HomeScreen = () => {
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
   const showSkeletons =
     stories.length === 0 && (isLoading || fetchingFirstPage);
+    const FORCE_ERROR = true;
 
   useEffect(() => {
-    // console.log(
-    //   "isLoading : ",
-    //   isLoading,
-    //   "Fetchign first page : ",
-    //   fetchingFirstPage,
-    // );
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
 
@@ -78,7 +74,6 @@ const HomeScreen = () => {
     }
   }, [allIds]);
   const sleep = (ms: number) =>
-
     new Promise((resolve) => setTimeout(resolve, ms));
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
@@ -135,9 +130,8 @@ const HomeScreen = () => {
         }}
       >
         <EmptyState
-               image={require("../../../assets/illustrations/no_results_light.png")}
-               
-             />
+          image={require("../../../assets/illustrations/no_results_light.png")}
+        />
       </Animated.View>
     );
   }, []);
@@ -147,11 +141,10 @@ const HomeScreen = () => {
       setDebouncedSearch(searchQuery);
     }, 500); // debounce by 500ms
 
-    return () => clearTimeout(timeOutId); // cleanup on unmount or query change
+    return () => clearTimeout(timeOutId);
   }, [searchQuery]);
 
   const filteredStories = useMemo(() => {
-    // console.log("Filtering stories with query:", debouncedSearch);
     return stories.filter((story) =>
       story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
@@ -196,23 +189,7 @@ const HomeScreen = () => {
               )}
             />
           ) : error ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: colors.background,
-              }}
-            >
-              <Text style={{ color: colors.text }}>{"error"}</Text>
-              {/* refetch from react query */}
-              <Button
-                title="Retry"
-                onPress={() => {
-                  refetch;
-                }}
-              />
-            </View>
+            <ErrorState refetch={refetch}/>
           ) : (
             <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
               <FlatList
@@ -232,19 +209,11 @@ const HomeScreen = () => {
                 refreshing={loading}
                 onEndReached={loadMore}
                 onEndReachedThreshold={1}
-                // ListFooterComponent={
-                //   filteredStories.length > 0 ? (
-                //     <Footer loadingMore={loadingMore} />
-                //   ) : null
-
-                // } 
-                // 
-                 ListFooterComponent={
+                ListFooterComponent={
                   filteredStories.length > 0 ? (
                     <Footer loadingMore={loadingMore} />
                   ) : null
                 }
-                // ListFooterComponent={null}
                 ListEmptyComponent={emptyListComponent}
               />
             </View>
@@ -264,7 +233,7 @@ const styles = StyleSheet.create({
     height: 36,
   },
   screenContainer: {
-    flex: 1, // Ensures the layout takes up the full display height
+    flex: 1,
   },
   networkBanner: {
     backgroundColor: "#dc2626",
