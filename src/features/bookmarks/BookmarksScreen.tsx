@@ -1,25 +1,25 @@
-import { StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTheme } from "../../shared/hooks/useTheme";
-import { Story } from "../../shared/types/story";
-import { useCallback, useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import SearchBar from "../../shared/components/SearchBar";
-import { getBookmarks } from "../../shared/services/bookmarkService";
-import { FlatList } from "react-native";
-import { useMemo } from "react";
-import SwipeableStoryCard from "../../shared/components/SwipeableStoryCard";
-import { removeBookmark } from "../../shared/services/bookmarkService";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Animated, { FlatList, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EmptyState from "../../shared/components/EmptyState";
+import SearchBar from "../../shared/components/SearchBar";
+import SwipeableStoryCard from "../../shared/components/SwipeableStoryCard";
+import { useTheme } from "../../shared/hooks/useTheme";
+import { getBookmarks, removeBookmark } from "../../shared/services/bookmarkService";
+import { Story } from "../../shared/types/story";
+import { useSharedValue } from "react-native-reanimated";
 const BookmarksScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
   const [error, setError] = useState<string>("");
-  const [searchBookMark, setSearchBookMark] = useState<string>("");
+ const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const isFocuesed = useIsFocused();
+
 
   const fetchBookMarks = async () => {
     try {
@@ -42,14 +42,37 @@ const BookmarksScreen = () => {
     }
   }, [isFocuesed]);
 
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500); // debounce by 500ms
+
+    return () => clearTimeout(timeOutId);
+  }, [searchQuery]);
+
+  const filteredStories = useMemo(() => {
+    return stories.filter((story) =>
+      story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
+    );
+  }, [stories, debouncedSearch]);
   const emptyBookMarksListCompnent = useMemo(() => {
     return (
-      <EmptyState
-        image={require("../../../assets/illustrations/no-bookmarks.png")}
-        title="Nothing saved yet"
-        subtitle="Tap the bookmark icon on any story to build your personal reading list."
-        imageSize={220}
-      />
+      <Animated.View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          // borderWidth : 1
+        }}
+      >
+        <EmptyState
+          image={require("../../../assets/illustrations/no-bookmarks.png")}
+          title="Nothing saved yet"
+          subtitle="Tap the bookmark icon on any story to build your personal reading list."
+          imageSize={300}
+        />
+      </Animated.View>
     );
   }, []);
 
@@ -75,31 +98,39 @@ const BookmarksScreen = () => {
     }
   }, []);
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <View
-        style={[
-          styles.screenContainer,
-          {
-            backgroundColor: colors.background,
-          },
-        ]}
-      >
-        {/* <AppHeader /> */}
-        <SearchBar
-          value={searchBookMark}
-          onChangeText={setSearchBookMark}
-          placeholder="Search stories..."
-        />
-        <FlatList
-          data={stories}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderStoryItem}
-          ListEmptyComponent={emptyBookMarksListCompnent}
-          onRefresh={onRefresh}
-          refreshing={refreshing}
-        />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <View
+          style={[
+            styles.screenContainer,
+            {
+              backgroundColor: colors.background,
+            },
+          ]}
+        >
+          {/* <AppHeader /> */}
+          <SearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search stories..."
+          />
+
+          <FlatList
+            contentContainerStyle={{ flexGrow: 1 }}
+            data={filteredStories}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderStoryItem}
+            ListEmptyComponent={emptyBookMarksListCompnent}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

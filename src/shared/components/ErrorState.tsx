@@ -47,14 +47,12 @@ export default function ErrorState({ refetch }: Props) {
           },
         ]}
       >
-       
         Please check your internet connection and try again.
       </Text>
       <Button
         title="Try Again"
         onPress={refetch}
-        style={[styles.button, {backgroundColor : colors.accent}]}
-
+        style={[styles.button, { backgroundColor: colors.accent }]}
       />
     </View>
   );
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
   image: {
     width: Math.min(width * 0.8, 300),
     height: Math.min(width * 0.8, 300),
-    paddingVertical : 10
+    paddingVertical: 10,
   },
   title: {
     fontSize: 24,
@@ -88,12 +86,11 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
   },
 
-   button: {
+  button: {
     paddingHorizontal: space(7),
     paddingVertical: space(3.5),
     borderRadius: 16,
     elevation: 2,
-   
   },
   buttonText: {
     color: "#fff",
