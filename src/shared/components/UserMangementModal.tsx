@@ -7,6 +7,7 @@ import {
   useWindowDimensions,
   TouchableOpacity,
 } from "react-native";
+import { fonts } from "../constants/fonts";
 import { memo, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../services/firebase";
@@ -240,6 +241,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: "700",
+    fontFamily: fonts.semibold,
     textAlign: "center",
     marginBottom: 4,
   },
@@ -248,6 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center",
     marginBottom: 28,
+    fontFamily: fonts.regular,
   },
 
   divider: {
@@ -264,6 +267,7 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: fonts.semibold,
     marginLeft: 12,
   },
 
@@ -273,6 +277,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
+    fontFamily: fonts.regular,
     marginBottom: 16,
   },
 
@@ -288,5 +293,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: fonts.semibold,
   },
 });

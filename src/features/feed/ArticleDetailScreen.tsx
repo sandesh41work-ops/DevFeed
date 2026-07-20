@@ -1,57 +1,33 @@
-import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Story } from "../../shared/types/story";
 import { useTheme } from "../../shared/hooks/useTheme";
 import StoryDetailsCard from "../../shared/components/StoryDetailsCard";
-import Discussion from "../discussion/Discussion";
-import { useState } from "react";
-import DiscussionCard from "../../shared/components/DiscussionCard";
+import DiscussionCard from "../discussion/Discussion";
 import SummaryCard from "../../shared/components/SummaryCard";
-import Summary from "../summary/Summary";
-
-
+import { LinearGradient } from "expo-linear-gradient";
 const ArticleDetailScreen = () => {
   const route = useRoute<any>();
   const { story }: { story: Story } = route.params;
   const { colors } = useTheme();
-  const [showDiscussion, setShowDiscussion] = useState<boolean>(false);
   const commentCount = story.descendants ?? 0;
-  const [showSummary, setShowSummary] = useState<boolean>(false)
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <StoryDetailsCard story={story} />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView
+        style={[styles.scrollView, { backgroundColor: colors.background }]}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View
+          style={[styles.container, { backgroundColor: colors.background }]}
+        >
+          <StoryDetailsCard story={story} />
 
-        {
-          !showSummary ? (
-            <SummaryCard onPress={() => setShowSummary(true)} />
-          ) : (
-            <Summary
-              articleId={story.id}
-              url={story.url}
-            />
-          )}
-
-
-        {!showDiscussion ? (
-          <DiscussionCard
-            commentCount={commentCount}
-            onPress={() => setShowDiscussion(true)}
-          />
-        ) : (
-          <Discussion
-            storyId={story.id}
-            commentCount={commentCount}
-          />
-        )}
-
-
-      </View>
-    </ScrollView>
+          <SummaryCard articleId={story.id} url={story.url} />
+          <DiscussionCard storyId={story.id} commentCount={commentCount} />
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -106,14 +82,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#FF6600", // Hacker News orange
-  },
-  statLabel: {
-    marginTop: 4,
-    color: "#666",
-  },
-  typeContainer: {
-    marginBottom: 20,
+    color: "#FF6600",
   },
   typeText: {
     fontSize: 14,
@@ -127,5 +96,8 @@ const styles = StyleSheet.create({
 
   actionButton: {
     flex: 1,
+  },
+  gradient: {
+    borderRadius: 18,
   },
 });

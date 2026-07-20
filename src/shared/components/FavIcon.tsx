@@ -5,28 +5,20 @@ const Favicon = React.memo(({ url }: { url?: string }) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  if (!url || error) {
-    return (
-      <View style={styles.fallbackIcon}>
-        <Text>🌐</Text>
-      </View>
-    );
-  }
-
   return (
-    <>
+    <View style={styles.faviconContainer}>
       <Image
         source={{
           uri: `https://www.google.com/s2/favicons?domain=${url}&sz=64`,
         }}
-        style={styles.favicon}
+        style={styles.favIcon}
         onLoad={() => setLoading(false)}
         onError={() => {
           (setLoading(false), setError(true));
         }}
       />
-      {loading && (
-        <View style={styles.fallbackIcon}>
+      {loading && error && (
+        <View style={[styles.placeholderIcon, styles.favIcon]}>
           <Ionicons
             name="globe-outline"
             size={18}
@@ -34,27 +26,25 @@ const Favicon = React.memo(({ url }: { url?: string }) => {
           />
         </View>
       )}
-    </>
+    </View>
   );
 });
 const styles = StyleSheet.create({
-  favicon: {
+  faviconContainer: {
     width: 36,
     height: 36,
-    borderRadius: 10,
     marginRight: 12,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
-  fallbackIcon: {
+  favIcon: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    marginRight: 12,
-
     backgroundColor: "#F3F4F6",
     justifyContent: "center",
     alignItems: "center",
-
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -63,6 +53,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 2,
     elevation: 1,
+  },
+
+  placeholderIcon: {
+      position: "absolute",
   },
 
   fallbackText: {

@@ -3,6 +3,8 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../hooks/useTheme";
 import Input from "./Input";
+import AnimatedBorder from "./AnimatedBorder";
+
 type SearchBarProps = {
   value: string;
   onChangeText: (text: string) => void;
@@ -16,27 +18,38 @@ const SearchBar = ({
 }: SearchBarProps) => {
   const [clearButtonPressed, setClearButtonPressed] = useState(false);
   const { colors } = useTheme();
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Input
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        customStyles={{ marginBottom: 1 }}
-      />
-      {/* Todo : Clear Icon */}
-      <TouchableOpacity
-        onPress={() => onChangeText("")}
-        onPressIn={() => setClearButtonPressed(true)}
-        onPressOut={() => setClearButtonPressed(false)}
-        style={{ position: "absolute", right: 30, top: 13, padding: 4 }}
-      >
-        <Ionicons
-          name="close-circle"
-          size={32}
-          color={clearButtonPressed ? "#e04646" : "#6d6262"}
+    <View style={styles.container}>
+      <View style={[styles.searchBox, { backgroundColor: colors.card }]}>
+        <AnimatedBorder color={colors.accent} borderRadius={16} />
+
+        <Input
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          customStyles={{
+            marginBottom: 0,
+            borderWidth: 0,
+            backgroundColor: "transparent",
+          }}
         />
-      </TouchableOpacity>
+
+        {value.length > 0 && (
+          <TouchableOpacity
+            onPress={() => onChangeText("")}
+            onPressIn={() => setClearButtonPressed(true)}
+            onPressOut={() => setClearButtonPressed(false)}
+            style={styles.clearButton}
+          >
+            <Ionicons
+              name="close-circle"
+              size={28}
+              color={clearButtonPressed ? "#e04646" : "rgba(255,102,0,0.5)"}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
@@ -45,9 +58,19 @@ export default React.memo(SearchBar);
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    // borderBottomWidth: 1,
-    // borderColor: "#47474783",
+    marginVertical: 10,
+    marginHorizontal: 16,
+  },
+  searchBox: {
+    position: "relative",
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  clearButton: {
+    position: "absolute",
+    right: 14,
+    top: 12,
+    padding: 4,
+    zIndex: 1,
   },
 });

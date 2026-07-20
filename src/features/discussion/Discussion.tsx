@@ -1,30 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
+import Animated, {
+  FadeIn,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { useTheme } from "../../shared/hooks/useTheme";
-import DiscussionCard from "../../shared/components/DiscussionCard";
 import { getStory } from "../../shared/services/hackerNewsServices";
 import { useQuery } from "@tanstack/react-query";
-import { TouchableOpacity } from "react-native";
 import { Comment } from "../../shared/types/comment";
 import CommentItem from "./CommentItem";
 import { Ionicons } from "@expo/vector-icons";
+import { fonts } from "../../shared/constants/fonts";
+
 type DiscussionProps = {
   storyId: number;
   commentCount: number;
 };
 
-const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
+const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
   const [expanded, setExpanded] = useState(false);
   const [visibleCount, setVisibleCount] = useState(10);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsLoading, setIsCommentsLoading] = useState(false);
 
   const { colors } = useTheme();
+
+  const rotation = useSharedValue(0);
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
   const { data: story, isLoading: isStoryLoading } = useQuery({
     queryKey: ["story", storyId],
@@ -75,39 +88,24 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
     };
   }, [expanded, story, visibleCount, allCommentIds.length, comments.length]);
 
-  const handleOpenDiscussion = () => {
-    setExpanded(true);
+  useEffect(() => {
+    rotation.value = withSpring(expanded ? 180 : 0, {
+      damping: 18,
+      stiffness: 180,
+    });
+  }, [expanded]);
+
+  const toggleDiscussion = () => {
+    setExpanded((prev) => !prev);
   };
 
-  const isInitialLoading = isStoryLoading || (isCommentsLoading && comments.length === 0);
-
-  if (!expanded) {
-    return (
-      <DiscussionCard
-        commentCount={commentCount}
-        onPress={handleOpenDiscussion}
-      />
-    );
-  }
-
-  if (isInitialLoading) {
-    return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-          },
-        ]}
-      >
-        <ActivityIndicator size="large" color={colors.accent} />
-      </View>
-    );
-  }
+  const isInitialLoading =
+    isStoryLoading || (isCommentsLoading && comments.length === 0);
 
   return (
-    <View
+    <Animated.View
+      layout={LinearTransition.springify().stiffness(400)}
+      exiting={undefined}
       style={[
         styles.container,
         {
@@ -116,55 +114,89 @@ const Discussion = ({ storyId, commentCount }: DiscussionProps) => {
         },
       ]}
     >
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <View style={styles.headerTop}>
-          <Text style={[styles.title, { color: colors.text }]}>
-            Discussion ({commentCount})
-          </Text>
+      <TouchableOpacity activeOpacity={0.85} onPress={toggleDiscussion}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
+          <View style={styles.headerTop}>
+            <View style={styles.titleContainer}>
+              <Ionicons
+                name="chatbubbles-outline"
+                size={24}
+                color={colors.accent}
+              />
 
-          <TouchableOpacity style={styles.sortButton}>
-            <Ionicons
-              name="swap-vertical"
-              size={14}
-              color={colors.subtext}
-            />
-            <Text style={[styles.sortText, { color: colors.subtext }]}>Top</Text>
-          </TouchableOpacity>
+              <View>
+                <Text style={[styles.title, { color: colors.text }]}>
+                  Discussion
+                </Text>
+                <Text style={[styles.count, { color: colors.subtext }]}>
+                  {commentCount} comments
+                </Text>
+              </View>
+            </View>
+
+            <Animated.View style={chevronStyle}>
+              <View style={styles.toggleRow}>
+                <Ionicons
+                  name="chevron-down"
+                  size={20}
+                  color={colors.subtext}
+                />
+              </View>
+            </Animated.View>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
-      {comments.map((comment: Comment) => (
-        <CommentItem key={comment.id} comment={comment} />
-      ))}
-
-      {isCommentsLoading && comments.length > 0 && (
-        <View style={styles.loadingMore}>
-          <ActivityIndicator size="small" color={colors.accent} />
-          <Text style={[styles.loadingText, { color: colors.subtext }]}>Loading more comments…</Text>
-        </View>
-      )}
-
-      {comments.length < allCommentIds.length && (
-        <TouchableOpacity
-          onPress={() => setVisibleCount((prev) => prev + 10)}
-          disabled={isCommentsLoading}
-          style={isCommentsLoading ? styles.disabledButton : undefined}
+      {!expanded ? (
+        <Text style={[styles.description, { color: colors.subtext }]}>
+          Explore insights, opinions, and discussions from the Hacker News
+          community.
+        </Text>
+      ) : (
+        <Animated.View
+          entering={FadeIn.duration(200)}
+          exiting={undefined}
+          layout={LinearTransition.springify()}
         >
-          <Text
-            style={[
-              styles.placeholder,
-              { color: colors.accent }
-            ]}
-          >
-            Load More Comments
-          </Text>
-        </TouchableOpacity>
+          {isInitialLoading ? (
+            <View style={styles.centeredLoading}>
+              <ActivityIndicator size="large" color={colors.accent} />
+            </View>
+          ) : (
+            <>
+              {comments.map((comment: Comment) => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))}
+
+              {isCommentsLoading && comments.length > 0 && (
+                <View style={styles.loadingMore}>
+                  <Text style={[styles.loadingText, { color: colors.subtext }]}>
+                    Loading more comments…
+                  </Text>
+                  <ActivityIndicator size="small" color={colors.accent} />
+                </View>
+              )}
+
+              {comments.length < allCommentIds.length && (
+                <TouchableOpacity
+                  onPress={() => setVisibleCount((prev) => prev + 10)}
+                  disabled={isCommentsLoading}
+                  style={isCommentsLoading ? styles.disabledButton : undefined}
+                >
+                  <Text style={[styles.placeholder, { color: colors.accent }]}>
+                    Load More Comments
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+        </Animated.View>
       )}
-    </View>
+    </Animated.View>
   );
 };
 
-export default Discussion;
+export default memo(DiscussionCard);
 
 const styles = StyleSheet.create({
   container: {
@@ -193,6 +225,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "700",
+    fontFamily: fonts.semibold,
+  },
+
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
 
   sortButton: {
@@ -210,11 +249,25 @@ const styles = StyleSheet.create({
   sortText: {
     fontSize: 12,
     fontWeight: "600",
+    fontFamily: fonts.semibold,
+  },
+
+  toggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+
+  toggleText: {
+    fontSize: 14,
+    fontWeight: "600",
+    fontFamily: fonts.semibold,
   },
 
   count: {
     marginTop: 4,
     fontSize: 14,
+    fontFamily: fonts.regular,
   },
 
   comment: {
@@ -245,6 +298,20 @@ const styles = StyleSheet.create({
 
   loadingText: {
     fontSize: 14,
+    fontFamily: fonts.regular,
+  },
+
+  centeredLoading: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 24,
+  },
+
+  description: {
+    marginBottom: 16,
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: fonts.regular,
   },
 
   replyCount: {
@@ -255,6 +322,7 @@ const styles = StyleSheet.create({
   placeholder: {
     marginTop: 8,
     fontWeight: "600",
+    fontFamily: fonts.semibold,
     textAlign: "center",
   },
 

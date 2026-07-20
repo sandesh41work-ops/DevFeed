@@ -1,5 +1,6 @@
 import { KeyboardTypeOptions, StyleSheet, TextInput, TextStyle } from "react-native";
 import { useTheme } from "../hooks/useTheme";
+import { fonts } from "../constants/fonts";
 
 import { StyleProp } from "react-native";
 type InputProps = {
@@ -29,8 +30,9 @@ const Input = ({
           backgroundColor: colors.card,
           borderColor: colors.border,
           color: colors.text,
+          fontFamily: fonts.regular,
         },
-        customStyles
+        customStyles,
       ]}
       placeholder={placeholder}
       placeholderTextColor={colors.subtext}

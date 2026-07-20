@@ -7,12 +7,18 @@ import { Dimensions } from "react-native";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 interface ShimmerBoneProps {
-  width: DimensionValue;   // Restricts to numbers, "50%", "auto", etc.
-  height: DimensionValue;  // Restricts to numbers, "50%", "auto", etc.
-  borderRadius?: number;   
+  width: DimensionValue; // Restricts to numbers, "50%", "auto", etc.
+  height: DimensionValue; // Restricts to numbers, "50%", "auto", etc.
+  borderRadius?: number;
+style?: any;
 }
 
-export default function ShimmerBone({ width, height, borderRadius = 4 }: ShimmerBoneProps) {
+export default function ShimmerBone({
+  width,
+  height,
+  borderRadius = 4,
+  style
+}: ShimmerBoneProps) {
   const { isDark, colors } = useTheme();
   const shimmerAnimatedValue = useRef(new Animated.Value(0)).current;
 
@@ -32,21 +38,18 @@ export default function ShimmerBone({ width, height, borderRadius = 4 }: Shimmer
   });
 
   return (
-    <View
+   <View
       style={[
         styles.boneBase,
         { width, height, borderRadius, backgroundColor: colors.skeleton },
+        style, 
       ]}
     >
       <Animated.View
         style={[StyleSheet.absoluteFill, { transform: [{ translateX }] }]}
       >
         <LinearGradient
-          colors={[
-            "transparent",
-            isDark ? "rgba(1, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.4)",
-            "transparent",
-          ]}
+          colors={["transparent", "rgba(255,102,0,0.08)", "transparent"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}

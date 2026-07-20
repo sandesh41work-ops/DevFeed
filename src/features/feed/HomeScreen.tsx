@@ -14,13 +14,18 @@ import Button from "../../shared/components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { logOutUser } from "../auth/authService";
 import SearchBar from "../../shared/components/SearchBar";
-import Loader from "../../shared/components/Loader";
 import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useTheme } from "../../shared/hooks/useTheme";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkStatus } from "../../shared/hooks/useNetworkState";
 import { useStoriesQuery } from "./useStoriesQuery";
-import AppHeader from "../../shared/components/AppHeader";
+import Footer from "../../shared/components/Footer";
+import Animated, {
+  FadeInDown,
+  LinearTransition,
+  SlideInDown,
+  SlideOutUp,
+} from "react-native-reanimated";
+import EmptyState from "../../shared/components/EmptyState";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -36,6 +41,9 @@ const HomeScreen = () => {
   const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery();
   const [loading, setLoading] = useState(false);
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
+  const showSkeletons =
+    stories.length === 0 && (isLoading || fetchingFirstPage);
+
   useEffect(() => {
     // console.log(
     //   "isLoading : ",
@@ -45,6 +53,7 @@ const HomeScreen = () => {
     // );
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
+
   const loadFirstPage = useCallback(
     async (ids: number[]) => {
       setFetchingFirstPage(true);
@@ -68,6 +77,9 @@ const HomeScreen = () => {
       loadFirstPage(allIds);
     }
   }, [allIds]);
+  const sleep = (ms: number) =>
+
+    new Promise((resolve) => setTimeout(resolve, ms));
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
@@ -78,9 +90,14 @@ const HomeScreen = () => {
     try {
       isFetching.current = true;
       setLoadingMore(true);
-      const newStories = await Promise.all(nextIds.map((id) => getStory(id)));
+      // await sleep(1500);
+
+      const newStories = await Promise.all(
+        nextIds.map((id: number) => getStory(id)),
+      );
       setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
+      // await sleep(1500);
     } catch (e) {
       console.warn(e);
     } finally {
@@ -98,26 +115,30 @@ const HomeScreen = () => {
   }, [navigation]);
 
   const renderItem = useCallback(
-    ({ item }: { item: Story }) => <StoryCard story={item} />,
+    ({ item }: { item: Story }) => (
+      <Animated.View entering={FadeInDown.duration(400)}>
+        <StoryCard story={item} />
+      </Animated.View>
+    ),
     [],
   );
-
   const emptyListComponent = useMemo(() => {
     return (
-      <View
+      <Animated.View
+        entering={FadeInDown.duration(250)}
+        layout={LinearTransition.springify()}
         style={{
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          marginTop: 50,
+          // marginTop: 50,
         }}
       >
-        <Text
-          style={[{ fontSize: 16, color: "#262424" }, { color: colors.text }]}
-        >
-          No stories found.
-        </Text>
-      </View>
+        <EmptyState
+               image={require("../../../assets/illustrations/no_results_light.png")}
+               
+             />
+      </Animated.View>
     );
   }, []);
 
@@ -135,74 +156,100 @@ const HomeScreen = () => {
       story.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
   }, [stories, debouncedSearch]);
-  const insets = useSafeAreaInsets();
 
   return (
     <>
-      <View
-        style={[
-          styles.screenContainer,
-          {
-            backgroundColor: colors.background,
-            // 2. Dynamically push EVERYTHING down past the phone's notch/status bar
-            paddingTop: insets.top > 0 ? insets.top : 12,
-          },
-        ]}
-      >
-        <AppHeader />
-        {!isConnected && (
-          <View style={styles.networkBanner}>
-            <Text style={styles.networkBannerText}>No internet connection</Text>
-          </View>
-        )}
-        <SearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Search stories..."
-        />
-        {loading ? (
-          <FlatList
-            data={[1, 2, 3, 4, 5, 6, 7, 8]}
-            keyExtractor={(item) => item.toString()}
-            renderItem={() => (
-              <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
-                <SkeletonCard />
-              </View>
-            )}
-          />
-        ) : error ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <View
+          style={[
+            styles.screenContainer,
+            {
               backgroundColor: colors.background,
-            }}
-          >
-            <Text style={{ color: colors.text }}>{"error"}</Text>
-            {/* refetch from react query */}
-            <Button
-              title="Retry"
-              onPress={() => {
-                refetch;
-              }}
-            />
-          </View>
-        ) : (
-          <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+            },
+          ]}
+        >
+          {!isConnected && (
+            <Animated.View
+              entering={SlideInDown}
+              exiting={SlideOutUp}
+              style={styles.networkBanner}
+            >
+              <Text style={styles.networkBannerText}>
+                No internet connection
+              </Text>
+            </Animated.View>
+          )}
+          <SearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search stories..."
+          />
+
+          {showSkeletons ? (
             <FlatList
-              data={filteredStories}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderItem}
-              onRefresh={refetch}
-              refreshing={loading}
-              onEndReached={loadMore}
-              onEndReachedThreshold={0.5}
-              ListFooterComponent={loadingMore ? <Loader size="small" /> : null}
-              ListEmptyComponent={emptyListComponent}
+              data={[1, 2, 3, 4, 5, 6, 7, 8]}
+              keyExtractor={(item) => item.toString()}
+              renderItem={() => (
+                <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
+                  <SkeletonCard />
+                </View>
+              )}
             />
-          </View>
-        )}
+          ) : error ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: colors.background,
+              }}
+            >
+              <Text style={{ color: colors.text }}>{"error"}</Text>
+              {/* refetch from react query */}
+              <Button
+                title="Retry"
+                onPress={() => {
+                  refetch;
+                }}
+              />
+            </View>
+          ) : (
+            <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+              <FlatList
+                initialNumToRender={12}
+                maxToRenderPerBatch={10}
+                windowSize={10}
+                updateCellsBatchingPeriod={30}
+                removeClippedSubviews
+                decelerationRate="normal"
+                bounces={true}
+                overScrollMode="always"
+                data={filteredStories}
+                // data={[]}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderItem}
+                onRefresh={refetch}
+                refreshing={loading}
+                onEndReached={loadMore}
+                onEndReachedThreshold={1}
+                // ListFooterComponent={
+                //   filteredStories.length > 0 ? (
+                //     <Footer loadingMore={loadingMore} />
+                //   ) : null
+
+                // } 
+                // 
+                 ListFooterComponent={
+                  filteredStories.length > 0 ? (
+                    <Footer loadingMore={loadingMore} />
+                  ) : null
+                }
+                // ListFooterComponent={null}
+                ListEmptyComponent={emptyListComponent}
+              />
+            </View>
+          )}
+        </View>
       </View>
     </>
   );

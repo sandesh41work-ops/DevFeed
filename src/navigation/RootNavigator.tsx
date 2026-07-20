@@ -15,60 +15,77 @@ import { useTheme } from "../shared/hooks/useTheme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BookmarksScreen from "../features/bookmarks/BookmarksScreen";
 import { Ionicons } from "@expo/vector-icons";
-import {View} from "react-native"
+import { View } from "react-native";
+import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import AppHeader from "../shared/components/AppHeader";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<TabParamList>();
 
 function MainTabNavigator() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
-    <Tabs.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.background,
-          height: 70,
-          paddingBottom: 8, // Adjusts spacing from the absolute physical bottom edge
-          paddingTop: 8, // Adjusts spacing from the top edge of the bar
-        },
-        tabBarItemStyle: {
-          justifyContent: "center", // Centering the inner item contents vertically
-          alignItems: "center", // Centering the inner item contents horizontally
-        },
-        tabBarActiveTintColor: colors.text,
-        tabBarInactiveTintColor: colors.subtext,
-
-        tabBarIcon: ({ color, size, focused }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
-
-          if (route.name === "Feed") {
-            iconName = focused ? "newspaper" : "newspaper-outline";
-          } else {
-            iconName = focused ? "bookmark" : "bookmark-outline";
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
+    <View
+      style={{
+        flex: 1,
+        paddingTop: insets.top,
+        backgroundColor: colors.background,
+      }}
     >
-      <Tabs.Screen
-        name="Feed"
-        component={HomeScreen}
-        options={{ title: "Feed" }}
-      />
-      <Tabs.Screen
-        name="Bookmarks"
-        component={BookmarksScreen}
-        options={{ title: "Bookmarks" }}
-      />
-    </Tabs.Navigator>
+      <AppHeader />
+      <Tabs.Navigator
+        screenOptions={({ route }) => ({
+          sceneStyle: {
+            backgroundColor: colors.background,
+          },
+          animation: "shift",
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: colors.background,
+            height: 70,
+            paddingBottom: 8, // Adjusts spacing from the absolute physical bottom edge
+            paddingTop: 8, // Adjusts spacing from the top edge of the bar
+          },
+          tabBarItemStyle: {
+            justifyContent: "center", // Centering the inner item contents vertically
+            alignItems: "center", // Centering the inner item contents horizontally
+          },
+          tabBarActiveTintColor: colors.text,
+          tabBarInactiveTintColor: colors.subtext,
+
+          tabBarIcon: ({ color, size, focused }) => {
+            let iconName: keyof typeof Ionicons.glyphMap;
+
+            if (route.name === "Feed") {
+              iconName = focused ? "newspaper" : "newspaper-outline";
+            } else {
+              iconName = focused ? "bookmark" : "bookmark-outline";
+            }
+
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+      >
+        <Tabs.Screen
+          name="Feed"
+          component={HomeScreen}
+          options={{ title: "Feed" }}
+        />
+        <Tabs.Screen
+          name="Bookmarks"
+          component={BookmarksScreen}
+          options={{ title: "Bookmarks" }}
+        />
+      </Tabs.Navigator>
+    </View>
   );
 }
 
 function RootNavigator() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -79,27 +96,37 @@ function RootNavigator() {
   }, []);
 
   if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
+  const navigationTheme = {
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+      background: colors.background,
+      card: colors.background,
+      text: colors.text,
+      border: colors.border,
+      primary: colors.accent,
+    },
+  };
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: colors.background,
-      }}
-    >
-      <ActivityIndicator
-        size="large"
-        color={colors.accent}
-      />
-    </View>
-  );
-}
-
-  return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
         screenOptions={{
+          contentStyle: {
+            backgroundColor: colors.background,
+          },
           headerStyle: {
             backgroundColor: colors.background,
           },
@@ -121,6 +148,9 @@ function RootNavigator() {
               component={ArticleDetailScreen}
               options={{
                 title: "Article",
+                animation: "slide_from_right",
+                headerBackButtonDisplayMode: "minimal",
+                presentation: "card",
               }}
             />
             <Stack.Screen
@@ -128,6 +158,7 @@ function RootNavigator() {
               component={ArticleWebViewScreen}
               options={({ route }) => ({
                 title: route.params?.title ?? "Article",
+                animation: "slide_from_right",
               })}
             />
           </>

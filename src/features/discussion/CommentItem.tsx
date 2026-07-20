@@ -1,8 +1,14 @@
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
+import { fonts } from "../../shared/constants/fonts";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { Comment } from "../../shared/types/comment";
 import CommentHtml from "../../shared/components/Comment";
 import { useTheme } from "../../shared/hooks/useTheme";
-import { useState } from "react";
+import { useState, useEffect, memo } from "react";
 import { useCommentsQuery } from "./useCommentQuery";
 import { ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,6 +35,18 @@ const CommentItem = ({
     expanded ? childIds : [],
   );
 
+  const rotation = useSharedValue(0);
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
+  useEffect(() => {
+    rotation.value = withSpring(expanded ? 180 : 0, {
+      damping: 18,
+      stiffness: 180,
+    });
+  }, [expanded]);
+
   const getTimeAgo = (timestamp?: number) => {
     if (!timestamp) return "unknown";
     const now = Date.now() / 1000;
@@ -47,7 +65,12 @@ const CommentItem = ({
   };
 
   return (
-    <View style={[styles.commentWrapper, level > 0 && { marginLeft: Math.min(level*8, 36) }]}>
+    <View
+      style={[
+        styles.commentWrapper,
+        level > 0 && { marginLeft: Math.min(level * 8, 36) },
+      ]}
+    >
       {level > 0 && (
         <View style={[styles.threadLine, { backgroundColor: colors.border }]} />
       )}
@@ -144,7 +167,7 @@ const CommentItem = ({
   );
 };
 
-export default CommentItem;
+export default memo(CommentItem);
 
 const styles = StyleSheet.create({
   commentWrapper: {
@@ -163,6 +186,7 @@ const styles = StyleSheet.create({
   comment: {
     marginBottom: 8,
     paddingBottom: 8,
+    fontFamily : fonts.regular
   },
 
   commentHeader: {
@@ -184,6 +208,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 12,
+    fontFamily: fonts.mono,
   },
 
   headerContent: {
@@ -197,7 +222,8 @@ const styles = StyleSheet.create({
   },
 
   author: {
-    fontSize: 14,
+    fontFamily: fonts.semibold,
+    fontSize: 15,
     fontWeight: "700",
   },
 
@@ -209,11 +235,15 @@ const styles = StyleSheet.create({
 
   authorBadgeText: {
     color: "#fff",
+    fontFamily: fonts.semibold,
     fontSize: 10,
     fontWeight: "700",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
 
   timestamp: {
+    fontFamily: fonts.regular,
     fontSize: 12,
     marginTop: 2,
   },
@@ -241,11 +271,13 @@ const styles = StyleSheet.create({
   },
 
   actionCount: {
+    fontFamily: fonts.semibold,
     fontSize: 12,
     fontWeight: "600",
   },
 
   actionText: {
+    fontFamily: fonts.regular,
     fontSize: 12,
     fontWeight: "600",
   },
