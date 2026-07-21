@@ -6,7 +6,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { getStory } from "../../shared/services/hackerNewsServices";
 import { Story } from "../../shared/types/story";
 import StoryCard from "../../shared/components/StoryCard";
@@ -27,7 +33,7 @@ import Animated, {
   SlideOutUp,
 } from "react-native-reanimated";
 import EmptyState from "../../shared/components/EmptyState";
-
+import { Platform } from "react-native";
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const navigation = useNavigation();
@@ -44,7 +50,6 @@ const HomeScreen = () => {
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
   const showSkeletons =
     stories.length === 0 && (isLoading || fetchingFirstPage);
-    const FORCE_ERROR = true;
 
   useEffect(() => {
     setLoading(isLoading || fetchingFirstPage);
@@ -119,20 +124,26 @@ const HomeScreen = () => {
   );
   const emptyListComponent = useMemo(() => {
     return (
-      <Animated.View
-        entering={FadeInDown.duration(250)}
-        layout={LinearTransition.springify()}
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          // marginTop: 50,
-        }}
-      >
-        <EmptyState
-          image={require("../../../assets/illustrations/no_results_light.png")}
-        />
-      </Animated.View>
+    
+        <Animated.View
+          entering={FadeInDown.duration(250)}
+          layout={LinearTransition.springify()}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            alignContent: "center",
+            // borderWidth : 1
+          }}
+        >
+
+          <EmptyState
+            image={require("../../../assets/illustrations/no_results_light.png")}
+            imageSize={300}
+          />
+
+        </Animated.View>
+     
     );
   }, []);
 
@@ -152,6 +163,10 @@ const HomeScreen = () => {
 
   return (
     <>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <View
           style={[
@@ -189,10 +204,11 @@ const HomeScreen = () => {
               )}
             />
           ) : error ? (
-            <ErrorState refetch={refetch}/>
+            <ErrorState refetch={refetch} />
           ) : (
             <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
               <FlatList
+                contentContainerStyle={{ flexGrow: 1 }}
                 initialNumToRender={12}
                 maxToRenderPerBatch={10}
                 windowSize={10}
@@ -220,6 +236,7 @@ const HomeScreen = () => {
           )}
         </View>
       </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
