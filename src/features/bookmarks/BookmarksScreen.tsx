@@ -1,6 +1,6 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Animated, { FlatList, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { FlatList, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EmptyState from "../../shared/components/EmptyState";
 import SearchBar from "../../shared/components/SearchBar";
@@ -8,7 +8,11 @@ import SwipeableStoryCard from "../../shared/components/SwipeableStoryCard";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { getBookmarks, removeBookmark } from "../../shared/services/bookmarkService";
 import { Story } from "../../shared/types/story";
-import { useSharedValue } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  LinearTransition
+
+} from "react-native-reanimated";
 const BookmarksScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [stories, setStories] = useState<Story[]>([]);
@@ -58,14 +62,16 @@ const BookmarksScreen = () => {
   const emptyBookMarksListCompnent = useMemo(() => {
     return (
       <Animated.View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          alignContent: "center",
-          // borderWidth : 1
-        }}
-      >
+               entering={FadeInDown.duration(250)}
+               layout={LinearTransition.springify()}
+               style={{
+                 flex: 1,
+                 justifyContent: "center",
+                 alignItems: "center",
+                 alignContent: "center",
+                 // borderWidth : 1
+               }}
+             >
         <EmptyState
           image={require("../../../assets/illustrations/no-bookmarks.png")}
           title="Nothing saved yet"
