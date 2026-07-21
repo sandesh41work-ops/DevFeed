@@ -39,7 +39,7 @@ function MainTabNavigator() {
           sceneStyle: {
             backgroundColor: colors.background,
           },
-          animation: "shift",
+          animation: "shift", 
           headerShown: false,
           tabBarStyle: {
             backgroundColor: colors.background,
@@ -75,7 +75,9 @@ function MainTabNavigator() {
         <Tabs.Screen
           name="Bookmarks"
           component={BookmarksScreen}
-          options={{ title: "Bookmarks" }}
+          options={
+            { title: "Bookmarks" }
+          }
         />
       </Tabs.Navigator>
     </View>
