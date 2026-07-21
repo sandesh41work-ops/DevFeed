@@ -50,7 +50,6 @@ const HomeScreen = () => {
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
   const showSkeletons =
     stories.length === 0 && (isLoading || fetchingFirstPage);
-  const FORCE_ERROR = true;
 
   useEffect(() => {
     setLoading(isLoading || fetchingFirstPage);

@@ -14,6 +14,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import EmptyState from "../../shared/components/EmptyState";
+import ErrorState from "../../shared/components/ErrorState";
 import SearchBar from "../../shared/components/SearchBar";
 import SkeletonCard from "../../shared/components/SkeletonCard";
 import SwipeableStoryCard from "../../shared/components/SwipeableStoryCard";
@@ -42,6 +43,7 @@ const BookmarksScreen = () => {
       if (isInitial) setLoading(true);
       const data = await getBookmarks();
       setStories(data);
+      setError("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       console.warn(err);
@@ -114,6 +116,8 @@ const BookmarksScreen = () => {
             )}
             contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
           />
+        ) : error ? (
+          <ErrorState refetch={() => fetchBookmarks(false)} />
         ) : (
           <FlatList
             data={filteredStories}
