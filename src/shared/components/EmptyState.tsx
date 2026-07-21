@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
-  Image,
+  Dimensions,
   ImageSourcePropType,
+  Keyboard,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
-  View,
 } from "react-native";
-import { useTheme } from "../hooks/useTheme";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+
 import { fonts } from "../constants/fonts";
-import { Dimensions } from "react-native";
+import { useTheme } from "../hooks/useTheme";
 
 type Props = {
   image?: ImageSourcePropType;
@@ -33,49 +39,112 @@ export default function EmptyState({
 }: Props) {
   const { colors } = useTheme();
 
+  const keyboardVisible = useSharedValue(Keyboard.isVisible());
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const showSub = Keyboard.addListener(showEvent, () => {
+      keyboardVisible.value = true;
+    });
+
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      keyboardVisible.value = false;
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: withTiming(
+          keyboardVisible.value ? -70 : 0,
+          {
+            duration: 250,
+          }
+        ),
+      },
+    ],
+  }));
+
+  const imageAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        scale: withTiming(
+          keyboardVisible.value ? 0.6 : 1,
+          {
+            duration: 250,
+          }
+        ),
+      },
+    ],
+  }));
+
+  const textAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: withTiming(keyboardVisible.value ? 0.95 : 1, {
+      duration: 250,
+    }),
+    marginTop: withTiming(keyboardVisible.value ? -20 : 0, {
+      duration: 250,
+    }),
+  }));
+
   return (
-    <View
+    <Animated.View
       style={[
         styles.container,
-        {
-          backgroundColor: colors.background,
-        },
+        { backgroundColor: colors.background },
+        containerAnimatedStyle,
       ]}
     >
-      <Image
-        source={image}
-        resizeMode="contain"
-        style={[
-          styles.image,
-          {
-            width: imageSize,
-            height: imageSize,
-          },
-        ]}
-      />
+      {image && (
+        <Animated.Image
+          source={image}
+          resizeMode="contain"
+          style={[
+            styles.image,
+            {
+              width: imageSize,
+              height: imageSize,
+            },
+            imageAnimatedStyle,
+          ]}
+        />
+      )}
 
-      <Text
-        style={[
-          styles.title,
-          {
-            color: colors.text,
-          },
-        ]}
-      >
-        {title ?? "No Results Found!"}
-      </Text>
+      <Animated.View style={textAnimatedStyle}>
+        <Text
+          style={[
+            styles.title,
+            {
+              color: colors.text,
+            },
+          ]}
+        >
+          {title ?? "No Results Found!"}
+        </Text>
 
-      <Text
-        style={[
-          styles.subtitle,
-          {
-            color: colors.subtext,
-          },
-        ]}
-      >
-        {subtitle ??
-          "Try another keyword or browse today's top Hacker News stories."}
-      </Text>
+        <Text
+          style={[
+            styles.subtitle,
+            {
+              color: colors.subtext,
+            },
+          ]}
+        >
+          {subtitle ??
+            "Try another keyword or browse today's top Hacker News stories."}
+        </Text>
+      </Animated.View>
+
       {buttonText && onPress && (
         <Pressable
           onPress={onPress}
@@ -91,7 +160,7 @@ export default function EmptyState({
           <Text style={styles.buttonText}>{buttonText}</Text>
         </Pressable>
       )}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -100,18 +169,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: space(16),
+    paddingHorizontal: 24,
   },
 
   image: {
-    width: Math.min(width * 0.8, 320),
-    height: Math.min(width * 0.8, 300),
+    marginBottom: 16,
   },
-  // image: {
-  //   width: 380,
-  //   height: 380,
-  // //   marginBottom: space(6),
-  // },
 
   title: {
     fontSize: 24,
