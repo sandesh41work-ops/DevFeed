@@ -1,4 +1,10 @@
-import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import Button from "../../shared/components/Button";
