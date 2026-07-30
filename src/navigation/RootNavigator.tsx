@@ -39,7 +39,7 @@ function MainTabNavigator() {
           sceneStyle: {
             backgroundColor: colors.background,
           },
-          animation: "shift", 
+          animation: "shift",
           headerShown: false,
           tabBarStyle: {
             backgroundColor: colors.background,
@@ -75,9 +75,7 @@ function MainTabNavigator() {
         <Tabs.Screen
           name="Bookmarks"
           component={BookmarksScreen}
-          options={
-            { title: "Bookmarks" }
-          }
+          options={{ title: "Bookmarks" }}
         />
       </Tabs.Navigator>
     </View>
@@ -166,8 +164,20 @@ function RootNavigator() {
           </>
         ) : (
           <>
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen
+              name="SignUp"
+              component={SignUpScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
           </>
         )}
       </Stack.Navigator>

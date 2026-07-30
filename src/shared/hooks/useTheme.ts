@@ -16,6 +16,7 @@ export const useTheme = () => {
       border: isDark ? '#333333' : '#eeeeee',
       accent: '#FF6600', // Hacker News orange — same in both modes
       skeleton: isDark ? '#3a3a3a' : '#E0E0E0',
+      error: isDark ? '#FF6B6B' : '#B00020',
     }
   }
 }
