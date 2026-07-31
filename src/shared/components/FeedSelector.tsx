@@ -5,13 +5,15 @@ import { FEEDS } from "../types/feed";
 import { useTheme } from "../hooks/useTheme";
 import { fonts } from "../constants/fonts";
 
+type FeedSelectorProps = {
+  selectedFeed: Feed;
+  onFeedChange: (feed: Feed) => void;
+};
+
 type Feed = (typeof FEEDS)[number]["id"];
 
-const FeedSelector = () => {
+const FeedSelector = ({ selectedFeed, onFeedChange }: FeedSelectorProps) => {
   const { colors } = useTheme();
-
-  const [selectedFeed, setSelectedFeed] = useState<Feed>("top");
-
   return (
     <View style={styles.container}>
       <ScrollView
@@ -33,7 +35,7 @@ const FeedSelector = () => {
               hitSlop={8}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
-              onPress={() => setSelectedFeed(feed.id)}
+              onPress={() => onFeedChange(feed.id)}
               style={({ pressed }) => [
                 styles.chip,
                 {
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 16,
     // paddingVertical: 1,
-    paddingBottom : 4,
+    paddingBottom: 4,
     gap: 10,
   },
 
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: 14,
     fontWeight: "600",
-    fontFamily : fonts.semibold,
-    letterSpacing : 1
+    fontFamily: fonts.semibold,
+    letterSpacing: 1,
   },
 });
