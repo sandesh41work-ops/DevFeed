@@ -24,3 +24,6 @@ export const FEEDS = [
     label: 'Jobs',
   },
 ] as const;
+
+
+export type Feed = (typeof FEEDS)[number]['id'];
