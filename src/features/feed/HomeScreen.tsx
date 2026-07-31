@@ -34,6 +34,7 @@ import Animated, {
 } from "react-native-reanimated";
 import EmptyState from "../../shared/components/EmptyState";
 import { Platform } from "react-native";
+import FeedSelector from "../../shared/components/FeedSelector";
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const navigation = useNavigation();
@@ -192,7 +193,7 @@ const HomeScreen = () => {
             onChangeText={setSearchQuery}
             placeholder="Search stories..."
           />
-
+          <FeedSelector />
           {showSkeletons ? (
             <FlatList
               data={[1, 2, 3, 4, 5, 6, 7, 8]}
