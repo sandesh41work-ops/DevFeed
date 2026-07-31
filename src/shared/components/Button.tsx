@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { useTheme } from "../hooks/useTheme";
 import { fonts } from "../constants/fonts";
 
 type ButtonProps = {
@@ -24,11 +25,17 @@ const Button = ({
   style,
   textStyle,
 }: ButtonProps) => {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      style={[styles.button, disabled && styles.disabled, style]}
+      style={[
+        styles.button,
+        { backgroundColor: colors.accent },
+        disabled && styles.disabled,
+        style,
+      ]}
     >
       {loading ? (
         <ActivityIndicator color="#ffff" size="small" />
@@ -44,7 +51,6 @@ export default Button;
 const styles = StyleSheet.create({
   button: {
     height: 52,
-    backgroundColor: "#2563eb",
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -58,6 +64,6 @@ const styles = StyleSheet.create({
   },
 
   disabled: {
-    backgroundColor: "#2564eb67",
+    opacity: 0.6,
   },
 });
