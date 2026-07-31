@@ -1,246 +1,437 @@
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import { useState } from "react";
-import Button from "../../shared/components/Button";
-import Input from "../../shared/components/Input";
+import { useCallback, useRef, useState } from "react";
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "../../shared/services/firebase";
+  Alert,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { loginUser } from "./authService";
-import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../../shared/hooks/useTheme";
+import { fonts } from "../../shared/constants/fonts";
+import Input from "../../shared/components/Input";
+import Button from "../../shared/components/Button";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../shared/types/navigation";
-import { useTheme } from "../../shared/hooks/useTheme";
-import { Platform } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// test functions for firebase auth, you can run these in useEffect to test the login and signup functionality without UI
-async function testFirebaseLogin() {
-  try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      "sandesh@gmail.com",
-      "password124",
-    );
-
-    console.log("User logged in:", userCredential.user.email);
-  } catch (error: any) {
-    console.log(error.code);
-    console.log(error.message);
-  }
-}
-
-async function testSignup() {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      "sandesh@gmail.com",
-      "password124",
-    );
-
-    console.log("User created:", userCredential.user.email);
-  } catch (error: any) {
-    console.log(error.code);
-    console.log(error.message);
-  }
-}
-
-const LoginScreen = () => {
+export default function LoginScreen() {
   const { colors, isDark } = useTheme();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigation = useNavigation<NavigationProp>();
 
-  function addDelay() {
-    // function for test the loading indicator
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 10000);
-  }
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  async function handleLogin(email: string, password: string) {
-    let userEmail = email.trim();
-    let userPassword = password.trim();
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [generalError, setGeneralError] = useState("");
+  const [infoMessage, setInfoMessage] = useState("");
 
-    if (!userEmail) {
-      setError("Please enter your email.");
-      return false;
-    }
-    if (!userEmail.includes("@")) {
-      setError("Please enter a valid email address.");
-      return false;
-    }
-    if (!userPassword) {
-      setError("Please enter your password.");
-      return false;
-    }
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
 
-    if (userPassword.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      return false;
+  const handleLogin = async () => {
+    setEmailError("");
+    setPasswordError("");
+    setGeneralError("");
+    setInfoMessage("");
+
+    if (!email) {
+      setEmailError("Email is required");
+      return;
     }
-    setError("");
-    setLoading(true);
+    if (!email.includes("@")) {
+      setEmailError("Enter a valid email");
+      return;
+    }
+    if (!password) {
+      setPasswordError("Password is required");
+      return;
+    }
+    if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return;
+    }
 
     try {
-      const user = await loginUser(userEmail, userPassword);
-      console.log("loggin success: ", user);
-    } catch (error) {
-      console.log(error);
-      setError("Invalid Credentials : Login Failed..");
+      setLoading(true);
+      Keyboard.dismiss();
+      await loginUser(email, password);
+    } catch (e: any) {
+      setGeneralError(e.message || "Login failed");
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleGooglePress = useCallback(() => {
+    setInfoMessage("Google sign-in is not yet configured");
+  }, []);
+
+  const handleApplePress = useCallback(() => {
+    setInfoMessage("Apple sign-in is not yet configured");
+  }, []);
+
+  const handleEmailSubmit = useCallback(() => {
+    Keyboard.dismiss();
+    passwordRef.current?.focus();
+  }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
         >
-          <View
+          <Image
+            source={require("../../../assets/illustrations/loginCat.png")}
+            resizeMode="cover"
+            style={styles.hero}
+          />
+
+          <Text
             style={[
-              styles.container,
-              {
-                backgroundColor: colors.background,
-              },
+              styles.subtitle,
+              { color: colors.subtext, fontFamily: fonts.regular },
             ]}
           >
+            Welcome back. Pick up where you left off.
+          </Text>
+
+          {!!generalError && (
+            <View
+              style={[styles.banner, { backgroundColor: colors.error + "1A" }]}
+            >
+              <Text style={[styles.bannerText, { color: colors.error }]}>
+                {generalError}
+              </Text>
+            </View>
+          )}
+
+          {!!infoMessage && (
             <View
               style={[
-                styles.card,
+                styles.infoBanner,
                 {
-                  backgroundColor: colors.card,
-                  shadowColor: isDark ? "#000" : "#000",
+                  backgroundColor: colors.accent + "1A",
+                  borderColor: colors.accent + "33",
                 },
               ]}
             >
+              <Text style={[styles.infoBannerText, { color: colors.text }]}>
+                {infoMessage}
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.field}>
+            <Text
+              style={[
+                styles.label,
+                { color: colors.subtext, fontFamily: fonts.regular },
+              ]}
+            >
+              EMAIL
+            </Text>
+
+            <Input
+              ref={emailRef}
+              placeholder="dev@feed.com"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (emailError) setEmailError("");
+              }}
+              keyboardType="email-address"
+              autoComplete="email"
+              textContentType="emailAddress"
+              returnKeyType="next"
+              onSubmitEditing={handleEmailSubmit}
+              customStyles={{ marginBottom: 0 }}
+            />
+
+            {!!emailError && (
+              <Text style={[styles.inlineError, { color: colors.error }]}>
+                {emailError}
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.field}>
+            <Text
+              style={[
+                styles.label,
+                { color: colors.subtext, fontFamily: fonts.regular },
+              ]}
+            >
+              PASSWORD
+            </Text>
+
+            <Input
+              ref={passwordRef}
+              placeholder="••••••••"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                if (passwordError) setPasswordError("");
+              }}
+              secureTextEntry={!showPassword}
+              autoComplete="password"
+              textContentType="password"
+              returnKeyType="done"
+              onSubmitEditing={handleLogin}
+              customStyles={{ marginBottom: 0 }}
+              rightElement={
+                <Pressable
+                  onPress={() => setShowPassword(!showPassword)}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    showPassword ? "Hide password" : "Show password"
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name={showPassword ? "eye-off" : "eye"}
+                    size={20}
+                    color={colors.subtext}
+                  />
+                </Pressable>
+              }
+            />
+
+            {!!passwordError && (
+              <Text style={[styles.inlineError, { color: colors.error }]}>
+                {passwordError}
+              </Text>
+            )}
+          </View>
+
+          <Button
+            title="Login"
+            disabled={loading}
+            loading={loading}
+            onPress={handleLogin}
+          />
+
+          <View style={styles.divider}>
+            <View style={[styles.line, { backgroundColor: colors.border }]} />
+
+            <Text
+              style={[
+                styles.or,
+                { color: colors.subtext, fontFamily: fonts.regular },
+              ]}
+            >
+              OR
+            </Text>
+
+            <View style={[styles.line, { backgroundColor: colors.border }]} />
+          </View>
+
+          <Pressable
+            style={[
+              styles.socialButton,
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+              },
+            ]}
+            onPress={handleGooglePress}
+            accessibilityRole="button"
+            accessibilityLabel="Continue with Google"
+          >
+            <MaterialCommunityIcons name="google" color="#EA4335" size={20} />
+
+            <Text
+              style={[
+                styles.socialText,
+                { color: colors.text, fontFamily: fonts.regular },
+              ]}
+            >
+              Continue with Google
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[
+              styles.socialButton,
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+              },
+            ]}
+            onPress={handleApplePress}
+            accessibilityRole="button"
+            accessibilityLabel="Continue with Apple"
+          >
+            <MaterialCommunityIcons name="apple" color="#000" size={22} />
+
+            <Text
+              style={[
+                styles.socialText,
+                { color: colors.text, fontFamily: fonts.regular },
+              ]}
+            >
+              Continue with Apple
+            </Text>
+          </Pressable>
+
+          <View style={styles.footer}>
+            <Text
+              style={[
+                styles.footerText,
+                { color: colors.subtext, fontFamily: fonts.regular },
+              ]}
+            >
+              Don't have an account?
+            </Text>
+
+            <Pressable onPress={() => navigation.navigate("SignUp")}>
               <Text
                 style={[
-                  styles.subtitle,
-                  {
-                    color: colors.subtext,
-                  },
+                  styles.loginText,
+                  { color: colors.accent, fontFamily: fonts.semibold },
                 ]}
               >
-                Login to continue
+                Sign Up
               </Text>
-
-              <Input
-                value={email}
-                placeholder="Enter your email"
-                onChangeText={setEmail}
-                keyboardType="email-address"
-              />
-
-              <Input
-                placeholder="Enter your password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={true}
-              />
-
-              {error ? (
-                <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
-              ) : null}
-
-              <Button
-                title="Login"
-                disabled={!email || !password}
-                loading={loading}
-                onPress={() => {
-                  handleLogin(email, password);
-                }}
-              />
-
-              <TouchableOpacity
-                style={styles.signupLink}
-                onPress={() => navigation.navigate("SignUp")}
-              >
-                <Text
-                  style={[
-                    styles.signupLinkText,
-                    {
-                      color: colors.accent,
-                    },
-                  ]}
-                >
-                  Don't have an account? Register
-                </Text>
-              </TouchableOpacity>
-            </View>
+            </Pressable>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </View>
+      </View>
+    </KeyboardAvoidingView>
   );
-};
-
-export default LoginScreen;
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f2f4f7",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+  content: {
+    padding: 24,
+    paddingBottom: 40,
   },
 
-  card: {
-    backgroundColor: "#fff",
-    padding: 25,
-    borderRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
+  hero: {
+    width: "100%",
+    height: 200,
+    marginBottom: 20,
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "700",
-    color: "#111",
+    textAlign: "center",
     marginBottom: 6,
   },
 
   subtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 25,
-  },
-
-  input: {
-    height: 52,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    marginBottom: 16,
-    fontSize: 16,
-    backgroundColor: "#fafafa",
-  },
-
-  signupLink: {
-    marginTop: 15,
-  },
-  signupLinkText: {
-    color: "#2563eb",
-    fontSize: 14,
+    marginTop: 6,
     textAlign: "center",
+    marginBottom: 32,
+    fontSize: 16,
+  },
+
+  banner: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+
+  bannerText: {
+    fontSize: 13,
+    textAlign: "center",
+  },
+
+  infoBanner: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderWidth: 1,
+  },
+
+  infoBannerText: {
+    fontSize: 13,
+    textAlign: "center",
+  },
+
+  field: {
+    marginBottom: 18,
+  },
+
+  label: {
+    fontWeight: "700",
+    fontSize: 12,
+    marginBottom: 8,
+    letterSpacing: 1,
+  },
+
+  inlineError: {
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+  },
+
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 30,
+  },
+
+  line: {
+    flex: 1,
+    height: 1,
+  },
+
+  or: {
+    marginHorizontal: 12,
+    fontWeight: "600",
+    fontSize: 14,
+  },
+
+  socialButton: {
+    height: 54,
+    borderRadius: 30,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 14,
+  },
+
+  socialText: {
+    fontWeight: "600",
+    fontSize: 15,
+  },
+
+  footer: {
+    marginTop: 24,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 5,
+  },
+
+  footerText: {
+    fontSize: 14,
+  },
+
+  loginText: {
+    fontWeight: "700",
+    fontSize: 14,
   },
 });
