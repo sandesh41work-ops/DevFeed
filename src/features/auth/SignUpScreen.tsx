@@ -1,24 +1,23 @@
-import React, { useState, useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
-  ScrollView,
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ActivityIndicator,
+  Alert,
   Image,
   Keyboard,
-  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
+  View,
 } from "react-native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { registerUser } from "./authService";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { fonts } from "../../shared/constants/fonts";
 import Input from "../../shared/components/Input";
+import Button from "../../shared/components/Button";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../shared/types/navigation";
 import { useNavigation } from "@react-navigation/native";
@@ -39,7 +38,7 @@ function getPasswordStrength(password: string): { score: number; label: string }
   return { score, label: "Strong" };
 }
 
-export default function SignupScreen() {
+export default function SignUpScreen() {
   const { colors, isDark } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -130,12 +129,16 @@ export default function SignupScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
         <Image
           source={require("../../../assets/illustrations/signUpCat.png")}
           resizeMode="cover"
@@ -298,12 +301,6 @@ export default function SignupScreen() {
             </View>
           )}
 
-          <Text
-            style={[styles.helperText, { color: colors.subtext }]}
-            accessibilityLabel="Password requirements"
-          >
-            6+ characters required — longer is stronger with a mix of cases, numbers, and symbols
-          </Text>
         </View>
 
         <View style={styles.field}>
@@ -387,7 +384,7 @@ export default function SignupScreen() {
               ]}
             >
               {acceptedTerms && (
-                <MaterialCommunityIcons name="check" size={14} color="white" />
+                <MaterialCommunityIcons name="check" size={14} color="black" />
               )}
             </View>
           </Pressable>
@@ -415,41 +412,12 @@ export default function SignupScreen() {
           </Text>
         )}
 
-        <Pressable
-          onPress={handleSignUp}
+        <Button
+          title="Create Account"
           disabled={loading}
-          accessibilityRole="button"
-          accessibilityLabel="Create account"
-          style={[
-            styles.button,
-            loading && styles.buttonDisabled,
-          ]}
-        >
-          <LinearGradient
-            colors={["#FF6600", "#FF8A3D"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.buttonGradient}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <>
-                <Text
-                  style={[styles.buttonText, { fontFamily: fonts.semibold }]}
-                >
-                  Create Account
-                </Text>
-
-                <MaterialCommunityIcons
-                  color="white"
-                  size={20}
-                  name="arrow-right"
-                />
-              </>
-            )}
-          </LinearGradient>
-        </Pressable>
+          loading={loading}
+          onPress={handleSignUp}
+        />
 
         <View style={styles.divider}>
           <View style={[styles.line, { backgroundColor: colors.border }]} />
@@ -536,7 +504,8 @@ export default function SignupScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -655,7 +624,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
-  checkboxWrap: {},
+  checkboxWrap: {
+   
+  },
 
   checkbox: {
     width: 20,
@@ -682,30 +653,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 8,
     marginLeft: 4,
-  },
-
-  button: {
-    marginTop: 10,
-    height: 56,
-    borderRadius: 14,
-    overflow: "hidden",
-  },
-
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-
-  buttonGradient: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 10,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 17,
   },
 
   divider: {
