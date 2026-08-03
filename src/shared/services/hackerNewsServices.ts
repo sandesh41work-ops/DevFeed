@@ -18,4 +18,29 @@ export const getStory = async (id: number) => {
   // console.log("Story data:", response.data)
   return response.data;
 };
+
 export const getItem = getStory;
+
+export const getNewStories = async (): Promise<number[]> => {
+  const response = await apiClient.get("/newstories.json");
+  return response.data;
+};
+
+export const getBestStories = async (): Promise<number[]> => {
+  const response = await apiClient.get("/beststories.json");
+  return response.data;
+};
+export const getAskStories = async (): Promise<number[]> => {
+  const response = await apiClient.get("/askstories.json");
+  return response.data;
+};
+
+export const getShowStories = async (): Promise<number[]> => {
+  const response = await apiClient.get("/showstories.json");
+  return response.data;
+};
+
+export const getJobStories = async (): Promise<number[]> => {
+  const response = await apiClient.get("/jobstories.json");
+  return response.data;
+};
