@@ -213,7 +213,7 @@ const HomeScreen = () => {
                 style={[{ flex: 1 }, { backgroundColor: colors.background }]}
               >
                 <FlatList
-                  contentContainerStyle={{ flexGrow: 1 }}
+                  contentContainerStyle={{ flexGrow: 1}}
                   initialNumToRender={12}
                   maxToRenderPerBatch={10}
                   windowSize={10}
