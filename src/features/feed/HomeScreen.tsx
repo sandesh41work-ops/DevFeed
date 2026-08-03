@@ -70,8 +70,7 @@ const HomeScreen = () => {
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
 
-  // Clear stale data the moment the feed changes so the skeleton shows
-  // instead of the previous feed's stories flashing during the crossfade.
+
   useEffect(() => {
     setStories([]);
     setPage(1);
@@ -239,14 +238,7 @@ const HomeScreen = () => {
               <View
                 style={[{ flex: 1 }, { backgroundColor: colors.background }]}
               >
-                {/*
-                  key={selectedFeed} intentionally remounts this wrapper on
-                  feed change: scroll position and virtualization state
-                  SHOULD reset for a different feed. FadeIn/FadeOut (no
-                  directional bias) is used on both sides so the crossfade
-                  reads as one clean transition rather than two lists
-                  sliding past each other in different directions.
-                */}
+              
                 <Animated.View
                   key={selectedFeed}
                   exiting={FadeOut.duration(200)}
