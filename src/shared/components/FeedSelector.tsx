@@ -75,14 +75,14 @@ export default React.memo(FeedSelector);
 const styles = StyleSheet.create({
   container: {
     marginTop: 0,
-    marginBottom: 8,
+    marginBottom: 1,
   },
 
   contentContainer: {
-    paddingHorizontal: 16,
-    // paddingVertical: 1,
-    paddingBottom: 4,
-    gap: 10,
+    paddingHorizontal: 15,
+    paddingBottom: 5,
+    paddingTop :1,
+    gap: 7,
   },
 
   chip: {
