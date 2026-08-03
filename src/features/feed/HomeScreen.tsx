@@ -27,7 +27,8 @@ import { useStoriesQuery } from "./useStoriesQuery";
 import Footer from "../../shared/components/Footer";
 import ErrorState from "../../shared/components/ErrorState";
 import Animated, {
-  FadeInDown,
+  FadeIn,
+  FadeOut,
   LinearTransition,
   SlideInDown,
   SlideOutUp,
@@ -59,48 +60,52 @@ const HomeScreen = () => {
     error,
     refetch,
   } = useStoriesQuery(selectedFeed);
+
   const showSkeletons =
     stories.length === 0 && (isLoading || fetchingFirstPage);
+
   const queryClient = useQueryClient();
+
   useEffect(() => {
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
 
-  const loadFirstPage = useCallback(
-    async (ids: number[]) => {
-      setFetchingFirstPage(true);
-      try {
-        const firstPageIds = ids.slice(0, PAGE_SIZE);
+  // Clear stale data the moment the feed changes so the skeleton shows
+  // instead of the previous feed's stories flashing during the crossfade.
+  useEffect(() => {
+    setStories([]);
+    setPage(1);
+    setFetchingFirstPage(true);
+  }, [selectedFeed]);
 
-        const data = await Promise.all(
-          firstPageIds.map((id) =>
-            queryClient.fetchQuery({
-              queryKey: ["story", id],
-              queryFn: () => getStory(id),
-              staleTime: 1000 * 60 * 10,
-            }),
-          ),
-        );
-        setStories(data);
-        setPage(1);
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // console.log("Finallly Called...");
-        setFetchingFirstPage(false);
-      }
-    },
-    [fetchingFirstPage],
-  );
+  const loadFirstPage = useCallback(async (ids: number[]) => {
+    setFetchingFirstPage(true);
+    try {
+      const firstPageIds = ids.slice(0, PAGE_SIZE);
+
+      const data = await Promise.all(
+        firstPageIds.map((id) =>
+          queryClient.fetchQuery({
+            queryKey: ["story", id],
+            queryFn: () => getStory(id),
+            staleTime: 1000 * 60 * 10,
+          }),
+        ),
+      );
+      setStories(data);
+      setPage(1);
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      setFetchingFirstPage(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (allIds.length > 0) {
       loadFirstPage(allIds);
     }
-  }, [allIds]);
-
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  }, [allIds, loadFirstPage]);
 
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
@@ -112,7 +117,6 @@ const HomeScreen = () => {
     try {
       isFetching.current = true;
       setLoadingMore(true);
-      // await sleep(1500);
 
       const newStories = await Promise.all(
         nextIds.map((id) =>
@@ -125,7 +129,6 @@ const HomeScreen = () => {
       );
       setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
-      // await sleep(1500);
     } catch (e) {
       console.warn(e);
     } finally {
@@ -144,23 +147,23 @@ const HomeScreen = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: Story }) => (
-      <Animated.View entering={FadeInDown.duration(400)}>
+      <Animated.View entering={FadeIn.duration(400)}>
         <StoryCard story={item} />
       </Animated.View>
     ),
     [],
   );
+
   const emptyListComponent = useMemo(() => {
     return (
       <Animated.View
-        entering={FadeInDown.duration(250)}
+        entering={FadeIn.duration(250)}
         layout={LinearTransition.springify()}
         style={{
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
           alignContent: "center",
-          // borderWidth : 1
         }}
       >
         <EmptyState
@@ -236,31 +239,45 @@ const HomeScreen = () => {
               <View
                 style={[{ flex: 1 }, { backgroundColor: colors.background }]}
               >
-                <FlatList
-                  contentContainerStyle={{ flexGrow: 1 }}
-                  initialNumToRender={12}
-                  maxToRenderPerBatch={10}
-                  windowSize={10}
-                  updateCellsBatchingPeriod={30}
-                  removeClippedSubviews
-                  decelerationRate="normal"
-                  bounces={true}
-                  overScrollMode="always"
-                  data={filteredStories}
-                  // data={[]}
-                  keyExtractor={(item) => item.id.toString()}
-                  renderItem={renderItem}
-                  onRefresh={refetch}
-                  refreshing={loading}
-                  onEndReached={loadMore}
-                  onEndReachedThreshold={1}
-                  ListFooterComponent={
-                    filteredStories.length > 0 ? (
-                      <Footer loadingMore={loadingMore} />
-                    ) : null
-                  }
-                  ListEmptyComponent={emptyListComponent}
-                />
+                {/*
+                  key={selectedFeed} intentionally remounts this wrapper on
+                  feed change: scroll position and virtualization state
+                  SHOULD reset for a different feed. FadeIn/FadeOut (no
+                  directional bias) is used on both sides so the crossfade
+                  reads as one clean transition rather than two lists
+                  sliding past each other in different directions.
+                */}
+                <Animated.View
+                  key={selectedFeed}
+                  exiting={FadeOut.duration(200)}
+                  entering={FadeIn.duration(250)}
+                  style={{ flex: 1 }}
+                >
+                  <FlatList
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    initialNumToRender={12}
+                    maxToRenderPerBatch={10}
+                    windowSize={10}
+                    updateCellsBatchingPeriod={30}
+                    removeClippedSubviews
+                    decelerationRate="normal"
+                    bounces={true}
+                    overScrollMode="always"
+                    data={filteredStories}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderItem}
+                    onRefresh={refetch}
+                    refreshing={loading}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={1}
+                    ListFooterComponent={
+                      filteredStories.length > 0 ? (
+                        <Footer loadingMore={loadingMore} />
+                      ) : null
+                    }
+                    ListEmptyComponent={emptyListComponent}
+                  />
+                </Animated.View>
               </View>
             )}
           </View>
