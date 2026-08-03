@@ -36,6 +36,7 @@ import EmptyState from "../../shared/components/EmptyState";
 import { Platform } from "react-native";
 import FeedSelector from "../../shared/components/FeedSelector";
 import { Feed } from "../../shared/types/feed";
+import { useQueryClient } from "@tanstack/react-query";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -50,11 +51,17 @@ const HomeScreen = () => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
-  
-  const [selectedFeed, setSelectedFeed] = useState<Feed>("top");
-  const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery(selectedFeed);
-  const showSkeletons = stories.length === 0 && (isLoading || fetchingFirstPage);
 
+  const [selectedFeed, setSelectedFeed] = useState<Feed>("top");
+  const {
+    data: allIds = [],
+    isLoading,
+    error,
+    refetch,
+  } = useStoriesQuery(selectedFeed);
+  const showSkeletons =
+    stories.length === 0 && (isLoading || fetchingFirstPage);
+  const queryClient = useQueryClient();
   useEffect(() => {
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
@@ -64,7 +71,16 @@ const HomeScreen = () => {
       setFetchingFirstPage(true);
       try {
         const firstPageIds = ids.slice(0, PAGE_SIZE);
-        const data = await Promise.all(firstPageIds.map((id) => getStory(id)));
+
+        const data = await Promise.all(
+          firstPageIds.map((id) =>
+            queryClient.fetchQuery({
+              queryKey: ["story", id],
+              queryFn: () => getStory(id),
+              staleTime: 1000 * 60 * 10,
+            }),
+          ),
+        );
         setStories(data);
         setPage(1);
       } catch (e) {
@@ -82,8 +98,10 @@ const HomeScreen = () => {
       loadFirstPage(allIds);
     }
   }, [allIds]);
+
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
+
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
@@ -97,7 +115,13 @@ const HomeScreen = () => {
       // await sleep(1500);
 
       const newStories = await Promise.all(
-        nextIds.map((id: number) => getStory(id)),
+        nextIds.map((id) =>
+          queryClient.fetchQuery({
+            queryKey: ["story", id],
+            queryFn: () => getStory(id),
+            staleTime: 1000 * 60 * 10,
+          }),
+        ),
       );
       setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
@@ -213,7 +237,7 @@ const HomeScreen = () => {
                 style={[{ flex: 1 }, { backgroundColor: colors.background }]}
               >
                 <FlatList
-                  contentContainerStyle={{ flexGrow: 1}}
+                  contentContainerStyle={{ flexGrow: 1 }}
                   initialNumToRender={12}
                   maxToRenderPerBatch={10}
                   windowSize={10}
