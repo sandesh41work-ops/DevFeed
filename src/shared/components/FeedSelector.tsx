@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { FEEDS } from "../types/feed";
 import { useTheme } from "../hooks/useTheme";
 import { fonts } from "../constants/fonts";
+type Feed = (typeof FEEDS)[number]["id"];
 
 type FeedSelectorProps = {
   selectedFeed: Feed;
   onFeedChange: (feed: Feed) => void;
 };
-
-type Feed = (typeof FEEDS)[number]["id"];
 
 const FeedSelector = ({ selectedFeed, onFeedChange }: FeedSelectorProps) => {
   const { colors } = useTheme();
@@ -71,7 +70,7 @@ const FeedSelector = ({ selectedFeed, onFeedChange }: FeedSelectorProps) => {
   );
 };
 
-export default FeedSelector;
+export default React.memo(FeedSelector);
 
 const styles = StyleSheet.create({
   container: {
