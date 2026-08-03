@@ -48,13 +48,12 @@ const HomeScreen = () => {
   const isFetching = useRef(false);
   const { isConnected } = useNetworkStatus();
   const { colors } = useTheme();
-  const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery();
   const [loading, setLoading] = useState(false);
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
-  const showSkeletons =
-    stories.length === 0 && (isLoading || fetchingFirstPage);
-
+  
   const [selectedFeed, setSelectedFeed] = useState<Feed>("top");
+  const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery(selectedFeed);
+  const showSkeletons = stories.length === 0 && (isLoading || fetchingFirstPage);
 
   useEffect(() => {
     setLoading(isLoading || fetchingFirstPage);
