@@ -237,7 +237,6 @@ const HomeScreen = () => {
               <View
                 style={[{ flex: 1 }, { backgroundColor: colors.background }]}
               >
-              
                 <Animated.View
                   key={selectedFeed}
                   exiting={FadeOut.duration(200)}
