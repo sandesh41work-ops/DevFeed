@@ -243,7 +243,7 @@ const HomeScreen = () => {
                   entering={FadeIn.duration(250)}
                   style={{ flex: 1 }}
                 >
-                  <FlatList
+                  <Animated.FlatList
                     contentContainerStyle={{ flexGrow: 1 }}
                     initialNumToRender={12}
                     maxToRenderPerBatch={10}
@@ -266,6 +266,8 @@ const HomeScreen = () => {
                       ) : null
                     }
                     ListEmptyComponent={emptyListComponent}
+                          itemLayoutAnimation={LinearTransition}
+
                   />
                 </Animated.View>
               </View>
