@@ -121,15 +121,16 @@ function RootNavigator() {
     },
   };
   return (
-    <NavigationContainer theme={navigationTheme}>
-      <Stack.Navigator
-        screenOptions={{
-          contentStyle: {
-            backgroundColor: colors.background,
-          },
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <NavigationContainer theme={navigationTheme}>
+        <Stack.Navigator
+          screenOptions={{
+            contentStyle: {
+              backgroundColor: colors.background,
+            },
+            headerStyle: {
+              backgroundColor: colors.background,
+            },
           headerTintColor: colors.subtext,
           headerTitleStyle: {
             color: colors.text,
@@ -182,7 +183,8 @@ function RootNavigator() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  </View>
+);
 }
 
 export default RootNavigator;
