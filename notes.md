@@ -15,4 +15,5 @@
 - https://github.com/hackernews/api
 
 
-### feature ideas
+### release commands
+eas build --platform android --profile release
