@@ -1,61 +1,75 @@
 # DevFeed
 
-![React Native](https://img.shields.io/badge/React%20Native-0.7x-blue)
-![Expo](https://img.shields.io/badge/Expo-SDK-black)
+![React Native](https://img.shields.io/badge/React%20Native-0.85-blue)
+![Expo](https://img.shields.io/badge/Expo-SDK-56-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-DevFeed is a React Native news reader app built with Expo and TypeScript. It provides authenticated access to Hacker News-style stories, in-app article details, bookmarking, search, threaded discussion browsing, and AI-powered article summaries.
+DevFeed is a polished, mobile-first Hacker News client built with Expo and TypeScript. It brings together the speed of modern news browsing with the depth of community discussion, giving developers a focused way to discover, read, bookmark, and engage with tech stories from one elegant experience.
 
-## 📥 Download
+Whether you want to stay updated on startup launches, engineering insights, or the latest product releases, DevFeed makes it easy to consume content quickly and thoughtfully.
 
-Download the latest Android APK from the **Releases** page.
+## Why DevFeed
 
-➡️ [Latest Release](../../releases/latest)
+This project is designed for users who want more than a basic feed viewer. It combines:
 
----
+- a clean, modern reading experience
+- fast browsing through Hacker News stories
+- in-app article detail views and discussion threads
+- personalized bookmarking and saved reading lists
+- AI-powered summaries for quicker content consumption
 
-## ✨ Features
+It is built as a product-minded mobile app, not just a demo, with attention to usability, responsiveness, and a refined user experience.
 
-- ✅ Firebase Authentication
-- ✅ Hacker News Feed
-- ✅ Infinite Scroll
-- ✅ Search Stories
-- ✅ Bookmarks
-- ✅ Discussion Threads
-- ✅ Dark / Light Theme
-- ✅ Offline Indicator
-- ✅ Pull to Refresh
-- ✅ Share Stories
-- ✅ AI Article Summary
+## Key Features
 
----
+- Authentication with Firebase for secure, personalized access
+- Hacker News story browsing with infinite scrolling
+- Pull-to-refresh and smooth content loading
+- Search across stories for faster discovery
+- Bookmarking for saving important posts
+- Threaded discussion browsing for context and conversation
+- Light and dark theme support
+- Offline connectivity awareness
+- Shareable article links
+- AI-generated article summaries for quick digesting
 
-## 🛠 Built With
+## Product Experience
 
-- Expo / React Native
+DevFeed is built around a simple idea: help readers stay informed without friction.
+
+The experience includes:
+
+- a streamlined home feed optimized for reading
+- article detail screens with rich context and actions
+- discussion views that preserve conversation flow
+- lightweight interactions that feel native and responsive
+
+## Tech Stack
+
+- React Native + Expo
 - TypeScript
 - React Navigation
-- Firebase Auth
-- React Query
-- AsyncStorage
-- Expo Vector Icons
+- Firebase Authentication
+- React Query for data fetching and caching
+- AsyncStorage for local persistence
+- Expo Vector Icons and custom UI components
 
----
+## Screenshots
 
-## Screens
+### Light Mode
 
-## 📱 Android
+A bright, clean experience for everyday reading and discovery.
 
 <table align="center">
   <tr>
     <td align="center">
       <img src="screenshot/Android/Feed.jpeg" width="220" /><br/>
-      <b>Home</b>
+      <b>Home Feed</b>
     </td>
     <td align="center">
       <img src="screenshot/Android/ArticleDetails.jpeg" width="220" /><br/>
-      <b>Article</b>
+      <b>Article Details</b>
     </td>
     <td align="center">
       <img src="screenshot/Android/BookMarks.jpeg" width="220" /><br/>
@@ -65,7 +79,7 @@ Download the latest Android APK from the **Releases** page.
   <tr>
     <td align="center">
       <img src="screenshot/Android/ArticleSummaryAi.jpeg" width="220" /><br/>
-      <b>Ai Summarization</b>
+      <b>AI Summary</b>
     </td>
     <td align="center">
       <img src="screenshot/Android/UserModal.jpeg" width="220" /><br/>
@@ -74,113 +88,45 @@ Download the latest Android APK from the **Releases** page.
   </tr>
 </table>
 
-## 🍎 iOS
+---
+
+### Dark Mode
+
+A deeper, more immersive experience designed for low-light use.
 
 <table align="center">
   <tr>
     <td align="center">
-      <img src="screenshot/IOS/Feed.png" width="220" /><br/>
-      <b>Home</b>
+      <img src="screenshot/Android/FeedDark.jpeg" width="220" /><br/>
+      <b>Home Feed</b>
     </td>
     <td align="center">
-      <img src="screenshot/IOS/ArticleDetailsScree.png" width="220" /><br/>
-      <b>Article</b>
+      <img src="screenshot/Android/ArticleDetailsDark.jpeg" width="220" /><br/>
+      <b>Article Details</b>
     </td>
     <td align="center">
-      <img src="screenshot/IOS/Bookmarks.png" width="220" /><br/>
-      <b>Bookmarks</b>
+      <img src="screenshot/Android/SummaryDark.jpeg" width="220" /><br/>
+      <b>AI Summary</b>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="screenshot/IOS/Discussions.png" width="220" /><br/>
-      <b>Discussion</b>
-    </td>
-    <td align="center">
-      <img src="screenshot/IOS/LoginScreen.png" width="220" /><br/>
-      <b>Login</b>
+      <img src="screenshot/Android/DisussionDark.jpeg" width="220" /><br/>
+      <b>Discussions</b>
     </td>
   </tr>
 </table>
 
----
+## Roadmap
 
-## Getting Started
+Future improvements include:
 
-### Prerequisites
+- expanded offline caching for story content
+- stronger discussion pagination and thread management
+- profile settings and richer account controls
+- improved error handling and resilience for network failures
+- broader environment configuration for API and service integrations
 
-- Node.js
-- npm
-- Expo CLI
-- Xcode or Android Studio if running on simulator/device
+## License
 
-### Install
-
-```bash
-npm install
-```
-
-### Run
-
-```bash
-npm start
-```
-
-Then choose:
-
-- `npm run android`
-- `npm run ios`
-- `npm run web`
-
----
-
-## Firebase
-
-The app uses Firebase Authentication in firebase.ts.
-
-If you want to use your own Firebase project:
-
-- create a Firebase app
-- enable Email/Password authentication
-- replace the `firebaseConfig` values in firebase.ts
-
----
-
-## Project Structure
-
-```text
-src
-├── features
-│   ├── auth
-│   ├── bookmarks
-│   ├── discussion
-│   └── feed
-├── navigation
-├── services
-├── shared
-│   ├── components
-│   ├── hooks
-│   └── utils
-└── types
-```
-
----
-
-## Notes
-
-- HomeScreen.tsx loads stories in pages and supports pull-to-refresh
-- BookmarksScreen.tsx refreshes bookmarks when screen is focused
-- StoryDetailsCard.tsx uses bookmark state and `Ionicons` action icons
-- SearchBar.tsx includes a clear icon for quick search reset
-
----
-
-## Future Improvements
-
-- add full offline caching for story data
-- improve discussion pagination for large threads
-- add profile settings and logout confirmation
-- enhance error handling across network requests
-- extract environment config for Firebase and API endpoints
-
----
+This project is licensed under the MIT License.
