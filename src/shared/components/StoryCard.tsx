@@ -102,12 +102,12 @@ const StoryCard = memo(({ story }: { story: Story }) => {
           </Text>
 
           {/* Dynamic Unread Badge */}
-          {/* {!visited && (
+          {!visited && (
             <View style={styles.unreadBadge}>
               <View style={styles.unreadDot} />
               <Text style={styles.unreadText}>New</Text>
             </View>
-          )} */}
+          )}
         </View>
 
         {/* Title contrast shift instead of full element opacity */}
