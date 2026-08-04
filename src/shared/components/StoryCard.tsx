@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,10 +7,9 @@ import { Story } from "../types/story";
 import Favicon from "./FavIcon";
 import { fonts } from "../constants/fonts";
 import { LinearGradient } from "expo-linear-gradient";
-const HOT_THRESHOLD = 500;
+import { isStoryVisited, markVisitedStory } from "../services/visitedStories";
 
-// 4px baseline grid — every margin/padding below is a multiple of this,
-// so spacing reads as a system rather than eyeballed numbers.
+const HOT_THRESHOLD = 500;
 const space = (n: number) => n * 4;
 
 const getDomain = (url?: string) => {
@@ -32,39 +31,62 @@ const getTimeAgo = (unixTime: number) => {
 };
 
 const StoryCard = memo(({ story }: { story: Story }) => {
+  const [visited, setVisited] = useState(false);
+
+  useEffect(() => {
+    isStoryVisited(story.id).then(setVisited);
+  }, [story.id]);
+
   const navigation = useNavigation<any>();
+
+  const handlePress = () => {
+    setVisited(true);
+    markVisitedStory(story.id).catch((error) => {
+      console.warn("Failed to persist visited story", error);
+    });
+    navigation.navigate("ArticleDetail", { story });
+  };
 
   const { colors, isDark } = useTheme();
   const isHot = story.score > HOT_THRESHOLD;
 
-  // Derived values only need recomputing when the story itself changes,
-  // not on every parent re-render or theme toggle.
   const domain = useMemo(() => getDomain(story.url), [story.url]);
   const timeAgo = useMemo(() => getTimeAgo(story.time), [story.time]);
-
   const commentCount = story.descendants ?? 0;
 
   return (
     <Pressable
-      onPress={() => navigation.navigate("ArticleDetail", { story })}
-      // Android gets a real ripple instead of a flat opacity fade;
-      // iOS falls back to the opacity style below.
+      onPress={handlePress}
       android_ripple={{ color: isDark ? "#2A2A2A" : "#ECECEC" }}
       style={({ pressed }) => [
         styles.card,
         {
           backgroundColor: colors.card,
-
-          borderColor: isDark ? "#232323" : "#a92727",
+          borderColor: isDark ? "#232323" : "#E5E5E5",
+          // Accent left bar for unread stories
+          borderLeftWidth: visited ? StyleSheet.hairlineWidth : 4,
+          borderLeftColor: visited
+            ? isDark
+              ? "#232323"
+              : "#E5E5E5"
+            : "#e37226e3",
           opacity: pressed ? 0.85 : 1,
         },
       ]}
       accessibilityRole="link"
-      accessibilityLabel={`${story.title}, ${story.score} points, by ${story.by}, ${timeAgo} ago, ${commentCount} comments${isHot ? ", trending" : ""}`}
+      accessibilityLabel={`${visited ? "Read" : "Unread"} story: ${
+        story.title
+      }, ${story.score} points, by ${story.by}, ${timeAgo} ago, ${commentCount} comments${
+        isHot ? ", trending" : ""
+      }`}
       accessibilityHint="Opens the full story"
     >
       <LinearGradient
-        colors={["rgba(255,102,0,0.03)", "rgba(255,102,0,0)"]}
+        colors={
+          visited
+            ? ["transparent", "transparent"]
+            : ["rgba(255,102,0,0.05)", "rgba(255,102,0,0)"]
+        }
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.gradient}
@@ -78,12 +100,25 @@ const StoryCard = memo(({ story }: { story: Story }) => {
           >
             {domain}
           </Text>
+
+          {/* Dynamic Unread Badge */}
+          {/* {!visited && (
+            <View style={styles.unreadBadge}>
+              <View style={styles.unreadDot} />
+              <Text style={styles.unreadText}>New</Text>
+            </View>
+          )} */}
         </View>
 
+        {/* Title contrast shift instead of full element opacity */}
         <Text
-          style={[styles.title, { color: colors.text }]}
-          numberOfLines={3}
-          ellipsizeMode="tail"
+          style={[
+            styles.title,
+            {
+              color: visited ? colors.subtext : colors.text,
+              fontWeight: visited ? "400" : "600",
+            },
+          ]}
         >
           {story.title}
         </Text>
@@ -140,8 +175,6 @@ StoryCard.displayName = "StoryCard";
 
 export default StoryCard;
 
-// Small enough that giving it its own component keeps the JSX above
-// readable, and memo means three of these re-rendering costs nothing.
 const Dot = memo(({ color }: { color: string }) => (
   <View style={[styles.dot, { backgroundColor: color }]} />
 ));
@@ -152,10 +185,8 @@ const styles = StyleSheet.create({
     marginHorizontal: space(4),
     marginBottom: space(3),
     borderRadius: space(4.5),
-
     borderWidth: StyleSheet.hairlineWidth,
-    // Ensures the whole row clears the 44pt minimum touch target even
-    // if title + footer collapse to a single short line.
+    overflow: "hidden",
     minHeight: 44,
   },
 
@@ -174,10 +205,34 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
 
+  unreadBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 102, 0, 0.12)",
+    paddingHorizontal: space(2),
+    paddingVertical: space(0.5),
+    borderRadius: space(3),
+    marginLeft: "auto",
+  },
+
+  unreadDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: "#FF6600",
+    marginRight: space(1),
+  },
+
+  unreadText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#FF6600",
+    letterSpacing: 0.5,
+  },
+
   title: {
     fontFamily: fonts.semibold,
     fontSize: 16.5,
-    fontWeight: "500",
     lineHeight: 23,
     letterSpacing: -0.1,
   },
@@ -222,6 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     fontWeight: "500",
   },
+
   gradient: {
     paddingHorizontal: space(5),
     paddingVertical: space(5),
