@@ -9,6 +9,12 @@ DevFeed is a polished, mobile-first Hacker News client built with Expo and TypeS
 
 Whether you want to stay updated on startup launches, engineering insights, or the latest product releases, DevFeed makes it easy to consume content quickly and thoughtfully.
 
+## Download App
+
+Download the latest Android APK from the releases page:
+
+➡️ [Latest Release](../../releases/latest)
+
 ## Why DevFeed
 
 This project is designed for users who want more than a basic feed viewer. It combines:
