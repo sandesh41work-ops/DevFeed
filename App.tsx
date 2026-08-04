@@ -8,8 +8,10 @@ import {
   IBMPlexSans_400Regular,
 } from "@expo-google-fonts/ibm-plex-sans";
 import { IBMPlexMono_600SemiBold } from "@expo-google-fonts/ibm-plex-mono";
+import { useTheme } from "./src/shared/hooks/useTheme";
 const queryClient = new QueryClient();
 export default function App() {
+  const { colors } = useTheme();
   const [fontsLoaded] = useFonts({
     IBMPlexSans_600SemiBold,
     IBMPlexSans_400Regular,
@@ -18,7 +20,7 @@ export default function App() {
 
   if (!fontsLoaded) return null;
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor : colors.background }}>
       <QueryClientProvider client={queryClient}>
         <RootNavigator />
       </QueryClientProvider>
