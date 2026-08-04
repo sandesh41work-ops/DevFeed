@@ -27,13 +27,18 @@ import { useStoriesQuery } from "./useStoriesQuery";
 import Footer from "../../shared/components/Footer";
 import ErrorState from "../../shared/components/ErrorState";
 import Animated, {
-  FadeInDown,
+  FadeIn,
+  FadeOut,
   LinearTransition,
   SlideInDown,
   SlideOutUp,
 } from "react-native-reanimated";
 import EmptyState from "../../shared/components/EmptyState";
 import { Platform } from "react-native";
+import FeedSelector from "../../shared/components/FeedSelector";
+import { Feed } from "../../shared/types/feed";
+import { useQueryClient } from "@tanstack/react-query";
+
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const navigation = useNavigation();
@@ -45,41 +50,61 @@ const HomeScreen = () => {
   const isFetching = useRef(false);
   const { isConnected } = useNetworkStatus();
   const { colors } = useTheme();
-  const { data: allIds = [], isLoading, error, refetch } = useStoriesQuery();
   const [loading, setLoading] = useState(false);
   const [fetchingFirstPage, setFetchingFirstPage] = useState(true);
+
+  const [selectedFeed, setSelectedFeed] = useState<Feed>("top");
+  const {
+    data: allIds = [],
+    isLoading,
+    error,
+    refetch,
+  } = useStoriesQuery(selectedFeed);
+
   const showSkeletons =
     stories.length === 0 && (isLoading || fetchingFirstPage);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
 
-  const loadFirstPage = useCallback(
-    async (ids: number[]) => {
-      setFetchingFirstPage(true);
-      try {
-        const firstPageIds = ids.slice(0, PAGE_SIZE);
-        const data = await Promise.all(firstPageIds.map((id) => getStory(id)));
-        setStories(data);
-        setPage(1);
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // console.log("Finallly Called...");
-        setFetchingFirstPage(false);
-      }
-    },
-    [fetchingFirstPage],
-  );
+  useEffect(() => {
+    setStories([]);
+    setPage(1);
+    setFetchingFirstPage(true);
+  }, [selectedFeed]);
+
+  const loadFirstPage = useCallback(async (ids: number[]) => {
+    setFetchingFirstPage(true);
+    try {
+      const firstPageIds = ids.slice(0, PAGE_SIZE);
+
+      const data = await Promise.all(
+        firstPageIds.map((id) =>
+          queryClient.fetchQuery({
+            queryKey: ["story", id],
+            queryFn: () => getStory(id),
+            staleTime: 1000 * 60 * 10,
+          }),
+        ),
+      );
+      setStories(data);
+      setPage(1);
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      setFetchingFirstPage(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (allIds.length > 0) {
       loadFirstPage(allIds);
     }
-  }, [allIds]);
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  }, [allIds, loadFirstPage]);
+
   const loadMore = useCallback(async () => {
     if (isFetching.current || loadingMore || searchQuery.length > 0) return;
     const nextPage = page + 1;
@@ -90,14 +115,18 @@ const HomeScreen = () => {
     try {
       isFetching.current = true;
       setLoadingMore(true);
-      // await sleep(1500);
 
       const newStories = await Promise.all(
-        nextIds.map((id: number) => getStory(id)),
+        nextIds.map((id) =>
+          queryClient.fetchQuery({
+            queryKey: ["story", id],
+            queryFn: () => getStory(id),
+            staleTime: 1000 * 60 * 10,
+          }),
+        ),
       );
       setStories((prev) => [...prev, ...newStories]);
       setPage(nextPage);
-      // await sleep(1500);
     } catch (e) {
       console.warn(e);
     } finally {
@@ -116,34 +145,30 @@ const HomeScreen = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: Story }) => (
-      <Animated.View entering={FadeInDown.duration(400)}>
+      <Animated.View entering={FadeIn.duration(400)}>
         <StoryCard story={item} />
       </Animated.View>
     ),
     [],
   );
+
   const emptyListComponent = useMemo(() => {
     return (
-    
-        <Animated.View
-          entering={FadeInDown.duration(250)}
-          layout={LinearTransition.springify()}
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            alignContent: "center",
-            // borderWidth : 1
-          }}
-        >
-
-          <EmptyState
-            image={require("../../../assets/illustrations/no_results_light.png")}
-            imageSize={300}
-          />
-
-        </Animated.View>
-     
+      <Animated.View
+        entering={FadeIn.duration(250)}
+        layout={LinearTransition.springify()}
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+        }}
+      >
+        <EmptyState
+          image={require("../../../assets/illustrations/no_results_light.png")}
+          imageSize={300}
+        />
+      </Animated.View>
     );
   }, []);
 
@@ -166,76 +191,87 @@ const HomeScreen = () => {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-      <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <View
-          style={[
-            styles.screenContainer,
-            {
-              backgroundColor: colors.background,
-            },
-          ]}
-        >
-          {!isConnected && (
-            <Animated.View
-              entering={SlideInDown}
-              exiting={SlideOutUp}
-              style={styles.networkBanner}
-            >
-              <Text style={styles.networkBannerText}>
-                No internet connection
-              </Text>
-            </Animated.View>
-          )}
-          <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search stories..."
-          />
-
-          {showSkeletons ? (
-            <FlatList
-              data={[1, 2, 3, 4, 5, 6, 7, 8]}
-              keyExtractor={(item) => item.toString()}
-              renderItem={() => (
-                <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
-                  <SkeletonCard />
-                </View>
-              )}
+      >
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+          <View
+            style={[
+              styles.screenContainer,
+              {
+                backgroundColor: colors.background,
+              },
+            ]}
+          >
+            {!isConnected && (
+              <Animated.View
+                entering={SlideInDown}
+                exiting={SlideOutUp}
+                style={styles.networkBanner}
+              >
+                <Text style={styles.networkBannerText}>
+                  No internet connection
+                </Text>
+              </Animated.View>
+            )}
+            <SearchBar
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search stories..."
             />
-          ) : error ? (
-            <ErrorState refetch={refetch} />
-          ) : (
-            <View style={[{ flex: 1 }, { backgroundColor: colors.background }]}>
+            <FeedSelector
+              selectedFeed={selectedFeed}
+              onFeedChange={setSelectedFeed}
+            />
+            {showSkeletons ? (
               <FlatList
-                contentContainerStyle={{ flexGrow: 1 }}
-                initialNumToRender={12}
-                maxToRenderPerBatch={10}
-                windowSize={10}
-                updateCellsBatchingPeriod={30}
-                removeClippedSubviews
-                decelerationRate="normal"
-                bounces={true}
-                overScrollMode="always"
-                data={filteredStories}
-                // data={[]}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={renderItem}
-                onRefresh={refetch}
-                refreshing={loading}
-                onEndReached={loadMore}
-                onEndReachedThreshold={1}
-                ListFooterComponent={
-                  filteredStories.length > 0 ? (
-                    <Footer loadingMore={loadingMore} />
-                  ) : null
-                }
-                ListEmptyComponent={emptyListComponent}
+                data={[1, 2, 3, 4, 5, 6, 7, 8]}
+                keyExtractor={(item) => item.toString()}
+                renderItem={() => (
+                  <View style={[{ flex: 1 }, { backgroundColor: colors.card }]}>
+                    <SkeletonCard />
+                  </View>
+                )}
               />
-            </View>
-          )}
+            ) : error ? (
+              <ErrorState refetch={refetch} />
+            ) : (
+              <View
+                style={[{ flex: 1 }, { backgroundColor: colors.background }]}
+              >
+                <Animated.View
+                  key={selectedFeed}
+                  exiting={FadeOut.duration(200)}
+                  entering={FadeIn.duration(250)}
+                  style={{ flex: 1 }}
+                >
+                  <FlatList
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    initialNumToRender={12}
+                    maxToRenderPerBatch={10}
+                    windowSize={10}
+                    updateCellsBatchingPeriod={30}
+                    removeClippedSubviews
+                    decelerationRate="normal"
+                    bounces={true}
+                    overScrollMode="always"
+                    data={filteredStories}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderItem}
+                    onRefresh={refetch}
+                    refreshing={loading}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={1}
+                    ListFooterComponent={
+                      filteredStories.length > 0 ? (
+                        <Footer loadingMore={loadingMore} />
+                      ) : null
+                    }
+                    ListEmptyComponent={emptyListComponent}
+                  />
+                </Animated.View>
+              </View>
+            )}
+          </View>
         </View>
-      </View>
       </KeyboardAvoidingView>
     </>
   );

@@ -58,8 +58,8 @@ export default React.memo(SearchBar);
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
-    marginHorizontal: 16,
+    marginVertical: 5,
+    marginHorizontal: 15,
   },
   searchBox: {
     position: "relative",
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     position: "absolute",
-    right: 14,
-    top: 12,
+    right: 12,
+    top: 8,
     padding: 4,
     zIndex: 1,
   },
