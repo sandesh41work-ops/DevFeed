@@ -70,7 +70,6 @@ const HomeScreen = () => {
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
 
-
   useEffect(() => {
     setStories([]);
     setPage(1);
