@@ -24,10 +24,15 @@ import { fonts } from "../../shared/constants/fonts";
 type DiscussionProps = {
   storyId: number;
   commentCount: number;
+  initialExpanded?: boolean;
 };
 
-const DiscussionCard = ({ storyId, commentCount }: DiscussionProps) => {
-  const [expanded, setExpanded] = useState(false);
+const DiscussionCard = ({
+  storyId,
+  commentCount,
+  initialExpanded = false,
+}: DiscussionProps) => {
+  const [expanded, setExpanded] = useState(initialExpanded);
   const [visibleCount, setVisibleCount] = useState(10);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsLoading, setIsCommentsLoading] = useState(false);

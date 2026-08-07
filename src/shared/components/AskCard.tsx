@@ -41,7 +41,7 @@ const AskCard = memo(({ story }: { story: Story }) => {
       console.warn("Failed to persist visited story", error);
     });
 
-    navigation.navigate("ArticleDetail", { story });
+    navigation.navigate("AskDetail", { story });
   };
 
   const timeAgo = useMemo(() => getTimeAgo(story.time), [story.time]);
