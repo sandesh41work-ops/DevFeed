@@ -107,6 +107,8 @@ const DiscussionCard = ({
   const isInitialLoading =
     isStoryLoading || (isCommentsLoading && comments.length === 0);
 
+  const hasMoreComments = comments.length < allCommentIds.length;
+
   return (
     <Animated.View
       layout={LinearTransition.springify().stiffness(400)}
@@ -120,42 +122,37 @@ const DiscussionCard = ({
       ]}
     >
       <TouchableOpacity activeOpacity={0.85} onPress={toggleDiscussion}>
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
-          <View style={styles.headerTop}>
-            <View style={styles.titleContainer}>
-              <Ionicons
-                name="chatbubbles-outline"
-                size={24}
-                color={colors.accent}
-              />
+        <View style={[styles.header, { borderBottomColor: colors.border }]}> 
+          <View style={styles.titleContainer}>
+            <Ionicons
+              name="chatbubbles-outline"
+              size={24}
+              color={colors.accent}
+            />
 
-              <View>
-                <Text style={[styles.title, { color: colors.text }]}>
-                  Discussion
-                </Text>
-                <Text style={[styles.count, { color: colors.subtext }]}>
-                  {commentCount} comments
-                </Text>
-              </View>
+            <View style={styles.titleTextGroup}>
+              <Text style={[styles.title, { color: colors.text }]}>Discussion</Text>
+              <Text style={[styles.count, { color: colors.subtext }]}> 
+                {commentCount} comments
+              </Text>
             </View>
-
-            <Animated.View style={chevronStyle}>
-              <View style={styles.toggleRow}>
-                <Ionicons
-                  name="chevron-down"
-                  size={20}
-                  color={colors.subtext}
-                />
-              </View>
-            </Animated.View>
           </View>
+
+          <Animated.View style={chevronStyle}>
+            <View style={styles.toggleRow}>
+              <Ionicons
+                name={expanded ? "chevron-up" : "chevron-down"}
+                size={20}
+                color={colors.subtext}
+              />
+            </View>
+          </Animated.View>
         </View>
       </TouchableOpacity>
 
       {!expanded ? (
-        <Text style={[styles.description, { color: colors.subtext }]}>
-          Explore insights, opinions, and discussions from the Hacker News
-          community.
+        <Text style={[styles.description, { color: colors.subtext }]}> 
+          Tap to expand comments and explore the Hacker News discussion.
         </Text>
       ) : (
         <Animated.View
@@ -168,32 +165,32 @@ const DiscussionCard = ({
               <ActivityIndicator size="large" color={colors.accent} />
             </View>
           ) : (
-            <>
+            <View style={styles.commentList}>
               {comments.map((comment: Comment) => (
                 <CommentItem key={comment.id} comment={comment} />
               ))}
 
               {isCommentsLoading && comments.length > 0 && (
                 <View style={styles.loadingMore}>
-                  <Text style={[styles.loadingText, { color: colors.subtext }]}>
+                  <Text style={[styles.loadingText, { color: colors.subtext }]}> 
                     Loading more comments…
                   </Text>
                   <ActivityIndicator size="small" color={colors.accent} />
                 </View>
               )}
 
-              {comments.length < allCommentIds.length && (
+              {hasMoreComments && (
                 <TouchableOpacity
                   onPress={() => setVisibleCount((prev) => prev + 10)}
                   disabled={isCommentsLoading}
-                  style={isCommentsLoading ? styles.disabledButton : undefined}
+                  style={[styles.loadMoreButton, isCommentsLoading && styles.disabledButton]}
                 >
-                  <Text style={[styles.placeholder, { color: colors.accent }]}>
-                    Load More Comments
+                  <Text style={[styles.loadMoreText, { color: colors.accent }]}> 
+                    Load more comments
                   </Text>
                 </TouchableOpacity>
               )}
-            </>
+            </View>
           )}
         </Animated.View>
       )}
@@ -263,6 +260,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
 
+  titleTextGroup: {
+    marginLeft: 12,
+  },
+
   toggleText: {
     fontSize: 14,
     fontWeight: "600",
@@ -306,12 +307,30 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
   },
 
+  commentList: {
+    gap: 12,
+    paddingTop: 8,
+  },
+
+  loadMoreButton: {
+    marginTop: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+
+  loadMoreText: {
+    fontSize: 14,
+    fontFamily: fonts.semibold,
+    letterSpacing: 0.2,
+  },
+
   centeredLoading: {
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 24,
   },
-
   description: {
     marginBottom: 16,
     fontSize: 14,
