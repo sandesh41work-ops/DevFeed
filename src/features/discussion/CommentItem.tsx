@@ -111,7 +111,7 @@ const CommentItem = ({
         </View>
 
         <View style={styles.commentFooter}>
-          {!!commentCount && (
+          {commentCount > 0 ? (
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => setExpanded((prev) => !prev)}
@@ -126,6 +126,8 @@ const CommentItem = ({
                 {expanded ? "Hide Replies" : `Replies (${commentCount})`}
               </Text>
             </TouchableOpacity>
+          ) : (
+            <Text style={[styles.noRepliesText, { color: colors.subtext }]}>No replies yet.</Text>
           )}
         </View>
 
@@ -157,9 +159,7 @@ const CommentItem = ({
                   </TouchableOpacity>
                 )}
               </>
-            ) : (
-              <Text style={[styles.noRepliesText, { color: colors.subtext }]}>No replies yet.</Text>
-            )}
+            ) : null}
           </View>
         )}
       </View>
