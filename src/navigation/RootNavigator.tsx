@@ -10,6 +10,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { ActivityIndicator } from "react-native";
 import SignUpScreen from "../features/auth/SignUpScreen";
 import ArticleDetailScreen from "../features/feed/ArticleDetailScreen";
+import AskDetails from "../shared/components/AskDetails";
 import ArticleWebViewScreen from "../features/feed/ArticleWebViewScreen";
 import { useTheme } from "../shared/hooks/useTheme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -149,6 +150,16 @@ function RootNavigator() {
               component={ArticleDetailScreen}
               options={{
                 title: "Article",
+                animation: "slide_from_right",
+                headerBackButtonDisplayMode: "minimal",
+                presentation: "card",
+              }}
+            />
+            <Stack.Screen
+              name="AskDetail"
+              component={AskDetails}
+              options={{
+                title: "Ask HN",
                 animation: "slide_from_right",
                 headerBackButtonDisplayMode: "minimal",
                 presentation: "card",

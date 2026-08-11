@@ -27,9 +27,21 @@ const CommentItem = ({
   isAuthor = false,
 }: CommentItemProps) => {
   const [expanded, setExpanded] = useState(false);
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const childIds = comment.kids ?? [];
   const commentCount = childIds.length;
+
+  const commentStyle = [
+    styles.comment,
+    {
+      backgroundColor: colors.card,
+      borderColor: colors.border,
+    },
+    level > 0 && {
+      backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#F8F9FB",
+      marginTop: 12,
+    },
+  ];
 
   const { data: childComments = [], isLoading } = useCommentsQuery(
     expanded ? childIds : [],
@@ -65,17 +77,8 @@ const CommentItem = ({
   };
 
   return (
-    <View
-      style={[
-        styles.commentWrapper,
-        level > 0 && { marginLeft: Math.min(level * 8, 36) },
-      ]}
-    >
-      {level > 0 && (
-        <View style={[styles.threadLine, { backgroundColor: colors.border }]} />
-      )}
-
-      <View style={styles.comment}>
+    <View style={styles.commentWrapper}>
+      <View style={commentStyle}>
         <View style={styles.commentHeader}>
           <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
             <Text style={styles.avatarText}>{getInitials(comment.by)}</Text>
@@ -113,20 +116,15 @@ const CommentItem = ({
               style={styles.actionButton}
               onPress={() => setExpanded((prev) => !prev)}
             >
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => setExpanded((prev) => !prev)}
-              >
-                <Ionicons
-                  name={expanded ? "chevron-up" : "chatbubble-outline"}
-                  size={14}
-                  color={colors.accent}
-                />
+              <Ionicons
+                name={expanded ? "chevron-up" : "chatbubble-outline"}
+                size={14}
+                color={colors.accent}
+              />
 
-                <Text style={[styles.actionText, { color: colors.accent }]}>
-                  {expanded ? "Hide Replies" : `Replies (${commentCount})`}
-                </Text>
-              </TouchableOpacity>
+              <Text style={[styles.actionText, { color: colors.accent }]}> 
+                {expanded ? "Hide Replies" : `Replies (${commentCount})`}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -135,7 +133,7 @@ const CommentItem = ({
           <View
             style={[
               styles.repliesContainer,
-              { borderLeftColor: colors.border },
+              { borderLeftColor: colors.border, borderLeftWidth: StyleSheet.hairlineWidth },
             ]}
           >
             {isLoading ? (
@@ -159,7 +157,9 @@ const CommentItem = ({
                   </TouchableOpacity>
                 )}
               </>
-            ) : null}
+            ) : (
+              <Text style={[styles.noRepliesText, { color: colors.subtext }]}>No replies yet.</Text>
+            )}
           </View>
         )}
       </View>
@@ -175,18 +175,15 @@ const styles = StyleSheet.create({
     position: "relative",
   },
 
-  threadLine: {
-    position: "absolute",
-    left: 20,
-    top: 44,
-    bottom: 0,
-    width: 2,
-  },
-
   comment: {
-    marginBottom: 8,
-    paddingBottom: 8,
-    fontFamily : fonts.regular
+    marginBottom: 12,
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.02,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
   },
 
   commentHeader: {
@@ -249,7 +246,6 @@ const styles = StyleSheet.create({
   },
 
   commentContent: {
-    marginLeft: 46,
     marginBottom: 8,
   },
 
@@ -257,7 +253,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    marginLeft: 46,
+    marginTop: 8,
   },
 
   actionButton: {
@@ -278,15 +274,20 @@ const styles = StyleSheet.create({
 
   actionText: {
     fontFamily: fonts.regular,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "600",
   },
 
+  noRepliesText: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    marginTop: 8,
+  },
+
   repliesContainer: {
-    marginTop: 12,
-    marginLeft: 12,
-    paddingLeft: 12,
-    borderLeftWidth: 2,
+    marginTop: 16,
+    paddingLeft: 8,
+    gap: 12,
   },
 
   viewMoreButton: {

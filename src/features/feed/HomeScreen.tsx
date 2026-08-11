@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { getStory } from "../../shared/services/hackerNewsServices";
 import { Story } from "../../shared/types/story";
+import AskCard from "../../shared/components/AskCard";
 import StoryCard from "../../shared/components/StoryCard";
 import Button from "../../shared/components/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -146,10 +147,14 @@ const HomeScreen = () => {
   const renderItem = useCallback(
     ({ item }: { item: Story }) => (
       <Animated.View entering={FadeIn.duration(400)}>
-        <StoryCard story={item} />
+        {selectedFeed === "ask" ? (
+          <AskCard story={item} />
+        ) : (
+          <StoryCard story={item} />
+        )}
       </Animated.View>
     ),
-    [],
+    [selectedFeed],
   );
 
   const emptyListComponent = useMemo(() => {
