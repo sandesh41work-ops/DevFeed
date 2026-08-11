@@ -17,3 +17,8 @@
 
 ### release commands
 eas build --platform android --profile release
+
+
+### agent prompts
+## - release docs preparation
+Prepare the v1.2.0 release. Check everything changed since v1.1.0, generate the GitHub release notes, and update RELEASES.md.
