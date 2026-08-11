@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LinearGradient } from "expo-linear-gradient";
-import { Story } from "../types/story";
 import { useTheme } from "../hooks/useTheme";
 import DiscussionCard from "../../features/discussion/Discussion";
 import { fonts } from "../constants/fonts";
+import { RootStackParamList } from "../types/navigation";
 
 const space = (n: number) => n * 4;
 
@@ -17,9 +17,10 @@ const getTimeAgo = (unixTime: number) => {
   return `${Math.floor(diff / 86400)}d`;
 };
 
-const AskDetails = () => {
-  const route = useRoute<any>();
-  const { story }: { story: Story } = route.params;
+type AskDetailsProps = NativeStackScreenProps<RootStackParamList, "AskDetail">;
+
+const AskDetails = ({ route }: AskDetailsProps) => {
+  const { story } = route.params;
   const { colors, isDark } = useTheme();
   const commentCount = story.descendants ?? 0;
   const timeAgo = useMemo(() => getTimeAgo(story.time), [story.time]);
