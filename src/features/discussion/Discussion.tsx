@@ -318,6 +318,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
+    marginBottom : 18
   },
 
   loadMoreText: {
