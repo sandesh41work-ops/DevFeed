@@ -166,29 +166,37 @@ const DiscussionCard = ({
             </View>
           ) : (
             <View style={styles.commentList}>
-              {comments.map((comment: Comment) => (
-                <CommentItem key={comment.id} comment={comment} />
-              ))}
+              {allCommentIds.length === 0 ? (
+                <Text style={[styles.emptyText, { color: colors.subtext }]}> 
+                  No comments yet.
+                </Text>
+              ) : (
+                <>
+                  {comments.map((comment: Comment) => (
+                    <CommentItem key={comment.id} comment={comment} />
+                  ))}
 
-              {isCommentsLoading && comments.length > 0 && (
-                <View style={styles.loadingMore}>
-                  <Text style={[styles.loadingText, { color: colors.subtext }]}> 
-                    Loading more comments…
-                  </Text>
-                  <ActivityIndicator size="small" color={colors.accent} />
-                </View>
-              )}
+                  {isCommentsLoading && comments.length > 0 && (
+                    <View style={styles.loadingMore}>
+                      <Text style={[styles.loadingText, { color: colors.subtext }]}> 
+                        Loading more comments…
+                      </Text>
+                      <ActivityIndicator size="small" color={colors.accent} />
+                    </View>
+                  )}
 
-              {hasMoreComments && (
-                <TouchableOpacity
-                  onPress={() => setVisibleCount((prev) => prev + 10)}
-                  disabled={isCommentsLoading}
-                  style={[styles.loadMoreButton, isCommentsLoading && styles.disabledButton]}
-                >
-                  <Text style={[styles.loadMoreText, { color: colors.accent }]}> 
-                    Load more comments
-                  </Text>
-                </TouchableOpacity>
+                  {hasMoreComments && (
+                    <TouchableOpacity
+                      onPress={() => setVisibleCount((prev) => prev + 10)}
+                      disabled={isCommentsLoading}
+                      style={[styles.loadMoreButton, isCommentsLoading && styles.disabledButton]}
+                    >
+                      <Text style={[styles.loadMoreText, { color: colors.accent }]}> 
+                        Load more comments
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </>
               )}
             </View>
           )}
@@ -300,6 +308,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
+  },
+
+  emptyText: {
+    fontSize: 14,
+    fontFamily: fonts.regular,
+    textAlign: "center",
+    paddingVertical: 12,
   },
 
   loadingText: {
