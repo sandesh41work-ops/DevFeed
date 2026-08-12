@@ -20,6 +20,8 @@ import { View } from "react-native";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import AppHeader from "../shared/components/AppHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ObserveNavigationContainer } from "expo-observe/integrations/react-navigation";
+import { useObserve } from "expo-observe";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<TabParamList>();
 
@@ -87,6 +89,7 @@ function RootNavigator() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { colors, isDark } = useTheme();
+  const { markInteractive } = useObserve();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -95,6 +98,13 @@ function RootNavigator() {
     });
     return unsubscribe; // cleanup
   }, []);
+
+  // Mark app as interactive after auth checks are complete
+  useEffect(() => {
+    if (!loading) {
+      markInteractive();
+    }
+  }, [loading, markInteractive]);
 
   if (loading) {
     return (
@@ -123,7 +133,7 @@ function RootNavigator() {
   };
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <NavigationContainer theme={navigationTheme}>
+      <ObserveNavigationContainer theme={navigationTheme}>
         <Stack.Navigator
           screenOptions={{
             contentStyle: {
@@ -193,7 +203,7 @@ function RootNavigator() {
           </>
         )}
       </Stack.Navigator>
-    </NavigationContainer>
+</ObserveNavigationContainer>
   </View>
 );
 }
