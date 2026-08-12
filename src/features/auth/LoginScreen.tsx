@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useObserve } from "expo-observe";
 import {
   Alert,
   Image,
@@ -40,6 +41,11 @@ export default function LoginScreen() {
 
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
+  const { markInteractive } = useObserve();
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
 
   const handleLogin = async () => {
     setEmailError("");

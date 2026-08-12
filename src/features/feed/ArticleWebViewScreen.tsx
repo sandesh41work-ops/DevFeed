@@ -1,5 +1,6 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useObserve } from "expo-observe";
 import { useRoute } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 import { useTheme } from "../../shared/hooks/useTheme";
@@ -14,10 +15,15 @@ const ArticleWebViewScreen = () => {
   const { url } = route.params as RouteParams;
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
+  const { markInteractive } = useObserve();
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
 
   if (!url) {
     return (
-      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]}> 
+      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
         <Text style={[styles.emptyText, { color: colors.text }]}>No article URL available.</Text>
       </View>
     );
@@ -36,7 +42,10 @@ const ArticleWebViewScreen = () => {
             </View>
           )}
           onLoadEnd={() => setIsLoading(false)}
-          style={[styles.webview, { backgroundColor: colors.background, opacity: isLoading ? 0 : 1 }]}
+          style={[
+            styles.webview,
+            { backgroundColor: colors.background, opacity: isLoading ? 0 : 1 },
+          ]}
           allowsBackForwardNavigationGestures
         />
       </View>

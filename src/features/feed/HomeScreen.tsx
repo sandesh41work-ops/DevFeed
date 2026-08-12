@@ -39,6 +39,7 @@ import { Platform } from "react-native";
 import FeedSelector from "../../shared/components/FeedSelector";
 import { Feed } from "../../shared/types/feed";
 import { useQueryClient } from "@tanstack/react-query";
+import { useObserve } from "expo-observe";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -70,6 +71,12 @@ const HomeScreen = () => {
   useEffect(() => {
     setLoading(isLoading || fetchingFirstPage);
   }, [isLoading, fetchingFirstPage]);
+
+  const { markInteractive } = useObserve();
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
 
   useEffect(() => {
     setStories([]);
@@ -192,12 +199,11 @@ const HomeScreen = () => {
   }, [stories, debouncedSearch]);
 
   return (
-    <>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
           <View
             style={[
               styles.screenContainer,
@@ -280,7 +286,6 @@ const HomeScreen = () => {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </>
   );
 };
 
