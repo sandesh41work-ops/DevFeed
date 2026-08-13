@@ -18,8 +18,10 @@ const ArticleWebViewScreen = () => {
   const { markInteractive } = useObserve();
 
   useEffect(() => {
-    markInteractive();
-  }, [markInteractive]);
+    if (!isLoading) {
+      markInteractive();
+    }
+  }, [isLoading, markInteractive]);
 
   if (!url) {
     return (

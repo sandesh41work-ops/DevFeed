@@ -2,11 +2,11 @@
 
 ## Critical (P0)
 
-- **No comments on Ask HN posts in feed** — AskCard navigates to AskDetails which has DiscussionCard, but feed-level previews show zero comment context.
+- **No comment previews on Ask HN posts in feed** — AskCard shows comment count pill but no preview text/excerpt from top comments; users must navigate to AskDetails to read any comment content.
 - **No HN comment nesting depth limit handling** — Deep threads can cause performance issues; no max-depth truncation or virtualization.
 - **No offline mode** — AsyncStorage is used for bookmarks/visited, but stories/comments are never cached for offline reading.
 - **No push notifications** — No notification system for comment replies or story updates.
-- **No share to app** — `Share.share` exists in StoryDetailsCard but is not exposed on StoryCard or AskCard.
+- **No share on StoryCard and AskCard** — `Share.share` exists in StoryDetailsCard but is not exposed on StoryCard or AskCard (P2 priority, see IMPROVEMENTS.md).
 - **No settings screen** — No user preferences for feeds, notifications, or display options.
 - **No about screen** — No app version, credits, or changelog view.
 - **No HN account integration** — No upvote, reply, submit, or profile features; app is read-only.

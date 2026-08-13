@@ -31,6 +31,8 @@ const { colors, isDark } = useTheme();
 
 **Never hardcode colors.** Always reference `colors.*`.
 
+**Note:** Some existing components contain hardcoded color values (e.g., `#FF6600`, `#E3BFB1`, `#A33E00`, `#ef4444`) that represent technical debt documented in IMPROVEMENTS.md. New code should use `colors.accent`, `colors.border`, and `colors.error` tokens instead of preserving these hardcoded values.
+
 ### Color Tokens
 
 | Token | Light | Dark | Usage |
@@ -117,6 +119,7 @@ Where `n` is the number of 4px units.
 ### Spacing Rules
 
 - **Prefer `space(n)`** over raw pixel values for consistency.
+- **Note:** Some existing components use hardcoded pixel values (e.g., `padding: 16`, `marginHorizontal: 15`) that represent technical debt documented in IMPROVEMENTS.md. New code should use the `space()` helper for all spacing values.
 - **Card horizontal margin** is `space(4)` and vertical margin is `space(3)`.
 - **Card internal padding** is `space(5)` horizontally and vertically (StoryCard, AskCard).
 - **Screen padding** is typically `16` (hardcoded in detail screens).
@@ -243,8 +246,9 @@ Feed item for Ask HN and Show HN posts.
 **Visual:**
 - Same card structure as StoryCard.
 - Header contains an `ASK HN` badge (orange background, Ionicons `chatbubble-outline`, `fonts.semibold` 10px, letterSpacing 0.7).
-- Comment count displayed as a pill badge (radius 999).
+- Comment count displayed as a pill badge (radius 999) in the footer.
 - No favicon, no domain display.
+- No comment preview text (only count is shown; see MISSING_FEATURES.md).
 
 **Rules:**
 - **Reuse `AskCard`** for Ask HN posts. It is selected automatically in `HomeScreen` when `selectedFeed === "ask"`.

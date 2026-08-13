@@ -17,7 +17,7 @@ const Favicon = React.memo(({ url }: { url?: string }) => {
           (setLoading(false), setError(true));
         }}
       />
-      {loading && error && (
+      {error && (
         <View style={[styles.placeholderIcon, styles.favIcon]}>
           <Ionicons
             name="globe-outline"

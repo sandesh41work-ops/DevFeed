@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import { View, Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -24,21 +25,34 @@ Observe.configure({
 
 const queryClient = new QueryClient();
 
+// Prevent auto-hiding the splash screen
+SplashScreen.preventAutoHideAsync();
+
 function App() {
   const { colors } = useTheme();
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     IBMPlexSans_600SemiBold,
     IBMPlexSans_400Regular,
     IBMPlexMono_600SemiBold,
   });
+  const [isSplashHidden, setIsSplashHidden] = React.useState(false);
 
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync().then(() => setIsSplashHidden(true));
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, fontError]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded && !fontError) return null;
+  if (!isSplashHidden) return null;
+
+  if (fontError) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: colors.text }}>Error loading fonts. Please restart the app.</Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView

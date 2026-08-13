@@ -47,7 +47,7 @@
 - **Long-press context menu** — Preview, share, bookmark, or hide from feed.
 - **Swipe-to-delete on Feed** — Reuse `SwipeableStoryCard` pattern for temporary hide.
 - **Trending / Hot section** — Split hot stories (`score > 500`) into a dedicated tab or section.
-- **About / changelog screen** — Show app version, credits, and recent updates from `RELEASES.md`.
+- **About / changelog screen** — Show app version, credits, and recent updates from `notes/RELEASES.md`.
 
 ---
 
