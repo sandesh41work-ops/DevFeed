@@ -20,6 +20,7 @@ import { View } from "react-native";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import AppHeader from "../shared/components/AppHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ObserveNavigationContainer } from "expo-observe/integrations/react-navigation";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<TabParamList>();
 
@@ -123,7 +124,7 @@ function RootNavigator() {
   };
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <NavigationContainer theme={navigationTheme}>
+      <ObserveNavigationContainer theme={navigationTheme}>
         <Stack.Navigator
           screenOptions={{
             contentStyle: {
@@ -193,7 +194,7 @@ function RootNavigator() {
           </>
         )}
       </Stack.Navigator>
-    </NavigationContainer>
+</ObserveNavigationContainer>
   </View>
 );
 }

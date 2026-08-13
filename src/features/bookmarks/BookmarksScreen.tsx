@@ -1,5 +1,6 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useObserve } from "expo-observe";
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -53,6 +54,12 @@ const BookmarksScreen = () => {
     }
   }, []);
 
+  const { markInteractive } = useObserve();
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
+
   useEffect(() => {
     if (isFocused) {
       fetchBookmarks(stories.length == 0);
@@ -96,15 +103,14 @@ const BookmarksScreen = () => {
       style={[styles.screenContainer, {backgroundColor : colors.background}]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={[styles.screenContainer, { backgroundColor: colors.background }]}>
-        {/* Persistent Search Bar Header */}
-        <SearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Search stories..."
-        />
+      {/* Persistent Search Bar Header */}
+      <SearchBar
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search stories..."
+      />
 
-        {/* Dynamic Body Content */}
+      {/* Dynamic Body Content */}
         {loading ? (
           <FlatList
             data={[1, 2, 3, 4, 5, 6]}
@@ -146,8 +152,7 @@ const BookmarksScreen = () => {
             }
           />
         )}
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
   );
 };
 

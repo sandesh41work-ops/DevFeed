@@ -1,5 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
+import { useEffect } from "react";
+import { useObserve } from "expo-observe";
 import { Story } from "../../shared/types/story";
 import { useTheme } from "../../shared/hooks/useTheme";
 import StoryDetailsCard from "../../shared/components/StoryDetailsCard";
@@ -11,6 +13,11 @@ const ArticleDetailScreen = () => {
   const { story }: { story: Story } = route.params;
   const { colors } = useTheme();
   const commentCount = story.descendants ?? 0;
+  const { markInteractive } = useObserve();
+
+  useEffect(() => {
+    markInteractive();
+  }, [markInteractive]);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
