@@ -2,7 +2,7 @@
   "expo": {
     "name": "DevFeed",
     "slug": "DevFeed",
-    "version": "1.0.0",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/appIcon.png",
     "userInterfaceStyle": "automatic",
@@ -12,7 +12,7 @@
     "android": {
       "predictiveBackGestureEnabled": false,
       "package": "com.sandesh41.DevFeed",
-      "versionCode": 4
+      "versionCode": 6
     },
     "web": {
       "favicon": "./assets/favicon.png"
