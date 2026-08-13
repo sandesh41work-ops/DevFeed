@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,8 +17,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 // Enable metrics reporting in development builds for dashboard visibility
 Observe.configure({
   dispatchInDebug: true,
-   integrations: {
-    'react-navigation': true,
+  integrations: {
+    "react-navigation": true,
   },
 });
 
@@ -41,7 +41,9 @@ function App() {
   if (!fontsLoaded) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
+    <GestureHandlerRootView
+      style={{ flex: 1, backgroundColor: colors.background }}
+    >
       <StatusBar style="auto" />
       <QueryClientProvider client={queryClient}>
         <RootNavigator />
