@@ -1,6 +1,6 @@
 {
   "name": "devfeed",
- "version": "1.2.1",
+  "version": "1.2.1",
   "main": "index.ts",
   "dependencies": {
     "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
@@ -16,6 +16,7 @@
     "expo-font": "~56.0.7",
     "expo-insights": "~56.0.23",
     "expo-linear-gradient": "~56.0.4",
+    "expo-notifications": "~56.0.24",
     "expo-observe": "~56.0.27",
     "expo-splash-screen": "~56.0.14",
     "expo-status-bar": "~56.0.4",
