@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
 import {
   DAILY_REMINDER_BODY,
@@ -7,9 +8,9 @@ import {
   DEFAULT_REMINDER_HOUR,
   DEFAULT_REMINDER_MINUTE,
   REMINDER_STORAGE_KEY,
-} from "./notificationConstant"
+} from "./notificationConstant";
 
-
+const DAILY_REMINDER_CHANNEL_ID = "daily-reminder";
 
 export type ReminderSettings = {
   enabled: boolean;
@@ -50,6 +51,21 @@ async function requestNotificationPermission(): Promise<boolean> {
   return status === "granted";
 }
 
+async function setupAndroidNotificationChannel(): Promise<void> {
+  if (Platform.OS !== "android") {
+    return;
+  }
+
+  await Notifications.setNotificationChannelAsync(
+    DAILY_REMINDER_CHANNEL_ID,
+    {
+      name: "Daily Reading Reminder",
+      importance: Notifications.AndroidImportance.DEFAULT,
+      sound: "default",
+    }
+  );
+}
+
 export async function scheduleDailyReminder(
   hour = DEFAULT_REMINDER_HOUR,
   minute = DEFAULT_REMINDER_MINUTE
@@ -60,6 +76,8 @@ export async function scheduleDailyReminder(
     console.log("[Notifications] Permission not granted");
     return null;
   }
+
+  await setupAndroidNotificationChannel();
 
   const existingSettings = await getReminderSettings();
 
@@ -89,6 +107,9 @@ export async function scheduleDailyReminder(
         data: {
           type: "daily-reading-reminder",
         },
+        ...(Platform.OS === "android" && {
+          channelId: DAILY_REMINDER_CHANNEL_ID,
+        }),
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
