@@ -14,7 +14,8 @@ import { ObserveRoot, Observe } from "expo-observe";
 import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { scheduleDailyReminder } from "./src/features/notifications/notificationService"; 
-
+import { testDailyReminder } from "./src/features/notifications/notificationService";
+import "./src/features/notifications/notificationConfig";
 // Enable metrics reporting in development builds for dashboard visibility
 Observe.configure({
   dispatchInDebug: true,
@@ -39,11 +40,15 @@ function App() {
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) return null;
   
+  // useEffect(() => {
+  //   scheduleDailyReminder();
+  // },[])
   useEffect(() => {
-    scheduleDailyReminder();
-  },[])
+  testDailyReminder();
+}, []);
+  
+  if (!fontsLoaded) return null;
   return (
     <GestureHandlerRootView
       style={{ flex: 1, backgroundColor: colors.background }}
