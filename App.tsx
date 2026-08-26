@@ -13,7 +13,7 @@ import { useTheme } from "./src/shared/hooks/useTheme";
 import { ObserveRoot, Observe } from "expo-observe";
 import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { scheduleDailyReminder } from "./src/features/notifications/notificationService"; 
+import { scheduleDailyReminders } from "./src/features/notifications/notificationService"; 
 import { testDailyReminder } from "./src/features/notifications/notificationService";
 import "./src/features/notifications/notificationConfig";
 // Enable metrics reporting in development builds for dashboard visibility
@@ -42,8 +42,9 @@ function App() {
 
   
   // useEffect(() => {
-  //   scheduleDailyReminder();
+  //   scheduleDailyReminders();
   // },[])
+  
   useEffect(() => {
   testDailyReminder();
 }, []);
