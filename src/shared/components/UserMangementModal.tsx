@@ -58,6 +58,13 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
       console.log("Logout Error:", error);
     }
   };
+  const handleProfilePressed = async () => {
+    try {
+      navigation.navigate("Profile");
+    } catch (error) {
+      console.log("Navigation Error :", error);
+    }
+  };
 
   return (
     <Modal
@@ -163,6 +170,28 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
             ]}
           />
 
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              handleProfilePressed();
+            }}
+          >
+            <Ionicons
+              name="person-circle-outline"
+              size={22}
+              color={colors.accent}
+            />
+            <Text
+              style={[
+                styles.actionText,
+                {
+                  color: colors.accent,
+                },
+              ]}
+            >
+              Go to Profile
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={22} color={colors.accent} />
 
