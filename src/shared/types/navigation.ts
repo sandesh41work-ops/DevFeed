@@ -8,6 +8,7 @@ export type RootStackParamList = {
   ArticleDetail: { story: Story }
   AskDetail: { story: Story }
   ArticleWebView: { url: string; title?: string }
+  Profile : undefined
 }
 export type TabParamList = {
   Feed: undefined;

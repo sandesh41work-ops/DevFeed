@@ -21,6 +21,7 @@ import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import AppHeader from "../shared/components/AppHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ObserveNavigationContainer } from "expo-observe/integrations/react-navigation";
+import ProfileScreen from "../features/profile/ProfileScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<TabParamList>();
 
@@ -173,6 +174,17 @@ function RootNavigator() {
                 title: route.params?.title ?? "Article",
                 animation: "slide_from_right",
               })}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen}
+              options={{
+                title: "Profile",
+                animation: "slide_from_right",
+                headerBackButtonDisplayMode: "minimal",
+                presentation: "card",
+                headerShown: false, // Hides the header for the Profile screen
+              }}
             />
           </>
         ) : (

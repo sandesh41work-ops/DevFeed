@@ -14,6 +14,10 @@ import { auth } from "../services/firebase";
 import { useTheme } from "../hooks/useTheme";
 import { updateUserDisplayName } from "../../features/auth/authService";
 import { TextInput } from "react-native-gesture-handler";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../types/navigation";
+
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -25,6 +29,7 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
   const currentUser = auth.currentUser;
   const [name, setName] = useState(currentUser?.displayName || "");
   const [saving, setSaving] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     setName(currentUser?.displayName ?? "");
