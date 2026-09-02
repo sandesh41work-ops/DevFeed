@@ -143,8 +143,8 @@ const ProfileScreen = () => {
               {
                 backgroundColor: colors.card,
                 borderColor: colors.border,
-              },
-              pressed && { opacity: 0.7 },
+                },
+                pressed && { opacity: 0.7 },
             ]}
           >
             <Ionicons name="log-out-outline" size={22} color={colors.error} />
