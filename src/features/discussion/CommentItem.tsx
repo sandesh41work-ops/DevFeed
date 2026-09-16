@@ -1,16 +1,10 @@
-import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import { fonts } from "../../shared/constants/fonts";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import { Comment } from "../../shared/types/comment";
 import CommentHtml from "../../shared/components/Comment";
 import { useTheme } from "../../shared/hooks/useTheme";
-import { useState, useEffect, memo } from "react";
+import { useState, memo } from "react";
 import { useCommentsQuery } from "./useCommentQuery";
-import { ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 type CommentItemProps = {
@@ -20,9 +14,25 @@ type CommentItemProps = {
   isAuthor?: boolean;
 };
 
+const getTimeAgo = (timestamp?: number) => {
+  if (!timestamp) return "unknown";
+  const now = Date.now() / 1000;
+  const diff = Math.floor(now - timestamp);
+
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`;
+  return `${Math.floor(diff / 2592000)}mo ago`;
+};
+
+const getInitials = (name?: string) => {
+  if (!name) return "?";
+  return name.substring(0, 2).toUpperCase();
+};
+
 const CommentItem = ({
   comment,
-  onRepliesPress,
   level = 0,
   isAuthor = false,
 }: CommentItemProps) => {
@@ -31,62 +41,52 @@ const CommentItem = ({
   const childIds = comment.kids ?? [];
   const commentCount = childIds.length;
 
-  const commentStyle = [
-    styles.comment,
-    {
-      backgroundColor: colors.card,
-      borderColor: colors.border,
-    },
-    level > 0 && {
-      backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#F8F9FB",
-      marginTop: 12,
-    },
-  ];
-
   const { data: childComments = [], isLoading } = useCommentsQuery(
     expanded ? childIds : [],
   );
 
-  const rotation = useSharedValue(0);
-  const chevronStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value}deg` }],
-  }));
-
-  useEffect(() => {
-    rotation.value = withSpring(expanded ? 180 : 0, {
-      damping: 18,
-      stiffness: 180,
-    });
-  }, [expanded]);
-
-  const getTimeAgo = (timestamp?: number) => {
-    if (!timestamp) return "unknown";
-    const now = Date.now() / 1000;
-    const diff = Math.floor(now - timestamp);
-
-    if (diff < 60) return `${diff}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`;
-    return `${Math.floor(diff / 2592000)}mo ago`;
-  };
-
-  const getInitials = (name?: string) => {
-    if (!name) return "?";
-    return name.substring(0, 2).toUpperCase();
-  };
+  const isNested = level > 0;
+  const isDeep = level >= 3;
 
   return (
-    <View style={styles.commentWrapper}>
-      <View style={commentStyle}>
+    <View
+      style={[
+        styles.commentWrapper,
+        !isNested && styles.rootCommentWrapper,
+        !isNested && { borderBottomColor: colors.border },
+      ]}
+    >
+      <View style={styles.commentContentBlock}>
+        {/* Comment Header */}
         <View style={styles.commentHeader}>
-          <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
-            <Text style={styles.avatarText}>{getInitials(comment.by)}</Text>
+          <View
+            style={[
+              styles.avatar,
+              isNested && styles.nestedAvatar,
+              { backgroundColor: colors.accent },
+            ]}
+          >
+            <Text
+              style={[
+                styles.avatarText,
+                isNested && styles.nestedAvatarText,
+              ]}
+            >
+              {getInitials(comment.by)}
+            </Text>
           </View>
 
-          <View style={styles.headerContent}>
+          <View style={styles.headerInfo}>
             <View style={styles.nameRow}>
-              <Text style={[styles.author, { color: colors.text }]}>
+              <Text
+                style={[
+                  styles.author,
+                  { color: colors.text },
+                  isNested && styles.nestedAuthor,
+                ]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {comment.by ?? "Unknown"}
               </Text>
               {isAuthor && (
@@ -99,70 +99,86 @@ const CommentItem = ({
                   <Text style={styles.authorBadgeText}>AUTHOR</Text>
                 </View>
               )}
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: isDark ? "#444" : "#CCC" },
+                ]}
+              />
+              <Text style={[styles.timestamp, { color: colors.subtext }]}>
+                {getTimeAgo(comment.time)}
+              </Text>
             </View>
-            <Text style={[styles.timestamp, { color: colors.subtext }]}>
-              {getTimeAgo(comment.time)}
-            </Text>
           </View>
         </View>
 
+        {/* Comment Body */}
         <View style={styles.commentContent}>
           <CommentHtml html={comment.text ?? "No comment text available"} />
         </View>
 
-        <View style={styles.commentFooter}>
-          {commentCount > 0 ? (
+        {/* Comment Actions - Only rendered if replies exist */}
+        {commentCount > 0 && (
+          <View style={styles.commentFooter}>
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => setExpanded((prev) => !prev)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel={
+                expanded ? "Hide replies" : `View ${commentCount} replies`
+              }
             >
               <Ionicons
                 name={expanded ? "chevron-up" : "chatbubble-outline"}
-                size={14}
+                size={13}
                 color={colors.accent}
               />
-
-              <Text style={[styles.actionText, { color: colors.accent }]}> 
-                {expanded ? "Hide Replies" : `Replies (${commentCount})`}
+              <Text style={[styles.actionText, { color: colors.accent }]}>
+                {expanded
+                  ? "Hide replies"
+                  : `${commentCount} ${commentCount === 1 ? "reply" : "replies"}`}
               </Text>
             </TouchableOpacity>
-          ) : (
-            <Text style={[styles.noRepliesText, { color: colors.subtext }]}>No replies yet.</Text>
-          )}
-        </View>
-
-        {expanded && (
-          <View
-            style={[
-              styles.repliesContainer,
-              { borderLeftColor: colors.border, borderLeftWidth: StyleSheet.hairlineWidth },
-            ]}
-          >
-            {isLoading ? (
-              <ActivityIndicator color={colors.accent} />
-            ) : commentCount > 0 ? (
-              <>
-                {childComments.map((child) => (
-                  <CommentItem
-                    key={child.id}
-                    comment={child}
-                    level={(level ?? 0) + 1}
-                  />
-                ))}
-                {commentCount > childComments.length && (
-                  <TouchableOpacity style={styles.viewMoreButton}>
-                    <Text
-                      style={[styles.viewMoreText, { color: colors.accent }]}
-                    >
-                      View {commentCount - childComments.length} more replies
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </>
-            ) : null}
           </View>
         )}
       </View>
+
+      {/* Flattened Thread Replies with subtle vertical guide line */}
+      {expanded && (
+        <View
+          style={[
+            styles.repliesContainer,
+            isDeep && styles.deepRepliesContainer,
+            {
+              borderLeftColor: isDark ? "#383838" : "#E2E8F0",
+            },
+          ]}
+        >
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color={colors.accent} />
+            </View>
+          ) : (
+            <>
+              {childComments.map((child) => (
+                <CommentItem
+                  key={child.id}
+                  comment={child}
+                  level={level + 1}
+                />
+              ))}
+              {commentCount > childComments.length && (
+                <TouchableOpacity style={styles.viewMoreButton}>
+                  <Text style={[styles.viewMoreText, { color: colors.accent }]}>
+                    View {commentCount - childComments.length} more replies
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -171,132 +187,147 @@ export default memo(CommentItem);
 
 const styles = StyleSheet.create({
   commentWrapper: {
-    marginBottom: 16,
-    position: "relative",
+    width: "100%",
   },
 
-  comment: {
-    marginBottom: 12,
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.02,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+  rootCommentWrapper: {
+    paddingBottom: 14,
+    marginBottom: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+
+  commentContentBlock: {
+    width: "100%",
   },
 
   commentHeader: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
-    marginBottom: 8,
+    alignItems: "center",
+    marginBottom: 6,
+    gap: 8,
   },
 
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
   },
 
+  nestedAvatar: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+  },
+
   avatarText: {
     color: "#fff",
-    fontWeight: "700",
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: fonts.mono,
   },
 
-  headerContent: {
+  nestedAvatarText: {
+    fontSize: 9,
+  },
+
+  headerInfo: {
     flex: 1,
   },
 
   nameRow: {
     flexDirection: "row",
     alignItems: "center",
+    flexWrap: "wrap",
     gap: 6,
   },
 
   author: {
     fontFamily: fonts.semibold,
-    fontSize: 15,
-    fontWeight: "700",
+    fontSize: 14,
+    maxWidth: 160,
+  },
+
+  nestedAuthor: {
+    fontSize: 13,
   },
 
   authorBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
+    borderRadius: 3,
   },
 
   authorBadgeText: {
     color: "#fff",
     fontFamily: fonts.semibold,
-    fontSize: 10,
-    fontWeight: "700",
+    fontSize: 9,
     letterSpacing: 0.5,
     textTransform: "uppercase",
+  },
+
+  dot: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
   },
 
   timestamp: {
     fontFamily: fonts.regular,
     fontSize: 12,
-    marginTop: 2,
   },
 
   commentContent: {
-    marginBottom: 8,
+    marginTop: 2,
+    marginBottom: 4,
+    width: "100%",
   },
 
   commentFooter: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginTop: 8,
+    marginTop: 4,
+    marginBottom: 4,
   },
 
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-  },
-
-  actionIcon: {
-    fontSize: 16,
-  },
-
-  actionCount: {
-    fontFamily: fonts.semibold,
-    fontSize: 12,
-    fontWeight: "600",
+    gap: 5,
+    paddingVertical: 4,
+    paddingRight: 8,
   },
 
   actionText: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-
-  noRepliesText: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    marginTop: 8,
+    fontFamily: fonts.semibold,
+    fontSize: 12.5,
   },
 
   repliesContainer: {
-    marginTop: 16,
+    marginTop: 8,
+    marginLeft: 6,
+    paddingLeft: 12,
+    borderLeftWidth: 1.5,
+    gap: 10,
+  },
+
+  deepRepliesContainer: {
+    marginLeft: 2,
     paddingLeft: 8,
-    gap: 12,
+  },
+
+  loadingContainer: {
+    paddingVertical: 12,
+    alignItems: "flex-start",
   },
 
   viewMoreButton: {
-    paddingVertical: 8,
-    marginTop: 8,
+    paddingVertical: 6,
+    marginTop: 4,
   },
 
   viewMoreText: {
+    fontFamily: fonts.semibold,
     fontSize: 12,
-    fontWeight: "600",
   },
 });

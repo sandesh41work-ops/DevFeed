@@ -1,36 +1,52 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../hooks/useTheme";
 import { memo } from "react";
-import { useState } from "react";
-import UserManagementModal from "./UserMangementModal";
 import { fonts } from "../constants/fonts";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../types/navigation";
 
-const AppHeader = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+type AppHeaderProps = {
+  activeTab?: "Feed" | "Bookmarks";
+};
+
+const AppHeader = ({ activeTab = "Feed" }: AppHeaderProps) => {
   const { colors } = useTheme();
-  return (
-    <View style={[{ backgroundColor: colors.background }, styles.container]}>
-      <View style={styles.leftContainer}>
-        <MaterialCommunityIcons
-          name="console-line"
-          size={24}
-          color={colors.text}
-        />
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-        <Text style={[styles.title, { color: colors.text }]}>DevFeed</Text>
+  return (
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+          borderBottomColor: colors.border,
+        },
+      ]}
+    >
+      <View style={styles.leftContainer}>
+        <Text style={[styles.terminalPrompt, { color: colors.accent }]}>
+          {">_"}
+        </Text>
+        <Text style={[styles.title, { color: colors.text }]}>
+          DevFeed
+          {activeTab === "Bookmarks" && (
+            <Text style={[styles.subtitle, { color: colors.subtext }]}>
+              {" / Bookmarks"}
+            </Text>
+          )}
+        </Text>
       </View>
 
       <TouchableOpacity
         style={styles.profileButton}
-        onPress={() => setModalVisible(true)}
+        onPress={() => navigation.navigate("Profile")}
+        accessibilityRole="button"
+        accessibilityLabel="Go to Profile"
       >
         <Ionicons name="person-outline" size={22} color={colors.text} />
       </TouchableOpacity>
-      <UserManagementModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
     </View>
   );
 };
@@ -39,15 +55,12 @@ export default memo(AppHeader);
 
 const styles = StyleSheet.create({
   container: {
-    height: 64,
-    paddingHorizontal: 20,
-
+    height: 56,
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-
-    borderBottomWidth: 1,
-    borderBottomColor: "#E3BFB1",
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 
   leftContainer: {
@@ -55,19 +68,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  terminalPrompt: {
+    fontFamily: fonts.mono,
+    fontSize: 19,
+    marginRight: 8,
+  },
+
   title: {
-    marginLeft: 10,
-    fontSize: 24,
-    fontWeight: "700",
+    fontSize: 20,
     fontFamily: fonts.semibold,
-    color: "#A33E00",
+  },
+
+  subtitle: {
+    fontSize: 16,
+    fontFamily: fonts.regular,
   },
 
   profileButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-
     alignItems: "center",
     justifyContent: "center",
   },

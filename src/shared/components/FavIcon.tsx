@@ -1,28 +1,40 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../hooks/useTheme";
+
 const Favicon = React.memo(({ url }: { url?: string }) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { colors, isDark } = useTheme();
 
   return (
     <View style={styles.faviconContainer}>
-      <Image
-        source={{
-          uri: `https://www.google.com/s2/favicons?domain=${url}&sz=64`,
-        }}
-        style={styles.favIcon}
-        onLoad={() => setLoading(false)}
-        onError={() => {
-          (setLoading(false), setError(true));
-        }}
-      />
-      {loading && error && (
-        <View style={[styles.placeholderIcon, styles.favIcon]}>
+      {!error && (
+        <Image
+          source={{
+            uri: `https://www.google.com/s2/favicons?domain=${url}&sz=64`,
+          }}
+          style={styles.favIcon}
+          onLoad={() => setLoading(false)}
+          onError={() => {
+            setLoading(false);
+            setError(true);
+          }}
+        />
+      )}
+      {(loading || error) && (
+        <View
+          style={[
+            styles.favIcon,
+            styles.placeholderIcon,
+            { backgroundColor: isDark ? "#282828" : "#F3F4F6" },
+          ]}
+        >
           <Ionicons
             name="globe-outline"
             size={18}
-            color="#6B7280"
+            color={colors.subtext}
           />
         </View>
       )}

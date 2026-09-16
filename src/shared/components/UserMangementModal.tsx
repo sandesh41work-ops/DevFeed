@@ -14,6 +14,10 @@ import { auth } from "../services/firebase";
 import { useTheme } from "../hooks/useTheme";
 import { updateUserDisplayName } from "../../features/auth/authService";
 import { TextInput } from "react-native-gesture-handler";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../types/navigation";
+
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -25,6 +29,7 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
   const currentUser = auth.currentUser;
   const [name, setName] = useState(currentUser?.displayName || "");
   const [saving, setSaving] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     setName(currentUser?.displayName ?? "");
@@ -56,6 +61,14 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
       onClose();
     } catch (error) {
       console.log("Logout Error:", error);
+    }
+  };
+  const handleProfilePressed = async () => {
+    try {
+      onClose();
+      navigation.navigate("Profile");
+    } catch (error) {
+      console.log("Navigation Error :", error);
     }
   };
 
@@ -163,6 +176,28 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
             ]}
           />
 
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              handleProfilePressed();
+            }}
+          >
+            <Ionicons
+              name="person-circle-outline"
+              size={22}
+              color={colors.accent}
+            />
+            <Text
+              style={[
+                styles.actionText,
+                {
+                  color: colors.accent,
+                },
+              ]}
+            >
+              Go to Profile
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={22} color={colors.accent} />
 
@@ -240,7 +275,6 @@ const styles = StyleSheet.create({
 
   name: {
     fontSize: 20,
-    fontWeight: "700",
     fontFamily: fonts.semibold,
     textAlign: "center",
     marginBottom: 4,
@@ -266,7 +300,6 @@ const styles = StyleSheet.create({
 
   actionText: {
     fontSize: 16,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
     marginLeft: 12,
   },
@@ -292,7 +325,6 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
 });

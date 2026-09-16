@@ -141,7 +141,7 @@ const DiscussionCard = ({
           <Animated.View style={chevronStyle}>
             <View style={styles.toggleRow}>
               <Ionicons
-                name={expanded ? "chevron-up" : "chevron-down"}
+                name="chevron-down"
                 size={20}
                 color={colors.subtext}
               />
@@ -234,7 +234,6 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 18,
-    fontWeight: "700",
     fontFamily: fonts.semibold,
   },
 
@@ -258,7 +257,6 @@ const styles = StyleSheet.create({
 
   sortText: {
     fontSize: 12,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
 
@@ -274,14 +272,13 @@ const styles = StyleSheet.create({
 
   toggleText: {
     fontSize: 14,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
 
   count: {
     marginTop: 4,
-    fontSize: 14,
-    fontFamily: fonts.regular,
+    fontSize: 13,
+    fontFamily: fonts.mono,
   },
 
   comment: {
@@ -361,7 +358,6 @@ const styles = StyleSheet.create({
 
   placeholder: {
     marginTop: 8,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
     textAlign: "center",
   },

@@ -7,6 +7,8 @@ type InputProps = {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   secureTextEntry?: boolean;
   keyboardType?: KeyboardTypeOptions;
   customStyles?: StyleProp<TextStyle>;
@@ -21,6 +23,8 @@ const Input = forwardRef<TextInput, InputProps>(({
   placeholder,
   value,
   onChangeText,
+  onFocus,
+  onBlur,
   secureTextEntry,
   keyboardType,
   customStyles,
@@ -50,6 +54,8 @@ const Input = forwardRef<TextInput, InputProps>(({
         placeholderTextColor={colors.subtext}
         value={value}
         onChangeText={onChangeText}
+        onFocus={onFocus}
+        onBlur={onBlur}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         autoCapitalize="none"

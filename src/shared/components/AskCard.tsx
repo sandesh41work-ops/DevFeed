@@ -7,10 +7,7 @@ import { useTheme } from "../hooks/useTheme";
 import { Story } from "../types/story";
 import { RootStackParamList } from "../types/navigation";
 import { fonts } from "../constants/fonts";
-import { LinearGradient } from "expo-linear-gradient";
 import { isStoryVisited, markVisitedStory } from "../services/visitedStories";
-
-const space = (n: number) => n * 4;
 
 const getTimeAgo = (unixTime: number) => {
   const diff = Math.floor(Date.now() / 1000) - unixTime;
@@ -45,7 +42,6 @@ const AskCard = memo(({ story }: { story: Story }) => {
   };
 
   const timeAgo = useMemo(() => getTimeAgo(story.time), [story.time]);
-
   const commentCount = story.descendants ?? 0;
 
   return (
@@ -58,14 +54,13 @@ const AskCard = memo(({ story }: { story: Story }) => {
         styles.card,
         {
           backgroundColor: colors.card,
-          borderColor: isDark ? "#232323" : "#E5E5E5",
-          borderLeftWidth: visited ? StyleSheet.hairlineWidth : 4,
+          borderColor: isDark ? "#2A2A2A" : "#E5E5E5",
+          borderLeftWidth: visited ? StyleSheet.hairlineWidth : 3,
           borderLeftColor: visited
             ? isDark
-              ? "#232323"
+              ? "#2A2A2A"
               : "#E5E5E5"
-            : "#e37226e3",
-
+            : colors.accent,
           opacity: pressed ? 0.85 : 1,
         },
       ]}
@@ -75,16 +70,7 @@ const AskCard = memo(({ story }: { story: Story }) => {
       }, by ${story.by}, ${timeAgo} ago, ${commentCount} comments`}
       accessibilityHint="Opens the discussion"
     >
-      <LinearGradient
-        colors={
-          visited
-            ? ["transparent", "transparent"]
-            : ["rgba(255,102,0,0.05)", "rgba(255,102,0,0)"]
-        }
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.gradient}
-      >
+      <View style={styles.cardContent}>
         {/* Ask label */}
         <View style={styles.header}>
           <View
@@ -99,29 +85,21 @@ const AskCard = memo(({ story }: { story: Story }) => {
           >
             <Ionicons
               name="chatbubble-outline"
-              size={13}
-              color={colors.accent ?? "#FF6600"}
+              size={12}
+              color={colors.accent}
             />
 
             <Text
               style={[
                 styles.askBadgeText,
                 {
-                  color: colors.accent ?? "#FF6600",
+                  color: colors.accent,
                 },
               ]}
             >
               ASK HN
             </Text>
           </View>
-
-          {!visited && (
-            <View style={styles.unreadBadge}>
-              <View style={styles.unreadDot} />
-
-              <Text style={styles.unreadText}>New</Text>
-            </View>
-          )}
         </View>
 
         {/* Question */}
@@ -130,10 +108,11 @@ const AskCard = memo(({ story }: { story: Story }) => {
             styles.title,
             {
               color: visited ? colors.subtext : colors.text,
-              fontWeight: visited ? "400" : "600",
+              fontFamily: visited ? fonts.regular : fonts.semibold,
             },
           ]}
-          numberOfLines={3}
+          numberOfLines={4}
+          ellipsizeMode="tail"
         >
           {story.title}
         </Text>
@@ -144,6 +123,7 @@ const AskCard = memo(({ story }: { story: Story }) => {
             <Text
               style={[styles.meta, { color: colors.subtext }]}
               numberOfLines={1}
+              ellipsizeMode="tail"
             >
               {story.by}
             </Text>
@@ -170,8 +150,8 @@ const AskCard = memo(({ story }: { story: Story }) => {
           >
             <Ionicons
               name="chatbubble-outline"
-              size={14}
-              color={colors.accent ?? "#FF6600"}
+              size={12}
+              color={colors.accent}
               accessibilityElementsHidden
               importantForAccessibility="no"
             />
@@ -180,7 +160,7 @@ const AskCard = memo(({ story }: { story: Story }) => {
               style={[
                 styles.commentText,
                 {
-                  color: colors.accent ?? "#FF6600",
+                  color: colors.accent,
                 },
               ]}
             >
@@ -188,7 +168,7 @@ const AskCard = memo(({ story }: { story: Story }) => {
             </Text>
           </View>
         </View>
-      </LinearGradient>
+      </View>
     </Pressable>
   );
 });
@@ -212,79 +192,50 @@ Dot.displayName = "Dot";
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: space(4),
-    marginBottom: space(3),
-    borderRadius: space(4.5),
+    marginHorizontal: 16,
+    marginBottom: 11,
+    borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
-    minHeight: 55,
+    minHeight: 44,
   },
 
-  gradient: {
-    paddingHorizontal: space(5),
-    paddingVertical: space(5),
-    flex: 1,
-    borderRadius: space(4.5),
+  cardContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
 
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: space(2.5),
+    marginBottom: 8,
   },
 
   askBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: space(1),
-    paddingHorizontal: space(2),
-    paddingVertical: space(1),
-    borderRadius: space(3),
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
   },
 
   askBadgeText: {
     fontFamily: fonts.semibold,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 0.7,
-  },
-
-  unreadBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 102, 0, 0.12)",
-    paddingHorizontal: space(2),
-    paddingVertical: space(0.5),
-    borderRadius: space(3),
-    marginLeft: "auto",
-  },
-
-  unreadDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "#FF6600",
-    marginRight: space(1),
-  },
-
-  unreadText: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: "#FF6600",
+    fontSize: 11,
     letterSpacing: 0.5,
   },
 
   title: {
-    fontFamily: fonts.semibold,
-    fontSize: 17,
-    lineHeight: 25,
-    letterSpacing: -0.2,
+    fontSize: 16.5,
+    lineHeight: 23,
+    letterSpacing: -0.15,
+    marginBottom: 10,
   },
 
   footer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: space(4),
   },
 
   authorSection: {
@@ -294,36 +245,34 @@ const styles = StyleSheet.create({
   },
 
   meta: {
-    fontFamily: fonts.semibold,
+    fontFamily: fonts.regular,
     fontSize: 12.5,
-    fontWeight: "400",
-    flexShrink: 1,
+    maxWidth: 110,
   },
 
   dot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    marginHorizontal: space(1.75),
+    marginHorizontal: 6,
   },
 
   spacer: {
     flex: 1,
-    minWidth: space(2),
+    minWidth: 8,
   },
 
   commentBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: space(1),
-    paddingHorizontal: space(2),
-    paddingVertical: space(1),
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 999,
   },
 
   commentText: {
-    fontFamily: fonts.semibold,
-    fontSize: 12.5,
-    fontWeight: "600",
+    fontFamily: fonts.mono,
+    fontSize: 12,
   },
 });

@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withTiming,
+  cancelAnimation,
   Easing,
 } from "react-native-reanimated";
 
@@ -15,12 +16,14 @@ type Props = {
   color: string;
   borderRadius?: number;
   strokeWidth?: number;
+  animating?: boolean;
 };
 
 export default function AnimatedBorder({
   color,
   borderRadius = 16,
   strokeWidth = 1,
+  animating = true,
 }: Props) {
   const [size, setSize] = useState({
     width: 0,
@@ -35,23 +38,33 @@ export default function AnimatedBorder({
   useEffect(() => {
     if (!size.width || !size.height) return;
 
-    offset.value = withRepeat(
-      withTiming(perimeter, {
-        duration: 2800,
-        easing: Easing.linear,
-      }),
-      -1,
-      false,
-    );
-  }, [size, perimeter]);
+    if (animating) {
+      offset.value = withRepeat(
+        withTiming(perimeter, {
+          duration: 2800,
+          easing: Easing.linear,
+        }),
+        -1,
+        false,
+      );
+    } else {
+      cancelAnimation(offset);
+      offset.value = 0;
+    }
+  }, [size, perimeter, animating]);
 
   const animatedProps = useAnimatedProps(() => ({
     strokeDashoffset: -offset.value,
   }));
 
+  if (!animating) {
+    return null;
+  }
+
   return (
     <View
       style={StyleSheet.absoluteFill}
+      pointerEvents="none"
       onLayout={(e: LayoutChangeEvent) => setSize(e.nativeEvent.layout)}
     >
       <Svg

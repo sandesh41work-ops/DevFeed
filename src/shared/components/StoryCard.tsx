@@ -6,11 +6,9 @@ import { useTheme } from "../hooks/useTheme";
 import { Story } from "../types/story";
 import Favicon from "./FavIcon";
 import { fonts } from "../constants/fonts";
-import { LinearGradient } from "expo-linear-gradient";
 import { isStoryVisited, markVisitedStory } from "../services/visitedStories";
 
 const HOT_THRESHOLD = 500;
-const space = (n: number) => n * 4;
 
 const getDomain = (url?: string) => {
   try {
@@ -62,14 +60,14 @@ const StoryCard = memo(({ story }: { story: Story }) => {
         styles.card,
         {
           backgroundColor: colors.card,
-          borderColor: isDark ? "#232323" : "#E5E5E5",
-          // Accent left bar for unread stories
-          borderLeftWidth: visited ? StyleSheet.hairlineWidth : 4,
+          borderColor: isDark ? "#2A2A2A" : "#E5E5E5",
+          // Subtle left accent bar for unread stories
+          borderLeftWidth: visited ? StyleSheet.hairlineWidth : 3,
           borderLeftColor: visited
             ? isDark
-              ? "#232323"
+              ? "#2A2A2A"
               : "#E5E5E5"
-            : "#e37226e3",
+            : colors.accent,
           opacity: pressed ? 0.85 : 1,
         },
       ]}
@@ -81,16 +79,7 @@ const StoryCard = memo(({ story }: { story: Story }) => {
       }`}
       accessibilityHint="Opens the full story"
     >
-      <LinearGradient
-        colors={
-          visited
-            ? ["transparent", "transparent"]
-            : ["rgba(255,102,0,0.05)", "rgba(255,102,0,0)"]
-        }
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.gradient}
-      >
+      <View style={styles.cardContent}>
         <View style={styles.header}>
           <Favicon url={story.url} />
           <Text
@@ -100,33 +89,35 @@ const StoryCard = memo(({ story }: { story: Story }) => {
           >
             {domain}
           </Text>
-
-          {/* Dynamic Unread Badge */}
-          {!visited && (
-            <View style={styles.unreadBadge}>
-              <View style={styles.unreadDot} />
-              <Text style={styles.unreadText}>New</Text>
-            </View>
-          )}
         </View>
 
-        {/* Title contrast shift instead of full element opacity */}
+        {/* Title with contrast distinction and bounded lines */}
         <Text
           style={[
             styles.title,
             {
               color: visited ? colors.subtext : colors.text,
-              fontWeight: visited ? "400" : "600",
+              fontFamily: visited ? fonts.regular : fonts.semibold,
             },
           ]}
+          numberOfLines={4}
+          ellipsizeMode="tail"
         >
           {story.title}
         </Text>
 
         <View style={styles.footer}>
-          <Text style={[styles.meta, { color: colors.subtext }]}>
-            {story.score} upvotes
-          </Text>
+          <View style={styles.scoreRow}>
+            <Ionicons
+              name="arrow-up"
+              size={12}
+              color={colors.subtext}
+              style={styles.scoreIcon}
+            />
+            <Text style={[styles.monoMeta, { color: colors.subtext }]}>
+              {story.score}
+            </Text>
+          </View>
           <Dot color={isDark ? "#3A3A3A" : "#D9D9D9"} />
           <Text
             style={[styles.meta, { color: colors.subtext }]}
@@ -146,7 +137,7 @@ const StoryCard = memo(({ story }: { story: Story }) => {
             <Ionicons
               name="flame-outline"
               size={14}
-              color={colors.accent ?? "#C4501E"}
+              color={colors.accent}
               style={styles.hotIcon}
               accessibilityElementsHidden
               importantForAccessibility="no"
@@ -156,17 +147,17 @@ const StoryCard = memo(({ story }: { story: Story }) => {
           <View style={styles.footerItem}>
             <Ionicons
               name="chatbubble-outline"
-              size={14}
+              size={12}
               color={colors.subtext}
               accessibilityElementsHidden
               importantForAccessibility="no"
             />
-            <Text style={[styles.footerText, { color: colors.subtext }]}>
+            <Text style={[styles.monoFooterText, { color: colors.subtext }]}>
               {commentCount}
             </Text>
           </View>
         </View>
-      </LinearGradient>
+      </View>
     </Pressable>
   );
 });
@@ -182,88 +173,79 @@ Dot.displayName = "Dot";
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: space(4),
-    marginBottom: space(3),
-    borderRadius: space(4.5),
+    marginHorizontal: 16,
+    marginBottom: 11,
+    borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
     minHeight: 44,
   },
 
+  cardContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: space(2.5),
+    marginBottom: 8,
   },
 
   domain: {
     fontFamily: fonts.semibold,
-    marginLeft: space(2),
+    marginLeft: 8,
     flexShrink: 1,
     fontSize: 12.5,
-    fontWeight: "500",
     letterSpacing: 0.2,
   },
 
-  unreadBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 102, 0, 0.12)",
-    paddingHorizontal: space(2),
-    paddingVertical: space(0.5),
-    borderRadius: space(3),
-    marginLeft: "auto",
-  },
-
-  unreadDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "#FF6600",
-    marginRight: space(1),
-  },
-
-  unreadText: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: "#FF6600",
-    letterSpacing: 0.5,
-  },
-
   title: {
-    fontFamily: fonts.semibold,
-    fontSize: 17,
+    fontSize: 16.5,
     lineHeight: 23,
-    letterSpacing: -0.1,
+    letterSpacing: -0.15,
+    marginBottom: 10,
   },
 
   footer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: space(4),
+  },
+
+  scoreRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  scoreIcon: {
+    marginRight: 2,
+  },
+
+  monoMeta: {
+    fontFamily: fonts.mono,
+    fontSize: 12,
   },
 
   meta: {
-    fontFamily: fonts.semibold,
+    fontFamily: fonts.regular,
     fontSize: 12.5,
-    fontWeight: "400",
-    flexShrink: 1,
+    maxWidth: 110,
   },
 
   dot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    marginHorizontal: space(1.75),
+    marginHorizontal: 6,
   },
 
   spacer: {
     flex: 1,
-    minWidth: space(2),
+    minWidth: 8,
   },
 
   hotIcon: {
-    marginRight: space(3.5),
+    marginRight: 10,
   },
 
   footerItem: {
@@ -271,17 +253,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  footerText: {
-    fontFamily: fonts.semibold,
-    marginLeft: space(1),
-    fontSize: 12.5,
-    fontWeight: "500",
-  },
-
-  gradient: {
-    paddingHorizontal: space(5),
-    paddingVertical: space(5),
-    flex: 1,
-    borderRadius: space(4.5),
+  monoFooterText: {
+    fontFamily: fonts.mono,
+    marginLeft: 4,
+    fontSize: 12,
   },
 });

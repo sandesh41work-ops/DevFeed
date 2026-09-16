@@ -40,6 +40,7 @@ import FeedSelector from "../../shared/components/FeedSelector";
 import { Feed } from "../../shared/types/feed";
 import { useQueryClient } from "@tanstack/react-query";
 import { useObserve } from "expo-observe";
+import { fonts } from "../../shared/constants/fonts";
 
 const HomeScreen = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -216,7 +217,7 @@ const HomeScreen = () => {
               <Animated.View
                 entering={SlideInDown}
                 exiting={SlideOutUp}
-                style={styles.networkBanner}
+                style={[styles.networkBanner, { backgroundColor: colors.error }]}
               >
                 <Text style={styles.networkBannerText}>
                   No internet connection
@@ -301,7 +302,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   networkBanner: {
-    backgroundColor: "#dc2626",
     paddingVertical: 10,
     paddingHorizontal: 16,
     alignItems: "center",
@@ -310,6 +310,7 @@ const styles = StyleSheet.create({
 
   networkBannerText: {
     color: "#fff",
-    fontWeight: "600",
+    fontFamily: fonts.semibold,
+    fontSize: 13,
   },
 });
