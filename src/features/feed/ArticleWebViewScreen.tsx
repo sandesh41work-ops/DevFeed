@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loading: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: "center",
     alignItems: "center",
   },
