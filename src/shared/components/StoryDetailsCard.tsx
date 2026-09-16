@@ -94,15 +94,27 @@ const StoryDetailsCard = ({ story }: Props) => {
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <View style={styles.infoItem}>
-            <Ionicons name="arrow-up-outline" size={16} color={colors.accent} />
+            <Ionicons name="arrow-up" size={16} color={colors.accent} />
 
             <Text style={[styles.statValue, { color: colors.text }]}>
               {story.score} Points
             </Text>
           </View>
+
+          <View style={[styles.infoItem, { marginLeft: 24 }]}>
+            <Ionicons
+              name="chatbubble-outline"
+              size={15}
+              color={colors.accent}
+            />
+
+            <Text style={[styles.statValue, { color: colors.text }]}>
+              {story.descendants ?? 0} Comments
+            </Text>
+          </View>
         </View>
 
-        <View style={[styles.infoRow, { marginTop: 18 }]}>
+        <View style={[styles.infoRow, { marginTop: 16 }]}>
           <View style={styles.infoItem}>
             <Ionicons name="person-outline" size={16} color={colors.accent} />
 
@@ -126,7 +138,7 @@ const StoryDetailsCard = ({ story }: Props) => {
       <Button
         title="Read Article"
         onPress={openArticle}
-        style={styles.readButton}
+        style={[styles.readButton, { backgroundColor: colors.accent }]}
         textStyle={styles.readButtonText}
       />
 
@@ -146,18 +158,20 @@ const StoryDetailsCard = ({ story }: Props) => {
             { width: "50%", justifyContent: "center" },
           ]}
           onPress={toggleBookmark}
+          accessibilityRole="button"
+          accessibilityLabel={bookmarked ? "Remove bookmark" : "Bookmark story"}
         >
           <Ionicons
             name={bookmarked ? "bookmark" : "bookmark-outline"}
             size={18}
-            color={bookmarked ? "#EF4444" : colors.text}
+            color={bookmarked ? colors.accent : colors.text}
           />
 
           <Text
             style={[
               styles.actionText,
               {
-                color: bookmarked ? "#EF4444" : colors.text,
+                color: bookmarked ? colors.accent : colors.text,
               },
             ]}
           >
@@ -229,7 +243,6 @@ const styles = StyleSheet.create({
   },
 
   readButton: {
-    backgroundColor: "#FF6600",
     marginTop: 4,
   },
 

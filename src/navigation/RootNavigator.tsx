@@ -28,6 +28,8 @@ const Tabs = createBottomTabNavigator<TabParamList>();
 function MainTabNavigator() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const [activeTab, setActiveTab] = useState<"Feed" | "Bookmarks">("Feed");
+
   return (
     <View
       style={{
@@ -36,8 +38,17 @@ function MainTabNavigator() {
         backgroundColor: colors.background,
       }}
     >
-      <AppHeader />
+      <AppHeader activeTab={activeTab} />
       <Tabs.Navigator
+        screenListeners={{
+          state: (e) => {
+            const state = e.data.state;
+            const currentRoute = state?.routes[state?.index];
+            if (currentRoute?.name === "Feed" || currentRoute?.name === "Bookmarks") {
+              setActiveTab(currentRoute.name);
+            }
+          },
+        }}
         screenOptions={({ route }) => ({
           sceneStyle: {
             backgroundColor: colors.background,

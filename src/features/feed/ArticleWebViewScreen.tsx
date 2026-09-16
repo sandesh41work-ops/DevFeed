@@ -4,6 +4,7 @@ import { useObserve } from "expo-observe";
 import { useRoute } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 import { useTheme } from "../../shared/hooks/useTheme";
+import { fonts } from "../../shared/constants/fonts";
 
 type RouteParams = {
   url: string;
@@ -24,7 +25,7 @@ const ArticleWebViewScreen = () => {
   if (!url) {
     return (
       <View style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
-        <Text style={[styles.emptyText, { color: colors.text }]}>No article URL available.</Text>
+        <Text style={[styles.emptyText, { color: colors.subtext }]}>No article URL available.</Text>
       </View>
     );
   }
@@ -68,9 +69,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    marginTop: 5,
+    marginTop: 8,
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: fonts.semibold,
   },
   emptyContainer: {
     flex: 1,
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
+    fontFamily: fonts.regular,
     textAlign: "center",
-    color: "#333",
   },
 });

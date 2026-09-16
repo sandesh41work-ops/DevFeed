@@ -275,7 +275,6 @@ const styles = StyleSheet.create({
 
   name: {
     fontSize: 20,
-    fontWeight: "700",
     fontFamily: fonts.semibold,
     textAlign: "center",
     marginBottom: 4,
@@ -301,7 +300,6 @@ const styles = StyleSheet.create({
 
   actionText: {
     fontSize: 16,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
     marginLeft: 12,
   },
@@ -327,7 +325,6 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
 });

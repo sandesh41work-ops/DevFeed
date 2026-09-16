@@ -40,7 +40,7 @@ const Button = ({
       {loading ? (
         <ActivityIndicator color="#ffff" size="small" />
       ) : (
-        <Text style={[styles.buttonText, textStyle, { fontFamily: fonts.semibold }]}> {title} </Text>
+        <Text style={[styles.buttonText, textStyle]}> {title} </Text>
       )}
     </TouchableOpacity>
   );
@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#fff",
+    fontFamily: fonts.semibold,
     fontSize: 16,
-    fontWeight: "600",
   },
 
   disabled: {

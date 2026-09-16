@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Switch,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -17,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeMode, useTheme } from "../../shared/hooks/useTheme";
 import { fonts } from "../../shared/constants/fonts";
 import { RootStackParamList } from "../../shared/types/navigation";
-import { logOutUser } from "../auth/authService";
+import { logOutUser, updateUserDisplayName } from "../auth/authService";
 import { useProfileDetails } from "./useProfileDetails";
 import {
   cancelDailyReminder,
@@ -51,6 +52,30 @@ const ProfileScreen = () => {
   const [remindersEnabled, setRemindersEnabled] = useState(false);
   const [loadingReminders, setLoadingReminders] = useState(true);
   const [testingNotification, setTestingNotification] = useState(false);
+
+  // Username edit state
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState(currentUser?.displayName || "");
+  const [savingName, setSavingName] = useState(false);
+
+  useEffect(() => {
+    setNameInput(currentUser?.displayName || "");
+  }, [currentUser?.displayName]);
+
+  const handleSaveUsername = async () => {
+    const trimmed = nameInput.trim();
+    if (!trimmed) return;
+    try {
+      setSavingName(true);
+      await updateUserDisplayName(trimmed);
+      setEditingName(false);
+    } catch (err) {
+      console.warn("Failed to update username", err);
+      Alert.alert("Error", "Could not update username.");
+    } finally {
+      setSavingName(false);
+    }
+  };
 
   useEffect(() => {
     getDailyReminderSettings()
@@ -197,9 +222,67 @@ const ProfileScreen = () => {
             </View>
           </View>
 
-          <Text style={[styles.profileName, { color: colors.text }]}>
-            {currentUser?.displayName || "Developer"}
-          </Text>
+          {editingName ? (
+            <View style={styles.editNameContainer}>
+              <TextInput
+                value={nameInput}
+                onChangeText={setNameInput}
+                placeholder="Enter username"
+                placeholderTextColor={colors.subtext}
+                autoFocus
+                style={[
+                  styles.nameInput,
+                  {
+                    color: colors.text,
+                    borderColor: colors.border,
+                    backgroundColor: colors.background,
+                  },
+                ]}
+              />
+              <View style={styles.editNameActions}>
+                <TouchableOpacity
+                  onPress={handleSaveUsername}
+                  disabled={savingName}
+                  style={[styles.editButton, { backgroundColor: colors.accent }]}
+                >
+                  <Text style={styles.editButtonText}>
+                    {savingName ? "..." : "Save"}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setNameInput(currentUser?.displayName || "");
+                    setEditingName(false);
+                  }}
+                  style={[
+                    styles.editButton,
+                    { backgroundColor: colors.background, borderColor: colors.border, borderWidth: 1 },
+                  ]}
+                >
+                  <Text style={[styles.cancelButtonText, { color: colors.subtext }]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={() => setEditingName(true)}
+              style={styles.nameRow}
+              accessibilityRole="button"
+              accessibilityLabel="Edit display name"
+            >
+              <Text style={[styles.profileName, { color: colors.text }]}>
+                {currentUser?.displayName || "Developer"}
+              </Text>
+              <Ionicons
+                name="pencil-outline"
+                size={16}
+                color={colors.subtext}
+                style={styles.editPencilIcon}
+              />
+            </TouchableOpacity>
+          )}
 
           <Text style={[styles.profileRole, { color: colors.subtext }]}>
             {currentUser?.email || "No email available"}
@@ -459,7 +542,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "700",
     fontFamily: fonts.semibold,
   },
   headerRightPlaceholder: {
@@ -492,16 +574,56 @@ const styles = StyleSheet.create({
   avatarInitials: {
     fontSize: 28,
     lineHeight: 34,
-    fontWeight: "700",
     fontFamily: fonts.mono,
     color: "#fff",
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  editPencilIcon: {
+    marginLeft: 6,
   },
   profileName: {
     fontSize: 22,
     lineHeight: 28,
-    fontWeight: "700",
     fontFamily: fonts.semibold,
-    marginBottom: 4,
+  },
+  editNameContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  nameInput: {
+    width: "100%",
+    height: 44,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    fontFamily: fonts.regular,
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  editNameActions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  editButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  editButtonText: {
+    color: "#fff",
+    fontFamily: fonts.semibold,
+    fontSize: 13,
+  },
+  cancelButtonText: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
   },
   profileRole: {
     fontSize: 14,
@@ -514,7 +636,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
   card: {
@@ -544,7 +665,6 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     lineHeight: 22,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
   cardDescription: {
@@ -585,7 +705,6 @@ const styles = StyleSheet.create({
   },
   testReminderText: {
     fontSize: 13,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
   aboutRow: {
@@ -600,7 +719,6 @@ const styles = StyleSheet.create({
   },
   aboutValue: {
     fontSize: 14,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
   signOutButton: {
@@ -616,7 +734,6 @@ const styles = StyleSheet.create({
   signOutText: {
     fontSize: 15,
     lineHeight: 22,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
   },
 });

@@ -73,7 +73,11 @@ const SummaryCard = ({ articleId, url }: Props) => {
         },
       ]}
     >
-      <AnimatedBorder color={colors.accent} borderRadius={16} />
+      <AnimatedBorder
+        color={colors.accent}
+        borderRadius={18}
+        animating={Boolean(expanded && isLoading)}
+      />
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={handlePress}
@@ -153,13 +157,17 @@ const SummaryCard = ({ articleId, url }: Props) => {
               exiting={undefined}
               style={styles.center}
             >
-              <Ionicons name="alert-circle-outline" size={28} color="#EF4444" />
+              <Ionicons
+                name="alert-circle-outline"
+                size={28}
+                color={colors.error}
+              />
 
               <Text
                 style={[
                   styles.message,
                   {
-                    color: "#EF4444",
+                    color: colors.error,
                   },
                 ]}
               >

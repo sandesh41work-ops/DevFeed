@@ -79,14 +79,14 @@ const styles = StyleSheet.create({
   },
 
   contentContainer: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 16,
     paddingBottom: 5,
-    paddingTop :1,
+    paddingTop: 1,
     gap: 7,
   },
 
   chip: {
-    paddingHorizontal: 23,
+    paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
@@ -94,8 +94,7 @@ const styles = StyleSheet.create({
 
   chipText: {
     fontSize: 14,
-    fontWeight: "600",
     fontFamily: fonts.semibold,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
 });

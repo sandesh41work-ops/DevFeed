@@ -7,6 +7,7 @@ import { Story } from "../types/story";
 import StoryCard from "./StoryCard";
 import { useTheme } from "../hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
+import { fonts } from "../constants/fonts";
 
 type Props = {
   story: Story;
@@ -23,11 +24,13 @@ export default function SwipeableStoryCard({ story, onDelete }: Props) {
     swipeableMethods: SwipeableMethods,
   ) => (
     <TouchableOpacity
-      style={[styles.deleteButton, { backgroundColor: "#ef4444" }]}
+      style={[styles.deleteButton, { backgroundColor: colors.error }]}
       onPress={() => {
         swipeableMethods.close();
         onDelete(story.id);
       }}
+      accessibilityRole="button"
+      accessibilityLabel="Delete bookmark"
     >
       <Ionicons name="trash" size={20} color="#fff" />
 
@@ -53,12 +56,12 @@ const styles = StyleSheet.create({
     width: 100,
     marginVertical: 6,
     borderRadius: 12,
-    marginRight: 12,
+    marginRight: 16,
     gap: 4,
   },
   deleteText: {
     color: "#fff",
-    fontWeight: "700",
+    fontFamily: fonts.semibold,
     fontSize: 13,
   },
 });
