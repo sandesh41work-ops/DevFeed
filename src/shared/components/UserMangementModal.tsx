@@ -65,6 +65,7 @@ const UserManagementModal = ({ visible, onClose }: Props) => {
   };
   const handleProfilePressed = async () => {
     try {
+      onClose();
       navigation.navigate("Profile");
     } catch (error) {
       console.log("Navigation Error :", error);

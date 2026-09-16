@@ -9,7 +9,7 @@ import {
   IBMPlexSans_400Regular,
 } from "@expo-google-fonts/ibm-plex-sans";
 import { IBMPlexMono_600SemiBold } from "@expo-google-fonts/ibm-plex-mono";
-import { useTheme } from "./src/shared/hooks/useTheme";
+import { useTheme, ThemeProvider } from "./src/shared/hooks/useTheme";
 import { ObserveRoot, Observe } from "expo-observe";
 import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -26,7 +26,7 @@ Observe.configure({
 const queryClient = new QueryClient();
 
 function App() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const [fontsLoaded] = useFonts({
     IBMPlexSans_600SemiBold,
     IBMPlexSans_400Regular,
@@ -48,7 +48,7 @@ function App() {
     <GestureHandlerRootView
       style={{ flex: 1, backgroundColor: colors.background }}
     >
-      <StatusBar style="auto" />
+      <StatusBar style={isDark ? "light" : "dark"} />
       <QueryClientProvider client={queryClient}>
         <RootNavigator />
       </QueryClientProvider>
@@ -59,7 +59,9 @@ function App() {
 function Root() {
   return (
     <SafeAreaProvider>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
